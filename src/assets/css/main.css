@@ -140,29 +140,29 @@ h6 {
 }
 
 /*--------------------------------------------------------------
-# Global Header
+# Global Header - Reduced Size
 --------------------------------------------------------------*/
 .header {
   --background-color: rgba(255, 255, 255, 0);
   --heading-color: #ffffff;
   color: var(--default-color);
   background-color: var(--background-color);
-  padding: 20px 0;
+  padding: 10px 0; /* Reduced padding from 20px to 10px */
   transition: all 0.5s;
   z-index: 997;
 }
 
 .header .logo {
-  line-height: 1;
+  line-height: 0.8; /* Reduced line height */
 }
 
 .header .logo img {
-  max-height: 32px;
-  margin-right: 8px;
+  max-height: 28px; /* Reduced from 32px */
+  margin-right: 6px; /* Reduced from 8px */
 }
 
 .header .logo h1 {
-  font-size: 30px;
+  font-size: 24px; /* Reduced from 30px */
   margin: 0;
   font-weight: 700;
   color: var(--heading-color);
@@ -197,14 +197,14 @@ h6 {
 
   .navmenu li {
     position: relative;
-    margin-left: 5px;
+    margin-left: 3px; /* Reduced from 5px */
   }
 
   .navmenu a,
   .navmenu a:focus {
     color: var(--nav-color);
-    padding: 8px 20px;
-    font-size: 14px;
+    padding: 6px 16px; /* Reduced from 8px 20px */
+    font-size: 13px; /* Reduced from 14px */
     font-family: var(--nav-font);
     font-weight: 400;
     display: flex;
@@ -217,9 +217,9 @@ h6 {
 
   .navmenu a i,
   .navmenu a:focus i {
-    font-size: 12px;
+    font-size: 11px; /* Reduced from 12px */
     line-height: 0;
-    margin-left: 5px;
+    margin-left: 4px; /* Reduced from 5px */
     transition: 0.3s;
   }
 
@@ -2614,6 +2614,11 @@ section,
 }
 
 img[src="../assets/img/logo_principale.png"] {
-    height: 8cm !important;
+    height: auto !important;
     width: auto !important;
+    max-height: 3.5cm !important; 
+    max-width: 100% !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.2)) !important;
+    transition: all 0.3s ease !important;
 }
