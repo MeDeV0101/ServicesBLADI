@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>MRE - Services Fiscaux</title>
+  <meta name="description" content="Services fiscaux pour les Marocains Résidant à l'Étranger">
+  <meta name="keywords" content="fiscal, Maroc, MRE, impôts, comptabilité">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="../assets/img/logo.png">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="../assets/css/main.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: Selecao
+  * Template URL: https://bootstrapmade.com/selecao-bootstrap-template/
+  * Updated: Aug 07 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+
+  <style>
+    .service-item {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .service-item:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+    .modal-content {
+      border-radius: 15px;
+      border: none;
+    }
+    .modal-header {
+      border-bottom: none;
+      padding: 20px 30px;
+    }
+    .modal-body {
+      padding: 20px 30px;
+    }
+    .modal-footer {
+      border-top: none;
+      padding: 20px 30px;
+    }
+    .service-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .service-list {
+      list-style: none;
+      padding: 0;
+    }
+    .service-list li {
+      margin-bottom: 10px;
+      padding-left: 30px;
+      position: relative;
+    }
+    .service-list li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #28a745;
+    }
+    #hero {
+      height: 9cm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="../assets/img/logo.png" alt=""> -->
+        <h1 class="sitename">MRE</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about-us.html">About</a></li>
+          <li class="dropdown"><a href="#"><span>Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="Tourisme.html">Tourisme</a></li>
+              <li><a href="Administrative.html">Administrative</a></li>
+              <li><a href="Investisment.html">Investisment</a></li>
+              <li><a href="Immobilier.html">Immobilier</a></li>
+              <li><a href="Fiscale.html" class="active">Fiscale</a></li>
+            </ul>
+          </li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="login.html">Se Connecter</a></li>
+          <li class="dropdown"><a href="#"><span><i class="bi bi-translate"></i> <span>Langue</span></span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="#" class="lang-option" data-lang="fr">Français</a></li>
+              <li><a href="#" class="lang-option" data-lang="ar">العربية</a></li>
+              <li><a href="#" class="lang-option" data-lang="en">English</a></li>
+              <li><a href="#" class="lang-option" data-lang="es">Español</a></li>
+            </ul>
+          </li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="main">
+    <section id="hero" class="hero section dark-background">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <h1 class="text-center">Services Fiscaux</h1>
+            <p class="text-center">Optimisez votre fiscalité entre la France et le Maroc</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="services section">
+      <div class="container">
+        <div class="row gy-4">
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="service-item position-relative" data-bs-toggle="modal" data-bs-target="#optimisationModal">
+              <div class="icon">
+                <i class="bi bi-calculator" style="color: #f3268c;"></i>
+              </div>
+              <h3>Optimisation Fiscale</h3>
+              <p>Nos experts-comptables vous conseillent pour optimiser votre fiscalité entre la France et le Maroc, en tenant compte des réglementations des deux pays.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item position-relative" data-bs-toggle="modal" data-bs-target="#declarationModal">
+              <div class="icon">
+                <i class="bi bi-file-earmark-text" style="color: #f3268c;"></i>
+              </div>
+              <h3>Déclarations Fiscales</h3>
+              <p>Nous vous accompagnons dans la préparation et le dépôt de vos déclarations fiscales dans les deux pays.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item position-relative" data-bs-toggle="modal" data-bs-target="#conventionModal">
+              <div class="icon">
+                <i class="bi bi-file-earmark-check" style="color: #f3268c;"></i>
+              </div>
+              <h3>Conventions Fiscales</h3>
+              <p>Nous vous aidons à comprendre et à appliquer les conventions fiscales entre la France et le Maroc.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <h2 class="text-center">Contactez-nous</h2>
+            <p class="text-center">Pour plus d'informations sur nos services fiscaux</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="footer" class="footer dark-background">
+    <div class="container">
+      <h3 class="sitename">MRE</h3>
+      <p>Services fiscaux pour les Marocains Résidant à l'Étranger</p>
+      <div class="social-links d-flex justify-content-center">
+        <a href=""><i class="bi bi-twitter-x"></i></a>
+        <a href=""><i class="bi bi-facebook"></i></a>
+        <a href=""><i class="bi bi-instagram"></i></a>
+        <a href=""><i class="bi bi-linkedin"></i></a>
+      </div>
+      <div class="copyright">
+        <span>Copyright</span> <strong class="px-1 sitename">MRE</strong> <span>All Rights Reserved</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/vendor/aos/aos.js"></script>
+  <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="../assets/js/main.js"></script>
+
+  <!-- Modal Optimisation Fiscale -->
+  <div class="modal fade" id="optimisationModal" tabindex="-1" aria-labelledby="optimisationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="service-icon">
+            <i class="bi bi-calculator" style="color: #f3268c; font-size: 48px;"></i>
+          </div>
+          <h5 class="modal-title" id="optimisationModalLabel">Optimisation Fiscale</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="service-list">
+            <li>Analyse de votre situation fiscale</li>
+            <li>Conseils personnalisés pour réduire votre imposition</li>
+            <li>Optimisation des investissements transfrontaliers</li>
+            <li>Gestion des revenus et patrimoine</li>
+            <li>Planification fiscale à long terme</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <a href="login.html" class="btn btn-primary">Prendre rendez-vous</a>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Déclarations Fiscales -->
+  <div class="modal fade" id="declarationModal" tabindex="-1" aria-labelledby="declarationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="service-icon">
+            <i class="bi bi-file-earmark-text" style="color: #f3268c; font-size: 48px;"></i>
+          </div>
+          <h5 class="modal-title" id="declarationModalLabel">Déclarations Fiscales</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="service-list">
+            <li>Préparation des déclarations d'impôts</li>
+            <li>Déclarations de revenus transfrontaliers</li>
+            <li>Déclarations de patrimoine</li>
+            <li>Assistance pour les contrôles fiscaux</li>
+            <li>Suivi des obligations déclaratives</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <a href="login.html" class="btn btn-primary">Déposer une déclaration</a>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Conventions Fiscales -->
+  <div class="modal fade" id="conventionModal" tabindex="-1" aria-labelledby="conventionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="service-icon">
+            <i class="bi bi-file-earmark-check" style="color: #f3268c; font-size: 48px;"></i>
+          </div>
+          <h5 class="modal-title" id="conventionModalLabel">Conventions Fiscales</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="service-list">
+            <li>Application des conventions fiscales internationales</li>
+            <li>Éviter la double imposition</li>
+            <li>Résolution des litiges fiscaux</li>
+            <li>Conseils sur les transferts transfrontaliers</li>
+            <li>Assistance pour les procédures de remboursement</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <a href="login.html" class="btn btn-primary">Consulter un expert</a>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Animation au survol des cartes de service
+    document.querySelectorAll('.service-item').forEach(item => {
+      item.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px)';
+        this.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.15)';
+      });
+      
+      item.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '0 5px 30px 0 rgba(0, 0, 0, 0.1)';
+      });
+    });
+  </script>
+
+</body>
+</html>

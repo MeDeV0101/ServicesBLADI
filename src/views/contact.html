@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>MRE - Contact</title>
+  <meta name="description" content="Contactez-nous pour plus d'informations sur nos services">
+  <meta name="keywords" content="contact, MRE, Maroc, services">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="../assets/img/logo.png">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="../assets/css/main.css" rel="stylesheet">
+
+  <style>
+    .contact .info-item {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 30px 0 rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    .contact .info-item i {
+      font-size: 24px;
+      color: #f3268c;
+      margin-bottom: 20px;
+    }
+    .contact .info-item h3 {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+    .contact .info-item p {
+      margin-bottom: 0;
+    }
+    .contact .php-email-form {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .contact .php-email-form,
+    .contact img {
+      height: 100%;
+    }
+
+    button, .php-email-form button[type="submit"], .scroll-top, .hero .btn-get-started {
+      background-color: #C49A5A !important; /* Couleur sable doré */
+    }
+
+    button:hover, .php-email-form button[type="submit"]:hover, .scroll-top:hover, .hero .btn-get-started:hover {
+      background-color: #C49A5A !important; /* Couleur sable doré au survol */
+    }
+  </style>
+</head>
+
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">MRE</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about-us.html">About</a></li>
+          <li class="dropdown"><a href="#"><span>Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="Tourisme.html">Tourisme</a></li>
+              <li><a href="Administrative.html">Administrative</a></li>
+              <li><a href="Investisment.html">Investisment</a></li>
+              <li><a href="Immobilier.html">Immobilier</a></li>
+              <li><a href="Fiscale.html">Fiscale</a></li>
+            </ul>
+          </li>
+          <li><a href="contact.html" class="active">Contact</a></li>
+          <li><a href="login.html">Se Connecter</a></li>
+          <li class="dropdown"><a href="#"><span><i class="bi bi-translate"></i> <span>Langue</span></span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="#" class="lang-option" data-lang="fr">Français</a></li>
+              <li><a href="#" class="lang-option" data-lang="ar">العربية</a></li>
+              <li><a href="#" class="lang-option" data-lang="en">English</a></li>
+              <li><a href="#" class="lang-option" data-lang="es">Español</a></li>
+            </ul>
+          </li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="main">
+    <section id="hero" class="hero section dark-background" style="height: 9cm;">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <h1 class="text-center">Contactez-nous</h1>
+            <p class="text-center">Nous sommes là pour vous aider</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact section">
+      <div class="container">
+        <div class="row gy-4 justify-content-center align-items-center">
+          <!-- Centered image section -->
+          <div class="col-lg-5 d-flex align-items-center justify-content-center">
+            <img src="../assets/img/contact us picture .png" alt="Contact Us" class="img-fluid rounded-4">
+          </div>
+
+          <!-- Centered form section -->
+          <div class="col-lg-7">
+            <form action="forms/contact.php" method="post" class="php-email-form">
+              <div class="row gy-4">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <input type="text" name="name" class="form-control" placeholder="Votre nom" required>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <input type="email" class="form-control" name="email" placeholder="Votre email" required>
+                  </div>
+                </div>
+
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <input type="text" class="form-control" name="subject" placeholder="Sujet" required>
+                  </div>
+                </div>
+
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <textarea class="form-control" name="message" rows="6" placeholder="Message" required></textarea>
+                  </div>
+                </div>
+
+                <div class="col-md-12 text-center">
+                  <button type="submit">Envoyer le message</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="footer" class="footer dark-background">
+    <div class="container">
+      <h3 class="sitename">MRE</h3>
+      <p>Contactez-nous pour plus d'informations sur nos services</p>
+      <div class="social-links d-flex justify-content-center">
+        <a href=""><i class="bi bi-twitter-x"></i></a>
+        <a href=""><i class="bi bi-facebook"></i></a>
+        <a href=""><i class="bi bi-instagram"></i></a>
+        <a href=""><i class="bi bi-linkedin"></i></a>
+      </div>
+      <div class="copyright">
+        <span>Copyright</span> <strong class="px-1 sitename">MRE</strong> <span>All Rights Reserved</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/vendor/aos/aos.js"></script>
+  <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="../assets/js/main.js"></script>
+
+</body>
+</html>

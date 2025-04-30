@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>MRE - Services Administratifs</title>
+  <meta name="description" content="Services administratifs pour les Marocains Résidant à l'Étranger">
+  <meta name="keywords" content="administratif, Maroc, MRE, documents, services">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="../assets/img/logo.png">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="../assets/css/main.css" rel="stylesheet">
+
+  <style>
+    .service-item {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      background-color: #fff;
+    }
+    .service-item:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      border-color: #f0950d;
+    }
+    .icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .service-item h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .service-item p {
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+    }
+    .modal-content {
+      border-radius: 15px;
+      border: none;
+    }
+    .modal-header {
+      border-bottom: none;
+      padding: 20px 30px;
+    }
+    .modal-body {
+      padding: 20px 30px;
+    }
+    .modal-footer {
+      border-top: none;
+      padding: 20px 30px;
+    }
+    .service-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .service-list {
+      list-style: none;
+      padding: 0;
+    }
+    .service-list li {
+      margin-bottom: 10px;
+      padding-left: 30px;
+      position: relative;
+    }
+    .service-list li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #28a745;
+    }
+    #hero {
+      height: 9cm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">MRE</h1>
+      </a>
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about-us.html">About</a></li>
+          <li class="dropdown"><a href="#"><span>Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="Tourisme.html">Tourisme</a></li>
+              <li><a href="Administrative.html" class="active">Administrative</a></li>
+              <li><a href="Investisment.html">Investisment</a></li>
+              <li><a href="Immobilier.html">Immobilier</a></li>
+              <li><a href="Fiscale.html">Fiscale</a></li>
+            </ul>
+          </li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="login.html">Se Connecter</a></li>
+          <li class="dropdown"><a href="#"><span><i class="bi bi-translate"></i> <span>Langue</span></span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="#" class="lang-option" data-lang="fr">Français</a></li>
+              <li><a href="#" class="lang-option" data-lang="ar">العربية</a></li>
+              <li><a href="#" class="lang-option" data-lang="en">English</a></li>
+              <li><a href="#" class="lang-option" data-lang="es">Español</a></li>
+            </ul>
+          </li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <section id="hero" class="hero section dark-background">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <h1 class="text-center">Services Administratifs</h1>
+            <p class="text-center">Simplifiez vos démarches administratives avec nos services dédiés</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Services Section -->
+    <section class="services section">
+      <div class="container">
+        <h2 class="text-center">Services Principaux</h2>
+        <div class="row gy-4">
+          <!-- Documents d'identité -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-person-badge" style="color: #f00d0d; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalDocuments" data-bs-toggle="modal">Documents d'Identité</a></h3>
+              <p>Renouvellement de passeport, carte d'identité nationale et autres documents officiels.</p>
+            </div>
+          </div>
+          <!-- Services Consulaires -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-building" style="color: #0d722a; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalConsulaires" data-bs-toggle="modal">Services Consulaires</a></h3>
+              <p>Assistance pour les démarches consulaires et les actes d'état civil.</p>
+            </div>
+          </div>
+          <!-- Légalisation -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-clipboard-check" style="color: #0d27f0; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalLegalisation" data-bs-toggle="modal">Légalisation</a></h3>
+              <p>Légalisation et authentification de documents officiels.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modals -->
+    <!-- Modal Documents d'Identité -->
+    <div class="modal fade" id="modalDocuments" tabindex="-1" aria-labelledby="modalDocumentsLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDocumentsLabel">Documents d'Identité</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Documents Disponibles</h6>
+                <ul class="service-list">
+                  <li>Carte Nationale d'Identité Électronique</li>
+                  <li>Passeport Biométrique</li>
+                  <li>Carte de Séjour</li>
+                  <li>Carte Consulaire</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services Proposés</h6>
+                <ul class="service-list">
+                  <li>Renouvellement de documents</li>
+                  <li>Première demande</li>
+                  <li>Remplacement en cas de perte</li>
+                  <li>Mise à jour des informations</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Documents Nécessaires</h6>
+              <ul class="service-list">
+                <li>Photos d'identité récentes</li>
+                <li>Justificatif de domicile</li>
+                <li>Ancien document (pour renouvellement)</li>
+                <li>Acte de naissance</li>
+                <li>Justificatif de situation professionnelle</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Prendre Rendez-vous</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Services Consulaires -->
+    <div class="modal fade" id="modalConsulaires" tabindex="-1" aria-labelledby="modalConsulairesLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalConsulairesLabel">Services Consulaires</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services d'État Civil</h6>
+                <ul class="service-list">
+                  <li>Actes de naissance</li>
+                  <li>Actes de mariage</li>
+                  <li>Actes de décès</li>
+                  <li>Certificats de nationalité</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Assistance Administrative</h6>
+                <ul class="service-list">
+                  <li>Inscription consulaire</li>
+                  <li>Procuration</li>
+                  <li>Certificats divers</li>
+                  <li>Assistance juridique</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Informations Pratiques</h6>
+              <ul class="service-list">
+                <li>Service disponible sur rendez-vous</li>
+                <li>Traitement des demandes sous 48h</li>
+                <li>Assistance en français et en arabe</li>
+                <li>Service d'urgence disponible</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Contacter le Service</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Légalisation -->
+    <div class="modal fade" id="modalLegalisation" tabindex="-1" aria-labelledby="modalLegalisationLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLegalisationLabel">Légalisation de Documents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Types de Documents</h6>
+                <ul class="service-list">
+                  <li>Documents administratifs</li>
+                  <li>Documents commerciaux</li>
+                  <li>Diplômes et certificats</li>
+                  <li>Traductions officielles</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services de Légalisation</h6>
+                <ul class="service-list">
+                  <li>Authentification de signature</li>
+                  <li>Certification conforme</li>
+                  <li>Apostille</li>
+                  <li>Validation de traduction</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Procédure</h6>
+              <ul class="service-list">
+                <li>Vérification des documents originaux</li>
+                <li>Contrôle de conformité</li>
+                <li>Application du sceau officiel</li>
+                <li>Délivrance du certificat de légalisation</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Soumettre une Demande</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents administratifs Section -->
+    <section class="services section">
+      <div class="container">
+        <h2 class="text-center">Documents administratifs</h2>
+        <div class="row gy-4">
+          <!-- État civil -->
+          <div class="col-lg-3 col-md-6" data-aos="fade-up">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-journal-text" style="color: #0dcaf0; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalEtatCivil" data-bs-toggle="modal">État civil</a></h3>
+              <p>Actes de naissance, certificats de résidence, etc.</p>
+            </div>
+          </div>
+          <!-- Mariage -->
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-heart" style="color: #0a5a34; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalMariage" data-bs-toggle="modal">Mariage</a></h3>
+              <p>Procédures et documents pour le mariage.</p>
+            </div>
+          </div>
+          <!-- Décès -->
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-emoji-frown" style="color: #ecf00d; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalDeces" data-bs-toggle="modal">Décès</a></h3>
+              <p>Démarches et formalités en cas de décès.</p>
+            </div>
+          </div>
+          <!-- Permis de conduire -->
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-car-front" style="color: #f00d3e; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalConduire" data-bs-toggle="modal">Permis de conduire</a></h3>
+              <p>Procédures d'échange et de reconnaissance du permis.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nouveaux Modals -->
+    <!-- Modal État Civil -->
+    <div class="modal fade" id="modalEtatCivil" tabindex="-1" aria-labelledby="modalEtatCivilLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEtatCivilLabel">État Civil</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Documents Disponibles</h6>
+                <ul class="service-list">
+                  <li>Acte de naissance intégral</li>
+                  <li>Extrait d'acte de naissance</li>
+                  <li>Certificat de résidence</li>
+                  <li>Certificat de vie</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services Proposés</h6>
+                <ul class="service-list">
+                  <li>Demande de copies d'actes</li>
+                  <li>Mise à jour des informations</li>
+                  <li>Transcription d'actes étrangers</li>
+                  <li>Rectification d'erreurs</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Procédure</h6>
+              <ul class="service-list">
+                <li>Dépôt de la demande en ligne ou en personne</li>
+                <li>Délai de traitement : 2-3 jours ouvrables</li>
+                <li>Retrait au guichet ou envoi postal</li>
+                <li>Service de traduction disponible</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Faire une Demande</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Mariage -->
+    <div class="modal fade" id="modalMariage" tabindex="-1" aria-labelledby="modalMariageLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalMariageLabel">Procédures de Mariage</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Documents Requis</h6>
+                <ul class="service-list">
+                  <li>Copie des pièces d'identité</li>
+                  <li>Actes de naissance récents</li>
+                  <li>Certificat de célibat</li>
+                  <li>Autorisation de mariage (si nécessaire)</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Étapes de la Procédure</h6>
+                <ul class="service-list">
+                  <li>Constitution du dossier</li>
+                  <li>Dépôt auprès des autorités</li>
+                  <li>Entretien avec l'officier d'état civil</li>
+                  <li>Célébration du mariage</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Informations Importantes</h6>
+              <ul class="service-list">
+                <li>Délai de traitement : 2-3 semaines</li>
+                <li>Présence des deux époux requise</li>
+                <li>Traduction des documents étrangers</li>
+                <li>Assistance juridique disponible</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Prendre Rendez-vous</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Décès -->
+    <div class="modal fade" id="modalDeces" tabindex="-1" aria-labelledby="modalDecesLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDecesLabel">Formalités en cas de Décès</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Démarches Immédiates</h6>
+                <ul class="service-list">
+                  <li>Déclaration du décès</li>
+                  <li>Obtention du certificat de décès</li>
+                  <li>Information des autorités consulaires</li>
+                  <li>Organisation du rapatriement</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Documents Nécessaires</h6>
+                <ul class="service-list">
+                  <li>Certificat médical de décès</li>
+                  <li>Pièce d'identité du défunt</li>
+                  <li>Livret de famille</li>
+                  <li>Acte de naissance du défunt</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Assistance Fournie</h6>
+              <ul class="service-list">
+                <li>Accompagnement administratif</li>
+                <li>Aide au rapatriement</li>
+                <li>Support pour les formalités</li>
+                <li>Assistance juridique</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Contacter le Service</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Permis de Conduire -->
+    <div class="modal fade" id="modalConduire" tabindex="-1" aria-labelledby="modalConduireLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalConduireLabel">Permis de Conduire</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services Disponibles</h6>
+                <ul class="service-list">
+                  <li>Échange de permis étranger</li>
+                  <li>Reconnaissance internationale</li>
+                  <li>Duplicata en cas de perte</li>
+                  <li>Renouvellement</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Documents Requis</h6>
+                <ul class="service-list">
+                  <li>Permis de conduire original</li>
+                  <li>Traduction certifiée</li>
+                  <li>Pièce d'identité valide</li>
+                  <li>Justificatif de résidence</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Procédure d'Échange</h6>
+              <ul class="service-list">
+                <li>Vérification d'éligibilité</li>
+                <li>Dépôt du dossier complet</li>
+                <li>Délai de traitement : 15 jours</li>
+                <li>Retrait du nouveau permis</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Démarrer la Procédure</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Services en ligne Section -->
+    <section class="services section section-bg">
+      <div class="container">
+        <h2 class="text-center">Services en ligne</h2>
+        <div class="row gy-4">
+          <!-- Administration marocaine en ligne -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-laptop" style="color: #f0b00d; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalAdministrationEnLigne" data-bs-toggle="modal">Administration en ligne</a></h3>
+              <p>Accédez aux services de l'administration marocaine en ligne via la plateforme www.watiqa.ma.</p>
+            </div>
+          </div>
+          <!-- Services de l'ANAPEC -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-person-workspace" style="color: #f00d91; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalANAPEC" data-bs-toggle="modal">Services de l'ANAPEC</a></h3>
+              <p>Offres d'emploi, accompagnement professionnel et insertion sur le marché du travail.</p>
+            </div>
+          </div>
+          <!-- Services douaniers -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-box-seam" style="color: #0dcaf0; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalDouanes" data-bs-toggle="modal">Services douaniers</a></h3>
+              <p>Informations sur les procédures douanières et les formalités d'importation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal Administration en Ligne -->
+    <div class="modal fade" id="modalAdministrationEnLigne" tabindex="-1" aria-labelledby="modalAdministrationEnLigneLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalAdministrationEnLigneLabel">Administration en Ligne</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services Disponibles</h6>
+                <ul class="service-list">
+                  <li>Demande d'actes d'état civil</li>
+                  <li>Certificats administratifs</li>
+                  <li>Casier judiciaire en ligne</li>
+                  <li>Paiement des taxes et impôts</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Avantages</h6>
+                <ul class="service-list">
+                  <li>Service disponible 24h/24</li>
+                  <li>Traitement rapide des demandes</li>
+                  <li>Paiement sécurisé en ligne</li>
+                  <li>Suivi en temps réel</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Comment Utiliser</h6>
+              <ul class="service-list">
+                <li>Créer un compte sur www.watiqa.ma</li>
+                <li>Authentification avec identité numérique</li>
+                <li>Sélection du service souhaité</li>
+                <li>Téléchargement des documents requis</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <a href="https://www.watiqa.ma" target="_blank" rel="noopener" class="btn btn-primary" onclick="window.location.href='login.html'">Accéder à la Plateforme</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal ANAPEC -->
+    <div class="modal fade" id="modalANAPEC" tabindex="-1" aria-labelledby="modalANAPECLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalANAPECLabel">Services de l'ANAPEC</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services pour les Chercheurs d'Emploi</h6>
+                <ul class="service-list">
+                  <li>Consultation des offres d'emploi</li>
+                  <li>Dépôt de CV en ligne</li>
+                  <li>Formations professionnelles</li>
+                  <li>Ateliers de recherche d'emploi</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Accompagnement Professionnel</h6>
+                <ul class="service-list">
+                  <li>Conseil en orientation</li>
+                  <li>Coaching personnalisé</li>
+                  <li>Aide à la création d'entreprise</li>
+                  <li>Programmes d'insertion</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Programmes Spéciaux</h6>
+              <ul class="service-list">
+                <li>Programme Idmaj (contrats d'insertion)</li>
+                <li>Programme Taehil (formation qualifiante)</li>
+                <li>Auto-emploi et entrepreneuriat</li>
+                <li>Programmes pour les MRE retournant au Maroc</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Consulter les Offres</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Services Douaniers -->
+    <div class="modal fade" id="modalDouanes" tabindex="-1" aria-labelledby="modalDouanesLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDouanesLabel">Services Douaniers</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Procédures d'Importation</h6>
+                <ul class="service-list">
+                  <li>Déclaration en douane</li>
+                  <li>Calcul des droits et taxes</li>
+                  <li>Franchises douanières</li>
+                  <li>Importation temporaire</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services en Ligne</h6>
+                <ul class="service-list">
+                  <li>Simulation des droits de douane</li>
+                  <li>Suivi des déclarations</li>
+                  <li>Paiement électronique</li>
+                  <li>Demande d'autorisation</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Avantages MRE</h6>
+              <ul class="service-list">
+                <li>Franchise sur effets personnels</li>
+                <li>Importation de véhicule personnel</li>
+                <li>Facilités pour le déménagement</li>
+                <li>Assistance dédiée aux MRE</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Accéder aux Services</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Réglementation et accompagnement financier Section -->
+    <section class="services section">
+      <div class="container">
+        <h2 class="text-center">Réglementation et accompagnement financier</h2>
+        <div class="row gy-4">
+          <!-- Réglementation des changes -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-currency-exchange" style="color: #0dcaf0; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalChanges" data-bs-toggle="modal">Réglementation des changes</a></h3>
+              <p>Informations sur les transferts de devises et la réglementation des changes pour les MRE.</p>
+            </div>
+          </div>
+          <!-- Actions de la DEGI -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-diagram-3" style="color: #f0a80d; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalDEGI" data-bs-toggle="modal">Actions de la DGI</a></h3>
+              <p>Sur la base de l’étude de la loi des finances 2025, nous vous présenterons les principales nouveautés fiscales qui apportent une valeur ajoutée spécifique aux MRE</p>
+            </div>
+          </div>
+          <!-- Dédouanement avec bénéfice -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-truck" style="color: #0a792f; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalDedouanement" data-bs-toggle="modal">Dédouanement avec bénéfice</a></h3>
+              <p>Avantages douaniers accordés aux MRE lors du retour définitif ou temporaire au Maroc.</p>
+            </div>
+          </div>
+          <!-- Règlement des dettes des MRE -->
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-cash-coin" style="color: #e1f00d; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalDettes" data-bs-toggle="modal">Règlement des dettes des MRE</a></h3>
+              <p>Assistance et procédures pour le règlement des dettes des Marocains résidant à l'étranger.</p>
+            </div>
+          </div>
+          <!-- Accompagnement entrepreneurial -->
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-graph-up-arrow" style="color: #782976; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalEntrepreneuriat" data-bs-toggle="modal">Accompagnement entrepreneurial</a></h3>
+              <p>Programmes d'accompagnement pour les MRE souhaitant investir ou entreprendre au Maroc.</p>
+            </div>
+          </div>
+          <!-- Création d'Entreprise -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-building-add" style="color: #f00d0d; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalCreationEntreprise" data-bs-toggle="modal">Création d'Entreprise</a></h3>
+              <p>Accompagnement dans la création et le développement de votre entreprise au Maroc.</p>
+            </div>
+          </div>
+          <!-- Études de Marché -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-bar-chart" style="color: #0d18f0; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalEtudesMarche" data-bs-toggle="modal">Études de Marché</a></h3>
+              <p>Analyses approfondies des opportunités d'investissement dans différents secteurs.</p>
+            </div>
+          </div>
+          <!-- Partenariats -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="700">
+            <div class="service-item position-relative">
+              <div class="icon mb-3">
+                <i class="bi bi-people" style="color: #0df091; font-size: 2.5rem;"></i>
+              </div>
+              <h3><a href="#modalPartenariats" data-bs-toggle="modal">Partenariats</a></h3>
+              <p>Mise en relation avec des partenaires locaux fiables pour vos projets d'investissement.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal Réglementation des changes -->
+    <div class="modal fade" id="modalChanges" tabindex="-1" aria-labelledby="modalChangesLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalChangesLabel">Réglementation des changes</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Transferts de devises</h6>
+                <ul class="service-list">
+                  <li>Transferts bancaires internationaux</li>
+                  <li>Plafonds et limites autorisés</li>
+                  <li>Déclaration des devises</li>
+                  <li>Comptes en devises pour MRE</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Réglementation</h6>
+                <ul class="service-list">
+                  <li>Cadre légal des changes</li>
+                  <li>Obligations déclaratives</li>
+                  <li>Sanctions et infractions</li>
+                  <li>Mise à jour réglementaire</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Services disponibles</h6>
+              <ul class="service-list">
+                <li>Consultation des taux de change</li>
+                <li>Assistance pour les transferts</li>
+                <li>Conseil en investissement</li>
+                <li>Support réglementaire</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">En savoir plus</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Actions de la DEGI -->
+    <div class="modal fade" id="modalDEGI" tabindex="-1" aria-labelledby="modalDEGILabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDEGILabel">Actions de la DEGI</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Missions principales</h6>
+                <ul class="service-list">
+                  <li>Études économiques</li>
+                  <li>Promotion des investissements</li>
+                  <li>Accompagnement des MRE</li>
+                  <li>Développement régional</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services offerts</h6>
+                <ul class="service-list">
+                  <li>Conseil en investissement</li>
+                  <li>Études de marché</li>
+                  <li>Support technique</li>
+                  <li>Mise en relation</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Programmes spéciaux</h6>
+              <ul class="service-list">
+                <li>Investissement régional</li>
+                <li>Développement durable</li>
+                <li>Innovation et technologie</li>
+                <li>Partenariats public-privé</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Contacter la DEGI</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Dédouanement avec bénéfice -->
+    <div class="modal fade" id="modalDedouanement" tabindex="-1" aria-labelledby="modalDedouanementLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDedouanementLabel">Dédouanement avec bénéfice</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Avantages pour les MRE</h6>
+                <ul class="service-list">
+                  <li>Franchise sur effets personnels</li>
+                  <li>Importation de véhicule</li>
+                  <li>Mobilier de déménagement</li>
+                  <li>Équipements professionnels</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Conditions d'éligibilité</h6>
+                <ul class="service-list">
+                  <li>Durée de séjour à l'étranger</li>
+                  <li>Statut de résident</li>
+                  <li>Documents justificatifs</li>
+                  <li>Délais à respecter</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Procédure de dédouanement</h6>
+              <ul class="service-list">
+                <li>Préparation du dossier</li>
+                <li>Déclaration en douane</li>
+                <li>Inspection des biens</li>
+                <li>Obtention des autorisations</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Simuler les droits</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Règlement des dettes -->
+    <div class="modal fade" id="modalDettes" tabindex="-1" aria-labelledby="modalDettesLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDettesLabel">Règlement des dettes des MRE</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services d'assistance</h6>
+                <ul class="service-list">
+                  <li>Médiation financière</li>
+                  <li>Restructuration de dettes</li>
+                  <li>Conseil juridique</li>
+                  <li>Plan de remboursement</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Types de dettes concernées</h6>
+                <ul class="service-list">
+                  <li>Crédits immobiliers</li>
+                  <li>Prêts personnels</li>
+                  <li>Dettes fiscales</li>
+                  <li>Charges sociales</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Procédure de règlement</h6>
+              <ul class="service-list">
+                <li>Évaluation de la situation</li>
+                <li>Négociation avec les créanciers</li>
+                <li>Établissement d'un échéancier</li>
+                <li>Suivi du remboursement</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Demander assistance</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Accompagnement entrepreneurial -->
+    <div class="modal fade" id="modalEntrepreneuriat" tabindex="-1" aria-labelledby="modalEntrepreneuriatLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEntrepreneuriatLabel">Accompagnement entrepreneurial</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services d'accompagnement</h6>
+                <ul class="service-list">
+                  <li>Étude de marché</li>
+                  <li>Business plan</li>
+                  <li>Conseil juridique</li>
+                  <li>Recherche de financement</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Programmes spéciaux</h6>
+                <ul class="service-list">
+                  <li>Incubation de startups</li>
+                  <li>Mentorat personnalisé</li>
+                  <li>Formation entrepreneuriale</li>
+                  <li>Networking professionnel</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Avantages pour les MRE</h6>
+              <ul class="service-list">
+                <li>Accès aux financements préférentiels</li>
+                <li>Support administratif complet</li>
+                <li>Mise en relation avec des partenaires</li>
+                <li>Suivi post-création</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Démarrer un projet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Création d'Entreprise -->
+    <div class="modal fade" id="modalCreationEntreprise" tabindex="-1" aria-labelledby="modalCreationEntrepriseLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCreationEntrepriseLabel">Création d'Entreprise</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services d'Accompagnement</h6>
+                <ul class="service-list">
+                  <li>Conseil en création d'entreprise</li>
+                  <li>Élaboration du business plan</li>
+                  <li>Assistance juridique</li>
+                  <li>Accompagnement administratif</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Formes Juridiques</h6>
+                <ul class="service-list">
+                  <li>Société à Responsabilité Limitée (SARL)</li>
+                  <li>Société Anonyme (SA)</li>
+                  <li>Entreprise Individuelle</li>
+                  <li>Société en Nom Collectif</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Avantages MRE</h6>
+              <ul class="service-list">
+                <li>Procédures simplifiées</li>
+                <li>Accompagnement personnalisé</li>
+                <li>Facilités de financement</li>
+                <li>Support post-création</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Démarrer un projet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Études de Marché -->
+    <div class="modal fade" id="modalEtudesMarche" tabindex="-1" aria-labelledby="modalEtudesMarcheLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEtudesMarcheLabel">Études de Marché</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Types d'Études</h6>
+                <ul class="service-list">
+                  <li>Analyse sectorielle</li>
+                  <li>Étude de faisabilité</li>
+                  <li>Analyse de la concurrence</li>
+                  <li>Étude de potentiel</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Secteurs d'Analyse</h6>
+                <ul class="service-list">
+                  <li>Tourisme et hôtellerie</li>
+                  <li>Industrie et technologie</li>
+                  <li>Agriculture et agroalimentaire</li>
+                  <li>Services et commerce</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Méthodologie</h6>
+              <ul class="service-list">
+                <li>Collecte de données primaires</li>
+                <li>Analyse de données secondaires</li>
+                <li>Études de terrain</li>
+                <li>Rapports détaillés</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Demander une étude</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Partenariats -->
+    <div class="modal fade" id="modalPartenariats" tabindex="-1" aria-labelledby="modalPartenariatsLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalPartenariatsLabel">Partenariats</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Types de Partenariats</h6>
+                <ul class="service-list">
+                  <li>Joint-ventures</li>
+                  <li>Partenariats commerciaux</li>
+                  <li>Accords de distribution</li>
+                  <li>Partenariats technologiques</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services de Mise en Relation</h6>
+                <ul class="service-list">
+                  <li>Identification de partenaires</li>
+                  <li>Organisation de rencontres</li>
+                  <li>Facilitation des négociations</li>
+                  <li>Suivi des partenariats</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Avantages</h6>
+              <ul class="service-list">
+                <li>Accès au marché local</li>
+                <li>Partage d'expertise</li>
+                <li>Réduction des risques</li>
+                <li>Développement mutuel</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">Rechercher un partenaire</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Conseils Régionaux de Tourisme -->
+    <div class="modal fade" id="modalCRT" tabindex="-1" aria-labelledby="modalCRTLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCRTLabel">Conseils Régionaux de Tourisme (CRT)</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Missions des CRT</h6>
+                <ul class="service-list">
+                  <li>Promotion du tourisme régional</li>
+                  <li>Développement de l'offre touristique</li>
+                  <li>Coordination des acteurs locaux</li>
+                  <li>Organisation d'événements touristiques</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-primary mb-3">Services Proposés</h6>
+                <ul class="service-list">
+                  <li>Information touristique</li>
+                  <li>Accompagnement des professionnels</li>
+                  <li>Études et statistiques régionales</li>
+                  <li>Marketing territorial</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h6 class="text-primary mb-3">Principaux CRT au Maroc</h6>
+              <ul class="service-list">
+                <li>CRT de Casablanca-Settat</li>
+                <li>CRT de Marrakech-Safi</li>
+                <li>CRT de Rabat-Salé-Kénitra</li>
+                <li>CRT de Tanger-Tétouan-Al Hoceima</li>
+                <li>CRT de Fès-Meknès</li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <a href="https://www.tourisme.gov.ma/fr/administration-du-tourisme/services-exterieurs/crt" target="_blank" rel="noopener" class="btn btn-primary" onclick="window.location.href='login.html'">En savoir plus</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="footer" class="footer dark-background">
+    <div class="container">
+      <h3 class="sitename">MRE</h3>
+      <p>Services administratifs pour les Marocains Résidant à l'Étranger</p>
+      <div class="social-links d-flex justify-content-center">
+        <a href=""><i class="bi bi-twitter-x"></i></a>
+        <a href=""><i class="bi bi-facebook"></i></a>
+        <a href=""><i class="bi bi-instagram"></i></a>
+        <a href=""><i class="bi bi-linkedin"></i></a>
+      </div>
+      <div class="copyright">
+        <span>Copyright</span> <strong class="px-1 sitename">MRE</strong> <span>All Rights Reserved</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/vendor/aos/aos.js"></script>
+  <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="../assets/js/main.js"></script>
+
+  <script>
+    // Animation pour les cartes de service
+    document.querySelectorAll('.service-item').forEach(item => {
+      item.addEventListener('mouseenter', function () {
+        this.style.transform = 'translateY(-5px)';
+      });
+      item.addEventListener('mouseleave', function () {
+        this.style.transform = 'translateY(0)';
+      });
+    });
+
+    // Gestion des modals avec scroll
+    const modalIds = {
+      'Documents d\'Identité': '#modalDocuments',
+      'Services Consulaires': '#modalConsulaires',
+      'Légalisation': '#modalLegalisation',
+      'État civil': '#modalEtatCivil',
+      'Mariage': '#modalMariage',
+      'Décès': '#modalDeces',
+      'Permis de conduire': '#modalConduire',
+      'Administration en ligne': '#modalAdministrationEnLigne',
+      'Services de l\'ANAPEC': '#modalANAPEC',
+      'Services douaniers': '#modalDouanes',
+      'Réglementation des changes': '#modalChanges',
+      'Actions de la DEGI': '#modalDEGI',
+      'Dédouanement avec bénéfice': '#modalDedouanement',
+      'Règlement des dettes des MRE': '#modalDettes',
+      'Accompagnement entrepreneurial': '#modalEntrepreneuriat',
+      'Ambassades': '#modalAmbassades',
+      'Consulats': '#modalConsulats',
+      'Établissements publics': '#modalEtablissements',
+      'Délégations du tourisme': '#modalDelegations',
+      'Agences de développement': '#modalAgences',
+      'Office National du Tourisme': '#modalONMT'
+    };
+
+    document.querySelectorAll('.service-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const title = item.querySelector('h3 a').textContent.trim();
+        const modalId = modalIds[title];
+        if (modalId) {
+          const modalElement = document.querySelector(modalId);
+          if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement, {
+              backdrop: 'static',
+              keyboard: true
+            });
+            modal.show();
+
+            // Nettoyer le modal et le backdrop lors de la fermeture
+            modalElement.addEventListener('hidden.bs.modal', function () {
+              document.body.classList.remove('modal-open');
+              const backdrops = document.querySelectorAll('.modal-backdrop');
+              backdrops.forEach(backdrop => backdrop.remove());
+              document.body.style.overflow = '';
+              document.body.style.paddingRight = '';
+            });
+          }
+        }
+      });
+    });
+
+    // Fix pour la fermeture des modals
+    document.querySelectorAll('.btn-close, .btn-secondary').forEach(button => {
+      button.addEventListener('click', function () {
+        const modalElement = this.closest('.modal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) {
+          modal.hide();
+          // Forcer le nettoyage
+          setTimeout(() => {
+            document.body.classList.remove('modal-open');
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+          }, 200);
+        }
+      });
+    });
+
+    // Gestion du clic en dehors du modal
+    document.querySelectorAll('.modal').forEach(modalElement => {
+      modalElement.addEventListener('click', function (event) {
+        if (event.target === this) {
+          const modal = bootstrap.Modal.getInstance(this);
+          if (modal) {
+            modal.hide();
+            // Forcer le nettoyage
+            setTimeout(() => {
+              document.body.classList.remove('modal-open');
+              const backdrops = document.querySelectorAll('.modal-backdrop');
+              backdrops.forEach(backdrop => backdrop.remove());
+              document.body.style.overflow = '';
+              document.body.style.paddingRight = '';
+            }, 200);
+          }
+        }
+      });
+    });
+
+    // Empêcher la fermeture du modal lors du clic à l'intérieur
+    document.querySelectorAll('.modal-content').forEach(content => {
+      content.addEventListener('click', function(event) {
+        event.stopPropagation();
+      });
+    });
+
+    // Gestionnaire d'événements pour la touche Escape
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const openModals = document.querySelectorAll('.modal.show');
+        openModals.forEach(modalElement => {
+          const modal = bootstrap.Modal.getInstance(modalElement);
+          if (modal) {
+            modal.hide();
+            // Forcer le nettoyage
+            setTimeout(() => {
+              document.body.classList.remove('modal-open');
+              const backdrops = document.querySelectorAll('.modal-backdrop');
+              backdrops.forEach(backdrop => backdrop.remove());
+              document.body.style.overflow = '';
+              document.body.style.paddingRight = '';
+            }, 200);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
