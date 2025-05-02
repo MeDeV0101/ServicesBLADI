@@ -74,38 +74,43 @@
 <body class="index-page">
 
   <header id="header" class="header d-flex align-items-center fixed-top">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+    <div   class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a  href="index.html" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="../assets/img/logo.png" alt=""> -->
-        <h1 class="sitename">MRE</h1>
+        <img src="../assets/img/logo_principale.png" alt="ServicesBladi Logo" style="height: 2.1cm !important;   width: auto; object-fit: contain; max-width: 100%; background-color: wheat; border-radius: 100px; padding: 0;">
       </a>
+
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about-us.html">About</a></li>
-          <li class="dropdown"><a href="#"><span>Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="Tourisme.html">Tourisme</a></li>
-              <li><a href="Administrative.html">Administrative</a></li>
-              <li><a href="Investisment.html" class="active">Investisment</a></li>
-              <li><a href="Immobilier.html">Immobilier</a></li>
-              <li><a href="Fiscale.html">Fiscale</a></li>
+          <li><a href="#hero" class="active" data-translate="home">Home</a></li>
+          <li><a href="about-us.html" data-translate="about">About</a></li>
+          <li class="dropdown"><a href="#"><span data-translate="services">Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            
+                <ul>
+                  <li><a href="Tourisme.html">Tourisme</a></li>
+                  <li><a href="Administrative.html">Administrative</a></li>
+                  <li><a href="Investisment.html">Investisment</a></li>
+                  <li><a href="Immobilier.html">Immobilier</a></li>
+                  <li><a href="Fiscale.html">Fiscale</a></li>
+                </ul>
+              </li>
+              
+              <li><a href="contact.html" data-translate="contact">Contact</a></li>
+              <li><a href="login.html" data-translate="login">Se Connecter</a></li>
+              <li class="dropdown"><a href="#"><span><i class="bi bi-translate"></i> <span data-translate="language">Langue</span></span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <ul>
+                  <li><a href="#" class="lang-option" data-lang="fr">Français</a></li>
+                  <li><a href="#" class="lang-option" data-lang="ar">العربية</a></li>
+                  <li><a href="#" class="lang-option" data-lang="en">English</a></li>
+                  <li><a href="#" class="lang-option" data-lang="es">Español</a></li>
+                </ul>
+              </li>
             </ul>
-          </li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="login.html">Se Connecter</a></li>
-          <li class="dropdown"><a href="#"><span><i class="bi bi-translate"></i> <span>Langue</span></span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#" class="lang-option" data-lang="fr">Français</a></li>
-              <li><a href="#" class="lang-option" data-lang="ar">العربية</a></li>
-              <li><a href="#" class="lang-option" data-lang="en">English</a></li>
-              <li><a href="#" class="lang-option" data-lang="es">Español</a></li>
-            </ul>
-          </li>
-        </ul>
+          
+  
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
@@ -277,7 +282,6 @@
       </div>
     </section>
   </main>
-
   <footer id="footer" class="footer dark-background">
     <div class="container">
 
@@ -286,7 +290,7 @@
         <div class="col-md-4">
           <div class="mb-4">
             
-        <img style="max-height: 3cm; width: auto; border-radius: 20px; object-fit: cover;" src="../assets/img/logo_principale.png" alt="Logo">
+            <img style="max-height: 3cm; width: auto; border-radius: 20px; object-fit: cover; background-color: wheat;" src="../assets/img/logo_principale.png" alt="Logo">
 
           </div>
           <p>L'équipe ADVAL met à votre disposition ses compétences et son expérience et vous accompagne</p>
@@ -308,11 +312,9 @@
             <h5 class="mb-3">À propos de nous</h5>
             
             <ul class="list-unstyled">
-              <li class="mb-3"><a href="#" style="color: white; text-decoration: none;">Qui sommes nous</a></li>
-              <li class="mb-3"><a href="#" style="color: white; text-decoration: none;">Que faisons-nous</a></li>
-              <li class="mb-3"><a href="#" style="color: white; text-decoration: none;">Services</a></li>
-              <li class="mb-3"><a href="#" style="color: white; text-decoration: none;">Contact nous</a></li>
-              <li class="mb-3"><a href="#" style="color: white; text-decoration: none;">À propos</a></li>
+              <li class="mb-3"><a href="about-us.html" style="color: white; text-decoration: none;">Qui sommes nous</a></li>
+              <li class="mb-3"><a href="contact.html" style="color: white; text-decoration: none;">Contact nous</a></li>
+             
             </ul>
           </div>
         </div>
@@ -361,9 +363,8 @@
       
      
     </div>
-  </footer>
-
-  <!-- Scroll Top -->
+  </footer>  <!-- Scroll Top -->
+    <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->

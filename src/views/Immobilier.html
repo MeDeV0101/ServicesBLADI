@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>MRE - Services Immobiliers</title>
+  <title>MRE - Services Immobiliers </title>
   <meta name="description" content="Services immobiliers pour les Marocains Résidant à l'Étranger">
   <meta name="keywords" content="immobilier, Maroc, MRE, propriété, logement">
 
@@ -91,43 +91,49 @@
 <body class="index-page">
 
   <header id="header" class="header d-flex align-items-center fixed-top">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+    <div   class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a  href="index.html" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="../assets/img/logo.png" alt=""> -->
-        <h1 class="sitename">MRE</h1>
+        <img src="../assets/img/logo_principale.png" alt="ServicesBladi Logo" style="height: 2.1cm !important;   width: auto; object-fit: contain; max-width: 100%; background-color: wheat; border-radius: 100px; padding: 0;">
       </a>
+
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about-us.html">About</a></li>
-          <li class="dropdown"><a href="#"><span>Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="Tourisme.html">Tourisme</a></li>
-              <li><a href="Administrative.html">Administrative</a></li>
-              <li><a href="Investisment.html">Investisment</a></li>
-              <li><a href="Immobilier.html" class="active">Immobilier</a></li>
-              <li><a href="Fiscale.html">Fiscale</a></li>
+          <li><a href="#hero" class="active" data-translate="home">Home</a></li>
+          <li><a href="about-us.html" data-translate="about">About</a></li>
+          <li class="dropdown"><a href="#"><span data-translate="services">Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            
+                <ul>
+                  <li><a href="Tourisme.html">Tourisme</a></li>
+                  <li><a href="Administrative.html">Administrative</a></li>
+                  <li><a href="Investisment.html">Investisment</a></li>
+                  <li><a href="Immobilier.html">Immobilier</a></li>
+                  <li><a href="Fiscale.html">Fiscale</a></li>
+                </ul>
+              </li>
+              
+              <li><a href="contact.html" data-translate="contact">Contact</a></li>
+              <li><a href="login.html" data-translate="login">Se Connecter</a></li>
+              <li class="dropdown"><a href="#"><span><i class="bi bi-translate"></i> <span data-translate="language">Langue</span></span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <ul>
+                  <li><a href="#" class="lang-option" data-lang="fr">Français</a></li>
+                  <li><a href="#" class="lang-option" data-lang="ar">العربية</a></li>
+                  <li><a href="#" class="lang-option" data-lang="en">English</a></li>
+                  <li><a href="#" class="lang-option" data-lang="es">Español</a></li>
+                </ul>
+              </li>
             </ul>
-          </li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="login.html">Se Connecter</a></li>
-          <li class="dropdown"><a href="#"><span><i class="bi bi-translate"></i> <span>Langue</span></span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#" class="lang-option" data-lang="fr">Français</a></li>
-              <li><a href="#" class="lang-option" data-lang="ar">العربية</a></li>
-              <li><a href="#" class="lang-option" data-lang="en">English</a></li>
-              <li><a href="#" class="lang-option" data-lang="es">Español</a></li>
-            </ul>
-          </li>
-        </ul>
+          
+  
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
     </div>
   </header>
+
 
   <main class="main">
     <section id="hero" class="hero section dark-background">
@@ -296,19 +302,87 @@
 
   <footer id="footer" class="footer dark-background">
     <div class="container">
-      <h3 class="sitename">MRE</h3>
-      <p>Services immobiliers pour les Marocains Résidant à l'Étranger</p>
-      <div class="social-links d-flex justify-content-center">
-        <a href=""><i class="bi bi-twitter-x"></i></a>
-        <a href=""><i class="bi bi-facebook"></i></a>
-        <a href=""><i class="bi bi-instagram"></i></a>
-        <a href=""><i class="bi bi-linkedin"></i></a>
+
+      <div class="row">
+        <!-- Logo et texte d'introduction -->
+        <div class="col-md-4">
+          <div class="mb-4">
+            
+            <img style="max-height: 3cm; width: auto; border-radius: 20px; object-fit: cover; background-color: wheat;" src="../assets/img/logo_principale.png" alt="Logo">
+
+          </div>
+          <p>L'équipe ADVAL met à votre disposition ses compétences et son expérience et vous accompagne</p>
+          
+          <!-- Icônes réseaux sociaux -->
+          <div class="social-links d-flex justify-content-center">
+            <a href="https://web.facebook.com/advalmaroc"><i class="bi bi-facebook"></i></a>
+            <a href="https://wa.me/+212666679779"><i class="bi bi-whatsapp"></i></a>
+            <a href="https://twitter.com/AdvalMaroc"><i class="bi bi-twitter"></i></a>
+            <a href="https://www.linkedin.com/in/mehdi-aboulfaraj-bb8b44167?trk=public_profile_samename-profile_profile-result-card_result-card_full-click&originalSubdomain=ma"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+        
+        <!-- Liens Utiles -->
+        <div class="col-md-4">
+          <h3 class="mb-4">Liens Utiles</h3>
+          
+          <div class="mt-4">
+            <h5 class="mb-3">À propos de nous</h5>
+            
+            <ul class="list-unstyled">
+              <li class="mb-3"><a href="about-us.html" style="color: white; text-decoration: none;">Qui sommes nous</a></li>
+              <li class="mb-3"><a href="contact.html" style="color: white; text-decoration: none;">Contact nous</a></li>
+             
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Contacts -->
+        <div class="col-md-4">
+          <h3 class="mb-4">Contacts</h3>
+          
+          <!-- Adresse -->
+          <div class="mb-4">
+            <div class="d-flex align-items-start mb-2">
+                 <i class="bi bi-geo-alt text-primary me-3 fs-4" style="color: #0d6efd;"></i>
+              <div>
+                <h5 class="mb-1">Adresse</h5>
+                 <p class="mb-0">15, Rue Al khaizourane Hay Al Houda<br>26000 - Berrechid - Maroc</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Téléphone -->
+          <div class="mb-4">
+            <div class="d-flex align-items-start mb-2">
+              <i class="bi bi-telephone text-primary me-3 fs-4" style="color: #0d6efd;"></i>
+              <div>
+                <h5 class="mb-1">Avez-vous des questions?</h5>
+                <p class="mb-0">TEL: +212 5 26 40 30 40</p>
+                <p class="mb-0">GSM: +212 6 66 67 97 79</p>
+                <p class="mb-0">France: +33 783 187 890</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Email -->
+          <div class="mb-4">
+            <div class="d-flex align-items-start mb-2">
+              <i class="bi bi-envelope text-primary me-3 fs-4" style="color: #0d6efd;"></i>
+              <div>
+                <h5 class="mb-1">Email</h5>
+                <p class="mb-0">contact@advalmaroc.com</p>
+                <p class="mb-0">pgcparis@gmail.com</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="copyright">
-        <span>Copyright</span> <strong class="px-1 sitename">MRE</strong> <span>All Rights Reserved</span>
-      </div>
+      
+     
     </div>
-  </footer>
+  </footer>  <!-- Scroll Top -->
+  
 
   <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
