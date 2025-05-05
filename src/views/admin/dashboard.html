@@ -4,13 +4,13 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Espace Client - MRE</title>
-  <meta name="description" content="Espace personnel client MRE">
-  <meta name="keywords" content="MRE, espace client, services">
+  <title>Administration - MRE</title>
+  <meta name="description" content="Espace administration MRE">
+  <meta name="keywords" content="MRE, administration, gestion">
 
   <!-- Favicons -->
-  <link href="../assets/img/favicon.png" rel="icon">
-  <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="../../assets/img/favicon.png" rel="icon">
+  <link href="../../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -18,15 +18,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="../assets/vendor/animate.css/animate.min.css" rel="stylesheet">
-  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../../assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="../assets/css/main.css" rel="stylesheet">
+  <link href="../../assets/css/main.css" rel="stylesheet">
 
   <!-- Dashboard specific CSS -->
   <style>
@@ -147,17 +147,18 @@
       color: #fa8c16;
     }
 
-    .document-item {
+    .user-item {
       display: flex;
       align-items: center;
       padding: 1rem;
       border-bottom: 1px solid #eee;
     }
 
-    .document-icon {
-      font-size: 2rem;
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       margin-right: 1rem;
-      color: var(--primary-color);
     }
 
     /* Responsive Design */
@@ -180,41 +181,34 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h3>MRE</h3>
+        <h3>MRE Admin</h3>
       </div>
       <div class="sidebar-profile">
-        <img src="../assets/img/profile-placeholder.jpg" alt="Profile" class="profile-image">
-        <h5 id="clientName">Mohammed Abd</h5>
-        <p class="text-muted">Client depuis: Mars 2024</p>
+        <img src="../../assets/img/admin-placeholder.jpg" alt="Admin Profile" class="profile-image">
+        <h5 id="adminName">Admin Principal</h5>
+        <p class="text-muted">Administrateur Système</p>
       </div>
       <nav class="sidebar-menu">
-        <a href="#" class="menu-item active">
-          <i class="bi bi-speedometer2"></i>
-          Tableau de bord
+        <a href="dashboard.html" class="d-block p-3 text-white text-decoration-none active">
+          <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
         </a>
-        <a href="#" class="menu-item">
-          <i class="bi bi-person"></i>
-          Mon Profil
+        <a href="users.html" class="d-block p-3 text-white text-decoration-none">
+          <i class="bi bi-people me-2"></i>Utilisateurs
         </a>
-        <a href="#" class="menu-item">
-          <i class="bi bi-file-text"></i>
-          Mes Documents
+        <a href="demandes.html" class="d-block p-3 text-white text-decoration-none">
+          <i class="bi bi-file-text me-2"></i>Demandes
         </a>
-        <a href="#" class="menu-item">
-          <i class="bi bi-calendar-check"></i>
-          Rendez-vous
+        <a href="documents.html" class="d-block p-3 text-white text-decoration-none">
+          <i class="bi bi-folder me-2"></i>Documents
         </a>
-        <a href="#" class="menu-item">
-          <i class="bi bi-book"></i>
-          Ressources
+        <a href="rendezvous.html" class="d-block p-3 text-white text-decoration-none">
+          <i class="bi bi-calendar me-2"></i>Rendez-vous
         </a>
-        <a href="#" class="menu-item">
-          <i class="bi bi-gear"></i>
-          Paramètres
+        <a href="ressources.html" class="d-block p-3 text-white text-decoration-none">
+          <i class="bi bi-book me-2"></i>Ressources
         </a>
-        <a href="login.html" class="menu-item">
-          <i class="bi bi-box-arrow-right"></i>
-          Déconnexion
+        <a href="../index.html" class="d-block p-3 text-white text-decoration-none">
+          <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
         </a>
       </nav>
     </aside>
@@ -223,10 +217,10 @@
     <main class="main-content">
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Tableau de bord</h2>
+        <h2>Tableau de bord Administration</h2>
         <div>
           <button class="btn btn-primary me-2">
-            <i class="bi bi-plus-circle"></i> Nouvelle demande
+            <i class="bi bi-plus-circle"></i> Nouvel Expert
           </button>
           <button class="btn btn-outline-primary">
             <i class="bi bi-bell"></i>
@@ -242,10 +236,10 @@
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 class="text-muted">Services Actifs</h6>
-                  <h3>3</h3>
+                  <h6 class="text-muted">Total Experts</h6>
+                  <h3>8</h3>
                 </div>
-                <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
+                <i class="bi bi-people-fill text-success" style="font-size: 2rem;"></i>
               </div>
             </div>
           </div>
@@ -255,10 +249,10 @@
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 class="text-muted">Demandes en cours</h6>
-                  <h3>2</h3>
+                  <h6 class="text-muted">Total Clients</h6>
+                  <h3>156</h3>
                 </div>
-                <i class="bi bi-clock-fill text-warning" style="font-size: 2rem;"></i>
+                <i class="bi bi-person-fill text-primary" style="font-size: 2rem;"></i>
               </div>
             </div>
           </div>
@@ -269,9 +263,9 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <h6 class="text-muted">Documents</h6>
-                  <h3>5</h3>
+                  <h3>423</h3>
                 </div>
-                <i class="bi bi-file-earmark-text-fill text-primary" style="font-size: 2rem;"></i>
+                <i class="bi bi-file-earmark-text-fill text-warning" style="font-size: 2rem;"></i>
               </div>
             </div>
           </div>
@@ -281,46 +275,61 @@
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 class="text-muted">Ressources</h6>
-                  <h3>8</h3>
+                  <h6 class="text-muted">Rendez-vous</h6>
+                  <h3>45</h3>
                 </div>
-                <i class="bi bi-book-fill text-info" style="font-size: 2rem;"></i>
+                <i class="bi bi-calendar-check-fill text-info" style="font-size: 2rem;"></i>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Services and Documents -->
+      <!-- Experts and Recent Activities -->
       <div class="row">
         <div class="col-md-8">
           <div class="dashboard-card">
             <div class="card-header">
-              <h5 class="mb-0">Services Actifs</h5>
+              <h5 class="mb-0">Experts Actifs</h5>
               <a href="#" class="btn btn-sm btn-primary">Voir tout</a>
             </div>
             <div class="card-body">
               <div class="list-group">
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Consultation Fiscale</h6>
-                    <small class="text-muted">Dernière mise à jour: 15/03/2024</small>
+                <div class="list-group-item">
+                  <div class="d-flex w-100 justify-content-between">
+                    <div>
+                      <h6 class="mb-1">Dr. Ahmed Benali</h6>
+                      <small class="text-muted">Expert Fiscal</small>
+                    </div>
+                    <div>
+                      <span class="badge bg-success me-2">12 Clients</span>
+                      <span class="badge bg-primary">4 Rendez-vous</span>
+                    </div>
                   </div>
-                  <span class="status-badge status-active">Actif</span>
                 </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Suivi Immobilier</h6>
-                    <small class="text-muted">Dernière mise à jour: 14/03/2024</small>
+                <div class="list-group-item">
+                  <div class="d-flex w-100 justify-content-between">
+                    <div>
+                      <h6 class="mb-1">Mme. Fatima El Fassi</h6>
+                      <small class="text-muted">Expert Immobilier</small>
+                    </div>
+                    <div>
+                      <span class="badge bg-success me-2">8 Clients</span>
+                      <span class="badge bg-primary">3 Rendez-vous</span>
+                    </div>
                   </div>
-                  <span class="status-badge status-active">Actif</span>
                 </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Assistance Administrative</h6>
-                    <small class="text-muted">Dernière mise à jour: 13/03/2024</small>
+                <div class="list-group-item">
+                  <div class="d-flex w-100 justify-content-between">
+                    <div>
+                      <h6 class="mb-1">M. Karim Benjelloun</h6>
+                      <small class="text-muted">Expert Administratif</small>
+                    </div>
+                    <div>
+                      <span class="badge bg-success me-2">15 Clients</span>
+                      <span class="badge bg-primary">5 Rendez-vous</span>
+                    </div>
                   </div>
-                  <span class="status-badge status-active">Actif</span>
                 </div>
               </div>
             </div>
@@ -329,139 +338,98 @@
         <div class="col-md-4">
           <div class="dashboard-card">
             <div class="card-header">
-              <h5 class="mb-0">Documents Récents</h5>
-              <a href="#" class="btn btn-sm btn-primary">Voir tout</a>
-            </div>
-            <div class="card-body">
-              <div class="document-item">
-                <i class="bi bi-file-pdf document-icon"></i>
-                <div>
-                  <h6 class="mb-1">Passeport</h6>
-                  <small class="text-muted">15/03/2024</small>
-                </div>
-              </div>
-              <div class="document-item">
-                <i class="bi bi-file-pdf document-icon"></i>
-                <div>
-                  <h6 class="mb-1">Contrat Immobilier</h6>
-                  <small class="text-muted">10/03/2024</small>
-                </div>
-              </div>
-              <div class="document-item">
-                <i class="bi bi-file-pdf document-icon"></i>
-                <div>
-                  <h6 class="mb-1">Déclaration Fiscale</h6>
-                  <small class="text-muted">05/03/2024</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Calendar and Resources -->
-      <div class="row">
-        <div class="col-md-8">
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h5 class="mb-0">Calendrier des Rendez-vous</h5>
-            </div>
-            <div class="card-body">
-              <div id="calendar"></div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h5 class="mb-0">Prochaines Échéances</h5>
+              <h5 class="mb-0">Activités Récentes</h5>
             </div>
             <div class="card-body">
               <div class="list-group">
                 <div class="list-group-item">
                   <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Rendez-vous Fiscal</h6>
-                    <small class="text-muted">Dans 2 jours</small>
+                    <h6 class="mb-1">Nouveau Client</h6>
+                    <small class="text-muted">Il y a 5 min</small>
                   </div>
-                  <p class="mb-1">Consultation avec M. Ahmed</p>
+                  <p class="mb-1">M. Mohammed Abd - Consultation Fiscale</p>
                 </div>
                 <div class="list-group-item">
                   <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Renouvellement Visa</h6>
-                    <small class="text-muted">Dans 5 jours</small>
+                    <h6 class="mb-1">Document Ajouté</h6>
+                    <small class="text-muted">Il y a 1 heure</small>
                   </div>
-                  <p class="mb-1">Documents à préparer</p>
+                  <p class="mb-1">Guide Fiscal MRE 2024</p>
                 </div>
                 <div class="list-group-item">
                   <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Paiement Taxe</h6>
-                    <small class="text-muted">Dans 7 jours</small>
-                  </div>
-                  <p class="mb-1">Échéance fiscale</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Additional Client Information -->
-      <div class="row">
-        <div class="col-md-6">
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h5 class="mb-0">Statut de mes Services</h5>
-            </div>
-            <div class="card-body">
-              <div class="progress mb-3">
-                <div class="progress-bar bg-success" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75% Complété</div>
-              </div>
-              <div class="list-group">
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Consultation Fiscale</h6>
-                    <small class="text-muted">En cours</small>
-                  </div>
-                  <span class="badge bg-success">75%</span>
-                </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Suivi Immobilier</h6>
-                    <small class="text-muted">En attente</small>
-                  </div>
-                  <span class="badge bg-warning">25%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h5 class="mb-0">Mes Notifications</h5>
-            </div>
-            <div class="card-body">
-              <div class="list-group">
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Nouveau Message</h6>
+                    <h6 class="mb-1">Expert Ajouté</h6>
                     <small class="text-muted">Il y a 2 heures</small>
                   </div>
-                  <p class="mb-1">Votre expert a répondu à votre question</p>
+                  <p class="mb-1">Dr. Ahmed Benali - Expert Fiscal</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Status and Recent Documents -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h5 class="mb-0">État du Système</h5>
+            </div>
+            <div class="card-body">
+              <div class="list-group">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1">Serveur Web</h6>
+                    <small class="text-muted">Status: Opérationnel</small>
+                  </div>
+                  <span class="status-badge status-active">Actif</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1">Base de Données</h6>
+                    <small class="text-muted">Status: Opérationnel</small>
+                  </div>
+                  <span class="status-badge status-active">Actif</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1">Sauvegarde</h6>
+                    <small class="text-muted">Dernière: Aujourd'hui 00:00</small>
+                  </div>
+                  <span class="status-badge status-active">Complète</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h5 class="mb-0">Documents Système</h5>
+            </div>
+            <div class="card-body">
+              <div class="list-group">
+                <div class="list-group-item">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Guide d'Utilisation</h6>
+                    <small class="text-muted">Mis à jour le 15/03/2024</small>
+                  </div>
+                  <p class="mb-1">Documentation système pour les experts</p>
                 </div>
                 <div class="list-group-item">
                   <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Document Validé</h6>
-                    <small class="text-muted">Il y a 1 jour</small>
+                    <h6 class="mb-1">Politique de Confidentialité</h6>
+                    <small class="text-muted">Mis à jour le 10/03/2024</small>
                   </div>
-                  <p class="mb-1">Votre passeport a été validé</p>
+                  <p class="mb-1">Règles de protection des données</p>
                 </div>
                 <div class="list-group-item">
                   <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Rappel Important</h6>
-                    <small class="text-muted">Il y a 2 jours</small>
+                    <h6 class="mb-1">Procédures Administratives</h6>
+                    <small class="text-muted">Mis à jour le 05/03/2024</small>
                   </div>
-                  <p class="mb-1">N'oubliez pas votre rendez-vous fiscal</p>
+                  <p class="mb-1">Guide des procédures internes</p>
                 </div>
               </div>
             </div>
@@ -472,13 +440,13 @@
   </div>
 
   <!-- Vendor JS Files -->
-  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../assets/vendor/aos/aos.js"></script>
-  <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../assets/vendor/aos/aos.js"></script>
+  <script src="../../assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../../assets/vendor/swiper/swiper-bundle.min.js"></script>
 
   <!-- Main JS File -->
-  <script src="../assets/js/main.js"></script>
+  <script src="../../assets/js/main.js"></script>
 
   <!-- Dashboard specific JS -->
   <script>
@@ -495,8 +463,8 @@
       document.querySelector('.sidebar').classList.toggle('active');
     });
 
-    // Update client name
-    document.getElementById('clientName').textContent = 'Mohammed Abd';
+    // Update admin name
+    document.getElementById('adminName').textContent = 'Admin Principal';
   </script>
 </body>
-</html>
+</html> 
