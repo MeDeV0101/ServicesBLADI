@@ -79,6 +79,7 @@ def create_request_view(request, service_id):
                     related_demande=demande
                 )
             
+            # Redirect to client requests view using the consistent URL naming
             return redirect('client_demandes')
             
         context = {

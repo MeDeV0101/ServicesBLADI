@@ -1,0 +1,58 @@
+{% extends 'client/base.html' %}
+
+{% block title %}Modifier ma demande - MRE{% endblock %}
+{% block meta_description %}Modifier une demande de service{% endblock %}
+{% block meta_keywords %}MRE, demande, service, modification{% endblock %}
+
+{% block content %}
+  <!-- Main Content -->
+  <div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Modifier ma demande</h2>
+      <div>
+        <a href="{% url 'requests:request_detail' demande.id %}" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left me-2"></i>Retour aux détails
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">{{ demande.service.title }}</h5>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          
+          <div class="mb-3">
+            <label for="title" class="form-label">Titre*</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ demande.title }}" required>
+            <div class="form-text">Un titre court et descriptif pour votre demande.</div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="description" class="form-label">Description*</label>
+            <textarea class="form-control" id="description" name="description" rows="5" required>{{ demande.description }}</textarea>
+            <div class="form-text">Décrivez en détail votre besoin ou votre demande.</div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="priority" class="form-label">Priorité</label>
+            <select class="form-select" id="priority" name="priority">
+              <option value="low" {% if demande.priority == 'low' %}selected{% endif %}>Basse</option>
+              <option value="medium" {% if demande.priority == 'medium' %}selected{% endif %}>Moyenne</option>
+              <option value="high" {% if demande.priority == 'high' %}selected{% endif %}>Haute</option>
+              <option value="urgent" {% if demande.priority == 'urgent' %}selected{% endif %}>Urgente</option>
+            </select>
+          </div>
+          
+          <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-save me-2"></i>Enregistrer les modifications
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
