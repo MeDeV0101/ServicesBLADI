@@ -90,20 +90,23 @@
         <p class="text-white-50">Client</p>
       </div>
       <nav class="sidebar-menu">
-        <a href="/client/dashboard/" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
+        <a href="{% url 'client_dashboard' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
           <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
         </a>
-        <a href="/client/demandes/" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_demandes' %}active{% endif %}">
+        <a href="{% url 'client_demandes' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_demandes' %}active{% endif %}">
           <i class="bi bi-file-text me-2"></i>Mes demandes
         </a>
-        <a href="/client/documents/" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_documents' %}active{% endif %}">
+        <a href="{% url 'client_documents' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_documents' %}active{% endif %}">
           <i class="bi bi-folder me-2"></i>Mes documents
         </a>
-        <a href="/client/rendezvous/" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_rendezvous' %}active{% endif %}">
+        <a href="{% url 'client_rendezvous' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_rendezvous' %}active{% endif %}">
           <i class="bi bi-calendar me-2"></i>Rendez-vous
         </a>
-        <a href="/client/ressources/" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_ressources' %}active{% endif %}">
+        <a href="{% url 'client_ressources' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_ressources' %}active{% endif %}">
           <i class="bi bi-book me-2"></i>Ressources
+        </a>
+        <a href="{% url 'client_messages' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_messages' %}active{% endif %}">
+          <i class="bi bi-envelope me-2"></i>Messages
         </a>
         <a href="{% url 'accounts:logout' %}" class="d-block p-3 text-white text-decoration-none">
           <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
@@ -125,6 +128,30 @@
 
   <!-- Main JS File -->
   <script src="../../static/js/main.js"></script>
+  
+  <script>
+    // Function to redirect to the appropriate service request page
+    function redirectToCreateRequest(serviceType) {
+      // Map service types to URLs with correct paths including the /requests/ prefix
+      const serviceUrls = {
+        'admin': '/requests/client/create/administrative/',
+        'administrative': '/requests/client/create/administrative/',
+        'tourisme': '/requests/client/create/tourism/',
+        'tourism': '/requests/client/create/tourism/',
+        'immobilier': '/requests/client/create/real_estate/',
+        'real_estate': '/requests/client/create/real_estate/',
+        'fiscal': '/requests/client/create/fiscal/',
+        'tax': '/requests/client/create/fiscal/',
+        'investissement': '/requests/client/create/investment/',
+        'investment': '/requests/client/create/investment/',
+        'service': '/requests/client/create/administrative/'
+      };
+      
+      // Use the mapped URL or default to the base URL
+      const redirectUrl = serviceUrls[serviceType] || '/requests/client/create/administrative/';
+      window.location.href = redirectUrl;
+    }
+  </script>
 </body>
 
 </html>

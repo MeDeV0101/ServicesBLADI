@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import client_views
 
 app_name = 'resources'
 
@@ -9,6 +10,10 @@ urlpatterns = [
     path('detail/<int:resource_id>/', views.resource_detail_view, name='resource_detail'),
     path('category/<str:category>/', views.resource_category_view, name='resource_category'),
     path('download/<int:resource_file_id>/', views.download_resource_view, name='download_resource'),
+    
+    # Client resource views
+    path('client/', client_views.client_resources_view, name='client_resources'),
+    path('client/download/<int:resource_file_id>/', client_views.client_download_resource_view, name='client_download_resource'),
     
     # Embassy and consulate views
     path('embassy/', views.embassy_list_view, name='embassy_list'),

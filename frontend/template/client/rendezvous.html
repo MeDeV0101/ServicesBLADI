@@ -15,105 +15,113 @@
     </div>
 
     <!-- Filtres -->
-    <div class="card mb-4">
-      <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-3">
-            <select class="form-select">
-              <option value="">Tous les statuts</option>
-              <option value="confirme">Confirmé</option>
-              <option value="en-attente">En attente</option>
-              <option value="annule">Annulé</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <input type="date" class="form-control">
-          </div>
-          <div class="col-md-4">
-            <input type="text" class="form-control" placeholder="Rechercher un rendez-vous...">
-          </div>
-          <div class="col-md-2">
-            <button class="btn btn-outline-primary w-100">Filtrer</button>
+    <form method="get" action="{% url 'client_rendezvous' %}">
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <select class="form-select" name="status">
+                <option value="">Tous les statuts</option>
+                <option value="scheduled" {% if request.GET.status == 'scheduled' %}selected{% endif %}>En attente</option>
+                <option value="confirmed" {% if request.GET.status == 'confirmed' %}selected{% endif %}>Confirmé</option>
+                <option value="cancelled" {% if request.GET.status == 'cancelled' %}selected{% endif %}>Annulé</option>
+                <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Terminé</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <input type="date" class="form-control" name="date" value="{{ request.GET.date|default:'' }}">
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" name="search" placeholder="Rechercher un rendez-vous..." value="{{ request.GET.search|default:'' }}">
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-outline-primary w-100">Filtrer</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
 
     <!-- Liste des rendez-vous -->
-    <div class="rdv-card p-3 mb-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h5 class="mb-1">Consultation administrative</h5>
-          <p class="text-muted mb-0">
-            <i class="bi bi-calendar-event me-2"></i>20 Mars 2024 - 14:30
-          </p>
-          <p class="text-muted mb-0">
-            <i class="bi bi-person me-2"></i>Expert: Ahmed Benali
-          </p>
-        </div>
-        <div class="text-end">
-          <span class="status-badge status-confirme">Confirmé</span>
-          <div class="mt-2">
-            <button class="btn btn-sm btn-outline-primary me-2">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger">
-              <i class="bi bi-x-lg"></i>
-            </button>
+    {% if appointments %}
+      {% for appointment in appointments %}
+        <div class="rdv-card p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-1">
+                {% if appointment.consultation_type == 'in_person' %}
+                  Consultation en personne
+                {% elif appointment.consultation_type == 'video' %}
+                  Consultation par vidéo
+                {% elif appointment.consultation_type == 'phone' %}
+                  Consultation téléphonique
+                {% else %}
+                  {{ appointment.get_consultation_type_display }}
+                {% endif %}
+              </h5>
+              <p class="text-muted mb-0">
+                <i class="bi bi-calendar-event me-2"></i>{{ appointment.date_time|date:"d F Y - H:i" }}
+              </p>
+              <p class="text-muted mb-0">
+                <i class="bi bi-person me-2"></i>Expert: {{ appointment.expert.name }} {{ appointment.expert.first_name }}
+              </p>
+              {% if appointment.service_request %}
+                <p class="text-muted mb-0">
+                  <i class="bi bi-tag me-2"></i>Demande associée: {{ appointment.service_request.title }}
+                </p>
+              {% endif %}
+            </div>
+            <div class="text-end">
+              {% if appointment.status == 'scheduled' %}
+                <span class="status-badge status-en-attente">En attente</span>
+              {% elif appointment.status == 'confirmed' %}
+                <span class="status-badge status-confirme">Confirmé</span>
+              {% elif appointment.status == 'completed' %}
+                <span class="status-badge status-termine">Terminé</span>
+              {% elif appointment.status == 'cancelled' %}
+                <span class="status-badge status-annule">Annulé</span>
+              {% else %}
+                <span class="status-badge">{{ appointment.get_status_display }}</span>
+              {% endif %}
+              
+              <div class="mt-2">
+                <a href="{% url 'requests:appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary me-2">
+                  <i class="bi bi-eye"></i>
+                </a>
+                {% if appointment.status == 'scheduled' or appointment.status == 'confirmed' %}
+                  <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ appointment.id }}">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                  
+                  <!-- Modal d'annulation -->
+                  <div class="modal fade" id="cancelModal{{ appointment.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Confirmer l'annulation</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Êtes-vous sûr de vouloir annuler ce rendez-vous ?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non, garder</button>
+                          <a href="{% url 'requests:cancel_appointment' appointment.id %}" class="btn btn-danger">Oui, annuler</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
           </div>
         </div>
+      {% endfor %}
+    {% else %}
+      <div class="alert alert-info">
+        <p>Vous n'avez pas encore de rendez-vous. Planifiez votre premier rendez-vous en cliquant sur "Nouveau rendez-vous".</p>
       </div>
-    </div>
-
-    <div class="rdv-card p-3 mb-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h5 class="mb-1">Consultation fiscale</h5>
-          <p class="text-muted mb-0">
-            <i class="bi bi-calendar-event me-2"></i>25 Mars 2024 - 10:00
-          </p>
-          <p class="text-muted mb-0">
-            <i class="bi bi-person me-2"></i>Expert: Fatima Zahra
-          </p>
-        </div>
-        <div class="text-end">
-          <span class="status-badge status-en-attente">En attente</span>
-          <div class="mt-2">
-            <button class="btn btn-sm btn-outline-primary me-2">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger">
-              <i class="bi bi-x-lg"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="rdv-card p-3 mb-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h5 class="mb-1">Consultation immobilière</h5>
-          <p class="text-muted mb-0">
-            <i class="bi bi-calendar-event me-2"></i>15 Mars 2024 - 16:00
-          </p>
-          <p class="text-muted mb-0">
-            <i class="bi bi-person me-2"></i>Expert: Karim Hassan
-          </p>
-        </div>
-        <div class="text-end">
-          <span class="status-badge status-annule">Annulé</span>
-          <div class="mt-2">
-            <button class="btn btn-sm btn-outline-primary me-2">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger">
-              <i class="bi bi-x-lg"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    {% endif %}
   </div>
 
   <!-- Modal Nouveau Rendez-vous -->
@@ -125,55 +133,57 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form>
+          <form method="post" action="{% url 'requests:create_appointment' %}">
+            {% csrf_token %}
             <div class="mb-3">
               <label class="form-label">Type de consultation</label>
-              <select class="form-select">
-                <option value="administrative">Administrative</option>
-                <option value="fiscale">Fiscale</option>
-                <option value="immobilier">Immobilier</option>
+              <select class="form-select" name="consultation_type" required>
+                <option value="in_person">En personne</option>
+                <option value="video">Appel vidéo</option>
+                <option value="phone">Appel téléphonique</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Service</label>
+              <select class="form-select" name="service_id" required>
+                {% for service in services %}
+                  <option value="{{ service.id }}">{{ service.title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Expert</label>
+              <select class="form-select" name="expert_id" required>
+                {% for expert in experts %}
+                  <option value="{{ expert.user.id }}">{{ expert.user.name }} {{ expert.user.first_name }}</option>
+                {% endfor %}
               </select>
             </div>
             <div class="mb-3">
               <label class="form-label">Date</label>
-              <input type="date" class="form-control">
+              <input type="date" class="form-control" name="date" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Heure</label>
-              <input type="time" class="form-control">
+              <input type="time" class="form-control" name="time" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Expert</label>
-              <select class="form-select">
-                <option value="1">Ahmed Benali</option>
-                <option value="2">Fatima Zahra</option>
-                <option value="3">Karim Hassan</option>
+              <label class="form-label">Lier à une demande existante (optionnel)</label>
+              <select class="form-select" name="demande_id">
+                <option value="">Aucune</option>
+                {% for request in service_requests %}
+                  <option value="{{ request.id }}">{{ request.title }}</option>
+                {% endfor %}
               </select>
             </div>
             <div class="mb-3">
-              <label class="form-label">Notes</label>
-              <textarea class="form-control" rows="3"></textarea>
+              <label class="form-label">Notes (optionnel)</label>
+              <textarea class="form-control" name="notes" rows="3"></textarea>
             </div>
+            <button type="submit" class="btn btn-primary">Planifier</button>
           </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="button" class="btn btn-primary">Confirmer</button>
         </div>
       </div>
     </div>
   </div>
 {% endblock %}
-
-  <!-- Vendor JS Files -->
-  <script src="../../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../../static/vendor/aos/aos.js"></script>
-  <script src="../../static/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../../static/vendor/swiper/swiper-bundle.min.js"></script>
-
-  <!-- Main JS File -->
-  <script src="../../static/js/main.js"></script>
-</body>
-
-</html>
-</html> 

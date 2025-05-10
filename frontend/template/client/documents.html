@@ -1,4 +1,6 @@
 {% extends 'client/base.html' %}
+{% load document_filters %}
+{% load document_filters %}
 
 {% block title %}Mes Documents - MRE{% endblock %}
 {% block meta_description %}Gestion des documents client MRE{% endblock %}
@@ -9,104 +11,142 @@
   <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>Mes Documents</h2>
-      <button class="btn btn-primary">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
         <i class="bi bi-upload me-2"></i>Télécharger un document
       </button>
     </div>
 
     <!-- Filtres -->
-    <div class="card mb-4">
-      <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-3">
-            <select class="form-select">
-              <option value="">Tous les types</option>
-              <option value="identite">Identité</option>
-              <option value="fiscal">Fiscal</option>
-              <option value="immobilier">Immobilier</option>
-              <option value="autre">Autre</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <input type="text" class="form-control" placeholder="Rechercher un document...">
-          </div>
-          <div class="col-md-2">
-            <button class="btn btn-outline-primary w-100">Filtrer</button>
+    <form method="get" action="{% url 'requests:documents' %}">
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <select class="form-select" name="type">
+                <option value="">Tous les types</option>
+                <option value="identity" {% if request.GET.type == 'identity' %}selected{% endif %}>Identité</option>
+                <option value="proof" {% if request.GET.type == 'proof' %}selected{% endif %}>Justificatif</option>
+                <option value="contract" {% if request.GET.type == 'contract' %}selected{% endif %}>Contrat</option>
+                <option value="invoice" {% if request.GET.type == 'invoice' %}selected{% endif %}>Facture</option>
+                <option value="report" {% if request.GET.type == 'report' %}selected{% endif %}>Rapport</option>
+                <option value="other" {% if request.GET.type == 'other' %}selected{% endif %}>Autre</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <input type="text" class="form-control" name="search" placeholder="Rechercher un document..." value="{{ request.GET.search|default:'' }}">
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-outline-primary w-100">Filtrer</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
 
     <!-- Liste des documents -->
     <div class="row">
-      <div class="col-md-4 mb-4">
-        <div class="document-card p-3">
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-file-pdf document-icon me-3"></i>
-            <div>
-              <h5 class="mb-1">Carte Nationale</h5>
-              <span class="document-type">Identité</span>
+      {% if documents %}
+        {% for document in documents %}
+          <div class="col-md-4 mb-4">
+            <div class="document-card p-3">
+              <div class="d-flex align-items-center mb-3">
+                {% if document.mime_type == 'application/pdf' %}
+                  <i class="bi bi-file-pdf document-icon me-3"></i>
+                {% elif 'image' in document.mime_type %}
+                  <i class="bi bi-file-image document-icon me-3"></i>
+                {% elif 'word' in document.mime_type %}
+                  <i class="bi bi-file-word document-icon me-3"></i>
+                {% elif 'excel' in document.mime_type or 'sheet' in document.mime_type %}
+                  <i class="bi bi-file-excel document-icon me-3"></i>
+                {% else %}
+                  <i class="bi bi-file-earmark document-icon me-3"></i>
+                {% endif %}
+                <div>
+                  <h5 class="mb-1">{{ document.name }}</h5>
+                  <span class="document-type">{{ document|display_type }}</span>
+                  {% if document.is_official %}
+                    <span class="badge bg-success ms-2">Officiel</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">Ajouté le: {{ document.upload_date|date:"d/m/Y" }}</small>
+                <div>
+                  <a href="{{ document.file.url }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  <button class="btn btn-sm btn-outline-danger" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce document?')) window.location.href='{% url 'requests:delete_document' document.id %}';">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted">Ajouté le: 15/03/2024</small>
-            <div>
-              <button class="btn btn-sm btn-outline-primary me-2">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-12">
+          <div class="alert alert-info">
+            Vous n'avez pas encore de documents. Cliquez sur "Télécharger un document" pour ajouter votre premier document.
           </div>
         </div>
-      </div>
-
-      <div class="col-md-4 mb-4">
-        <div class="document-card p-3">
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-file-pdf document-icon me-3"></i>
-            <div>
-              <h5 class="mb-1">Avis d'imposition 2023</h5>
-              <span class="document-type">Fiscal</span>
-            </div>
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted">Ajouté le: 10/03/2024</small>
-            <div>
-              <button class="btn btn-sm btn-outline-primary me-2">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
+      {% endif %}
+    </div>
+  </div>
+  
+  <!-- Modal Upload Document -->
+  <div class="modal fade" id="uploadDocumentModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Télécharger un document</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-      </div>
-
-      <div class="col-md-4 mb-4">
-        <div class="document-card p-3">
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-file-pdf document-icon me-3"></i>
-            <div>
-              <h5 class="mb-1">Contrat de location</h5>
-              <span class="document-type">Immobilier</span>
+        <div class="modal-body">
+          <form method="post" action="{% url 'requests:upload_document' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Nom du document</label>
+              <input type="text" class="form-control" name="name" required>
             </div>
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted">Ajouté le: 01/03/2024</small>
-            <div>
-              <button class="btn btn-sm btn-outline-primary me-2">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i>
-              </button>
+            <div class="mb-3">
+              <label class="form-label">Type de document</label>
+              <select class="form-select" name="type" required>
+                <option value="identity">Identité</option>
+                <option value="proof">Justificatif</option>
+                <option value="contract">Contrat</option>
+                <option value="invoice">Facture</option>
+                <option value="report">Rapport</option>
+                <option value="other">Autre</option>
+              </select>
             </div>
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Fichier</label>
+              <input type="file" class="form-control" name="file" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Associer à une demande (optionnel)</label>
+              <select class="form-select" name="demande_id">
+                <option value="">Aucune demande</option>
+                {% for demande in service_requests %}
+                  <option value="{{ demande.id }}">{{ demande.title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="isOfficialCheck" name="is_official">
+              <label class="form-check-label" for="isOfficialCheck">Document officiel</label>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Numéro de référence (optionnel)</label>
+              <input type="text" class="form-control" name="reference_number">
+            </div>
+            <div class="text-end">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-primary">Télécharger</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
-{% endblock %} 
+{% endblock %}

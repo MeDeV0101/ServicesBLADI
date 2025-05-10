@@ -6,12 +6,13 @@ from django.utils import timezone
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.contrib import messages
 import json
 import os
 import mimetypes
 
 from accounts.models import Utilisateur, Client, Expert
-from services.models import Service
+from services.models import Service, ServiceCategory
 from .models import ServiceRequest, RendezVous, Document, Message, Notification
 
 # Client request management views
@@ -19,8 +20,10 @@ from .models import ServiceRequest, RendezVous, Document, Message, Notification
 def client_requests_view(request):
     """Display client's service requests"""
     try:
+        # We need to check if the user is a client
         client = Client.objects.get(user=request.user)
-        requests = ServiceRequest.objects.filter(client=client).order_by('-created_at')
+        # Use the user object for filtering, not the client object
+        requests = ServiceRequest.objects.filter(client=request.user).order_by('-created_at')
         
         context = {
             'requests': requests,
@@ -45,7 +48,7 @@ def create_request_view(request, service_id):
             
             # Create the request
             demande = ServiceRequest.objects.create(
-                client=client,
+                client=request.user,
                 service=service,
                 title=title,
                 description=description,
@@ -76,7 +79,7 @@ def create_request_view(request, service_id):
                     related_demande=demande
                 )
             
-            return redirect('requests:client_requests')
+            return redirect('client_demandes')
             
         context = {
             'service': service,
@@ -88,6 +91,56 @@ def create_request_view(request, service_id):
         return redirect('home')
 
 @login_required
+def create_request_by_type_view(request, service_type):
+    """Create a new service request by service type name (admin, tourisme, etc.)"""
+    try:
+        # Map service type names to categories
+        service_type_map = {
+            'admin': 'administrative',
+            'administrative': 'administrative',
+            'tourisme': 'tourism',
+            'tourism': 'tourism',
+            'immobilier': 'real_estate',
+            'real_estate': 'real_estate',
+            'fiscal': 'fiscal',
+            'tax': 'fiscal',
+            'investissement': 'investment',
+            'investment': 'investment'
+        }
+        
+        # Get category slug (default to 'administrative' if not found)
+        category_slug = service_type_map.get(service_type.lower(), 'administrative')
+        
+        # Try to find a service category with this slug
+        try:
+            category = ServiceCategory.objects.get(slug=category_slug)
+            # Get first active service in this category
+            service = Service.objects.filter(
+                service_type__category=category,
+                is_active=True
+            ).first()
+            
+            if not service:
+                # If no service found in category, get any active service
+                service = Service.objects.filter(is_active=True).first()
+                if not service:
+                    messages.error(request, _('No active services found. Please contact support.'))
+                    return redirect('client_dashboard')
+        except ServiceCategory.DoesNotExist:
+            # If category not found, get any active service
+            service = Service.objects.filter(is_active=True).first()
+            if not service:
+                messages.error(request, _('No active services found. Please contact support.'))
+                return redirect('client_dashboard')
+        
+        # Redirect to the existing create view with the service ID
+        return redirect('requests:create_request', service_id=service.id)
+    
+    except Exception as e:
+        messages.error(request, _(f'An error occurred: {str(e)}'))
+        return redirect('client_dashboard')
+
+@login_required
 def request_detail_view(request, request_id):
     """Display details of a specific request"""
     demande = get_object_or_404(ServiceRequest, id=request_id)
@@ -96,7 +149,7 @@ def request_detail_view(request, request_id):
     if request.user.account_type == 'client':
         try:
             client = Client.objects.get(user=request.user)
-            if demande.client != client:
+            if demande.client != request.user:  # Compare with the User object, not the Client
                 return redirect('home')
         except Client.DoesNotExist:
             return redirect('home')
@@ -224,7 +277,7 @@ def cancel_request_view(request, request_id):
                     related_demande=demande
                 )
             
-            return redirect('requests:client_requests')
+            return redirect('client_demandes')
             
         context = {
             'demande': demande,
@@ -241,10 +294,54 @@ def client_appointments_view(request):
     """Display client's appointments"""
     try:
         client = Client.objects.get(user=request.user)
-        appointments = RendezVous.objects.filter(client=client).order_by('date_time')
+        
+        # Get filters
+        status = request.GET.get('status', '')
+        search = request.GET.get('search', '')
+        date = request.GET.get('date', '')
+        
+        # Start with all appointments for this client - use request.user, not client object
+        appointments = RendezVous.objects.filter(client=request.user)
+        
+        # Apply filters
+        if status:
+            appointments = appointments.filter(status=status)
+        
+        if date:
+            try:
+                # Filter by date only (not time)
+                from datetime import datetime
+                filter_date = datetime.strptime(date, '%Y-%m-%d').date()
+                appointments = appointments.filter(date_time__date=filter_date)
+            except ValueError:
+                pass  # Invalid date format
+        
+        if search:
+            # Search in expert names, service names, and notes
+            appointments = appointments.filter(
+                Q(expert__user__name__icontains=search) |
+                Q(expert__user__first_name__icontains=search) |
+                Q(service__title__icontains=search) |
+                Q(notes__icontains=search)
+            )
+        
+        # Order by date_time
+        appointments = appointments.order_by('date_time')
+        
+        # Get services for the "New appointment" form
+        services = Service.objects.filter(is_active=True)
+        
+        # Get available experts
+        experts = Expert.objects.filter(user__is_active=True)
+        
+        # Get client's service requests for the "linked request" dropdown
+        service_requests = ServiceRequest.objects.filter(client=request.user).exclude(status='cancelled')
         
         context = {
             'appointments': appointments,
+            'services': services,
+            'experts': experts,
+            'service_requests': service_requests
         }
         
         return render(request, 'client/rendezvous.html', context)
@@ -253,76 +350,75 @@ def client_appointments_view(request):
         return redirect('home')
 
 @login_required
-def create_appointment_view(request, expert_id):
-    """Create a new appointment with an expert"""
+def create_appointment_view(request):
+    """Create a new appointment"""
+    if request.method != 'POST':
+        return redirect('client_rendezvous')
+    
     try:
         client = Client.objects.get(user=request.user)
-        expert = get_object_or_404(Expert, id=expert_id)
         
-        if request.method == 'POST':
-            date_time_str = request.POST.get('date_time')
-            service_id = request.POST.get('service_id')
-            consultation_type = request.POST.get('consultation_type')
-            notes = request.POST.get('notes', '')
-            demande_id = request.POST.get('demande_id')
+        # Get form data
+        expert_id = request.POST.get('expert_id')
+        service_id = request.POST.get('service_id')
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+        consultation_type = request.POST.get('consultation_type')
+        notes = request.POST.get('notes', '')
+        demande_id = request.POST.get('demande_id', '')
+        
+        # Validate data
+        if not (expert_id and service_id and date and time and consultation_type):
+            messages.error(request, _('Please fill all required fields.'))
+            return redirect('client_rendezvous')
+        
+        try:
+            # Get the expert, service and service request
+            expert = Expert.objects.get(user_id=expert_id)
+            service = Service.objects.get(id=service_id)
             
-            try:
-                # Parse date and time
-                date_time = timezone.datetime.strptime(date_time_str, '%Y-%m-%dT%H:%M')
-                date_time = timezone.make_aware(date_time)
-                
-                # Get service if provided
-                service = None
-                if service_id:
-                    service = get_object_or_404(Service, id=service_id, is_active=True)
-                
-                # Get associated request if provided
-                demande = None
-                if demande_id:
-                    demande = get_object_or_404(ServiceRequest, id=demande_id, client=client)
-                
-                # Create the appointment
-                appointment = RendezVous.objects.create(
-                    client=client,
-                    expert=expert,
-                    service=service,
-                    date_time=date_time,
-                    consultation_type=consultation_type,
-                    notes=notes,
-                    demande=demande,
-                    status='scheduled'
-                )
-                
-                # Notify the expert
-                Notification.objects.create(
-                    user=expert.user,
-                    type='appointment',
-                    title=_('New Appointment Request'),
-                    content=_(f'A new appointment has been scheduled by {client.user.name} {client.user.first_name} for {date_time_str}.'),
-                    related_rendez_vous=appointment
-                )
-                
-                return redirect('requests:client_appointments')
-                
-            except ValueError:
-                messages.error(request, _('Invalid date or time format.'))
-        
-        # Get available services
-        services = Service.objects.filter(is_active=True)
-        
-        # Get client's requests that can be associated with this appointment
-        demandes = ServiceRequest.objects.filter(client=client).exclude(status__in=['completed', 'cancelled'])
-        
-        context = {
-            'expert': expert,
-            'services': services,
-            'demandes': demandes,
-        }
-        
-        return render(request, 'client/create_appointment.html', context)
+            # Parse the date and time
+            from datetime import datetime
+            date_time_str = f'{date} {time}'
+            date_time = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M')
+            
+            # Get the linked service request if provided
+            demande = None
+            if demande_id:
+                demande = get_object_or_404(ServiceRequest, id=demande_id, client=request.user)
+            
+            # Create the appointment
+            appointment = RendezVous.objects.create(
+                client=request.user,
+                expert=expert.user,
+                service=service,
+                date_time=date_time,
+                consultation_type=consultation_type,
+                notes=notes,
+                service_request=demande,
+                status='scheduled'
+            )
+            
+            # Create notification for the expert
+            Notification.objects.create(
+                user=expert.user,
+                type='appointment',
+                title=_('New Appointment Request'),
+                content=_(f'A new appointment has been scheduled by {request.user.name} {request.user.first_name} for {date_time.strftime("%Y-%m-%d %H:%M")}.'),
+                related_rendez_vous=appointment
+            )
+            
+            messages.success(request, _('Appointment successfully scheduled.'))
+            
+        except (Expert.DoesNotExist, Service.DoesNotExist):
+            messages.error(request, _('Invalid expert or service.'))
+        except ValueError:
+            messages.error(request, _('Invalid date or time format.'))
     
     except Client.DoesNotExist:
-        return redirect('home')
+        messages.error(request, _('You need a client account to schedule appointments.'))
+    
+    return redirect('client_rendezvous')
 
 @login_required
 def appointment_detail_view(request, appointment_id):
@@ -359,58 +455,74 @@ def appointment_detail_view(request, appointment_id):
 
 @login_required
 def cancel_appointment_view(request, appointment_id):
-    """Cancel an appointment"""
-    try:
-        if request.user.account_type == 'client':
-            client = Client.objects.get(user=request.user)
-            appointment = get_object_or_404(RendezVous, id=appointment_id, client=client)
-        elif request.user.account_type == 'expert':
-            expert = Expert.objects.get(user=request.user)
-            appointment = get_object_or_404(RendezVous, id=appointment_id, expert=expert)
-        else:
-            return redirect('home')
-        
-        # Only allow cancellation if appointment is not already completed or cancelled
-        if appointment.status in ['completed', 'cancelled']:
-            messages.error(request, _('This appointment cannot be cancelled in its current status.'))
-            return redirect('requests:appointment_detail', appointment_id=appointment_id)
-        
-        if request.method == 'POST':
-            reason = request.POST.get('reason', '')
-            
-            # Update the appointment
-            appointment.status = 'cancelled'
-            appointment.save()
-            
-            # Determine who cancelled and who needs to be notified
-            if request.user.account_type == 'client':
-                # Client cancelled, notify expert
-                notification_recipient = appointment.expert.user
-                canceller_name = f"{client.user.name} {client.user.first_name}"
-            else:
-                # Expert cancelled, notify client
-                notification_recipient = appointment.client.user
-                canceller_name = f"{expert.user.name} {expert.user.first_name}"
-            
-            # Create notification
-            Notification.objects.create(
-                user=notification_recipient,
-                type='appointment',
-                title=_('Appointment Cancelled'),
-                content=_(f'Appointment on {appointment.date_time.strftime("%Y-%m-%d %H:%M")} has been cancelled by {canceller_name}. Reason: {reason}'),
-                related_rendez_vous=appointment
-            )
-            
-            return redirect('requests:client_appointments' if request.user.account_type == 'client' else 'requests:expert_appointments')
-            
-        context = {
-            'appointment': appointment,
-        }
-        
-        return render(request, 'client/cancel_appointment.html' if request.user.account_type == 'client' else 'expert/cancel_appointment.html', context)
+    """Cancel a specific appointment"""
+    appointment = get_object_or_404(RendezVous, id=appointment_id)
     
-    except (Client.DoesNotExist, Expert.DoesNotExist):
+    # Check if user has permission to cancel this appointment
+    if request.user.account_type == 'client':
+        try:
+            client = Client.objects.get(user=request.user)
+            if appointment.client != client.user:
+                messages.error(request, _('You do not have permission to cancel this appointment.'))
+                return redirect('client_rendezvous')
+        except Client.DoesNotExist:
+            messages.error(request, _('You do not have permission to cancel this appointment.'))
+            return redirect('client_rendezvous')
+    elif request.user.account_type == 'expert':
+        try:
+            expert = Expert.objects.get(user=request.user)
+            if appointment.expert != expert.user:
+                messages.error(request, _('You do not have permission to cancel this appointment.'))
+                return redirect('expert_appointments')
+        except Expert.DoesNotExist:
+            messages.error(request, _('You do not have permission to cancel this appointment.'))
+            return redirect('expert_appointments')
+    elif request.user.account_type != 'admin':
+        messages.error(request, _('You do not have permission to cancel this appointment.'))
         return redirect('home')
+    
+    # Check if the appointment can be cancelled
+    if appointment.status not in ['scheduled', 'confirmed']:
+        messages.error(request, _('This appointment cannot be cancelled.'))
+        if request.user.account_type == 'client':
+            return redirect('client_rendezvous')
+        elif request.user.account_type == 'expert':
+            return redirect('expert_appointments')
+        else:
+            return redirect('admin_appointments')
+    
+    # Cancel the appointment
+    appointment.status = 'cancelled'
+    appointment.save()
+    
+    # Create notification for the other party
+    if request.user.account_type == 'client':
+        # Notify the expert
+        Notification.objects.create(
+            user=appointment.expert,
+            type='appointment_update',
+            title=_('Appointment Cancelled'),
+            content=_(f'Appointment on {appointment.date_time.strftime("%Y-%m-%d %H:%M")} was cancelled by the client.'),
+            related_rendez_vous=appointment
+        )
+    elif request.user.account_type == 'expert' or request.user.account_type == 'admin':
+        # Notify the client
+        Notification.objects.create(
+            user=appointment.client,
+            type='appointment_update',
+            title=_('Appointment Cancelled'),
+            content=_(f'Appointment on {appointment.date_time.strftime("%Y-%m-%d %H:%M")} was cancelled by the expert.'),
+            related_rendez_vous=appointment
+        )
+    
+    messages.success(request, _('Appointment successfully cancelled.'))
+    
+    if request.user.account_type == 'client':
+        return redirect('client_rendezvous')
+    elif request.user.account_type == 'expert':
+        return redirect('expert_appointments')
+    else:
+        return redirect('admin_appointments')
 
 # Expert views
 @login_required
@@ -449,39 +561,69 @@ def expert_appointments_view(request):
 @login_required
 def documents_view(request):
     """Display user's documents"""
+    # Get document type filter
+    doc_type = request.GET.get('type')
+    search = request.GET.get('search')
+    
+    documents_query = Document.objects.all()
+    
+    # Apply user filter
     if request.user.account_type == 'client':
         try:
             client = Client.objects.get(user=request.user)
-            # Get documents from client's requests
-            documents = Document.objects.filter(
-                Q(demande__client=client) |
-                Q(rendez_vous__client=client) |
+            # Get documents from client's requests - fixed to use correct field names
+            documents_query = documents_query.filter(
+                Q(service_request__client=request.user) |
+                Q(rendez_vous__client=request.user) |
                 Q(uploaded_by=request.user)
-            ).distinct().order_by('-upload_date')
+            ).distinct()
+            
+            # Get client's service requests for the upload form
+            service_requests = ServiceRequest.objects.filter(client=request.user).order_by('-created_at')
+            
         except Client.DoesNotExist:
-            documents = Document.objects.filter(uploaded_by=request.user).order_by('-upload_date')
+            documents_query = documents_query.filter(uploaded_by=request.user)
+            service_requests = []
     
     elif request.user.account_type == 'expert':
         try:
             expert = Expert.objects.get(user=request.user)
             # Get documents from expert's assigned requests
-            documents = Document.objects.filter(
-                Q(demande__assigned_expert=expert) |
+            documents_query = documents_query.filter(
+                Q(service_request__expert=expert) |
                 Q(rendez_vous__expert=expert) |
                 Q(uploaded_by=request.user)
-            ).distinct().order_by('-upload_date')
+            ).distinct()
+            service_requests = []
         except Expert.DoesNotExist:
-            documents = Document.objects.filter(uploaded_by=request.user).order_by('-upload_date')
+            documents_query = documents_query.filter(uploaded_by=request.user)
+            service_requests = []
     
     elif request.user.account_type == 'admin':
         # Admins can see all documents
-        documents = Document.objects.all().order_by('-upload_date')
+        service_requests = []
     
     else:
-        documents = []
+        documents_query = Document.objects.none()
+        service_requests = []
+    
+    # Apply type filter
+    if doc_type:
+        documents_query = documents_query.filter(type=doc_type)
+    
+    # Apply search filter
+    if search:
+        documents_query = documents_query.filter(
+            Q(name__icontains=search) |
+            Q(reference_number__icontains=search)
+        )
+    
+    # Order by upload date
+    documents = documents_query.order_by('-upload_date')
     
     context = {
         'documents': documents,
+        'service_requests': service_requests,
     }
     
     if request.user.account_type == 'client':
@@ -517,9 +659,9 @@ def upload_document_view(request):
             if rendez_vous_id:
                 rendez_vous = get_object_or_404(RendezVous, id=rendez_vous_id)
             
-            # Create document
+            # Create document - fixed to use correct field names
             document = Document.objects.create(
-                demande=demande,
+                service_request=demande,
                 rendez_vous=rendez_vous,
                 uploaded_by=request.user,
                 type=document_type,
@@ -579,8 +721,9 @@ def upload_document_view(request):
     if request.user.account_type == 'client':
         try:
             client = Client.objects.get(user=request.user)
-            demandes = ServiceRequest.objects.filter(client=client)
-            appointments = RendezVous.objects.filter(client=client)
+            # Use request.user instead of client when filtering ServiceRequest objects
+            demandes = ServiceRequest.objects.filter(client=request.user)
+            appointments = RendezVous.objects.filter(client=request.user)
         except Client.DoesNotExist:
             demandes = []
             appointments = []
@@ -605,6 +748,34 @@ def upload_document_view(request):
     }
     
     return render(request, 'upload_document.html', context)
+
+@login_required
+def delete_document_view(request, document_id):
+    """Delete a document"""
+    document = get_object_or_404(Document, id=document_id)
+    
+    # Check permission to delete
+    if request.user.account_type == 'client':
+        # Clients can only delete their own documents
+        if document.uploaded_by != request.user and (
+            not document.service_request or document.service_request.client != request.user):
+            messages.error(request, _('You do not have permission to delete this document.'))
+            return redirect('requests:documents')
+    elif request.user.account_type == 'expert':
+        # Experts can only delete their own documents
+        if document.uploaded_by != request.user and (
+            not document.service_request or document.service_request.expert != request.user):
+            messages.error(request, _('You do not have permission to delete this document.'))
+            return redirect('requests:documents')
+    elif request.user.account_type != 'admin':
+        messages.error(request, _('You do not have permission to delete this document.'))
+        return redirect('requests:documents')
+    
+    # Delete the document
+    document.delete()
+    
+    messages.success(request, _('Document successfully deleted.'))
+    return redirect('requests:documents')
 
 # Messaging views
 @login_required
@@ -730,7 +901,7 @@ def send_message_view(request):
     if request.user.account_type == 'client':
         try:
             client = Client.objects.get(user=request.user)
-            demandes = ServiceRequest.objects.filter(client=client)
+            demandes = ServiceRequest.objects.filter(client=request.user)
         except Client.DoesNotExist:
             demandes = []
     elif request.user.account_type == 'expert':
@@ -800,7 +971,7 @@ def api_client_requests(request):
     """API endpoint for client requests"""
     try:
         client = Client.objects.get(user=request.user)
-        requests_query = ServiceRequest.objects.filter(client=client).order_by('-created_at')
+        requests_query = ServiceRequest.objects.filter(client=request.user).order_by('-created_at')
         
         # Apply status filter if provided
         status = request.GET.get('status')
@@ -951,7 +1122,7 @@ def api_client_appointments(request):
     try:
         if request.user.account_type == 'client':
             client = Client.objects.get(user=request.user)
-            appointments_query = RendezVous.objects.filter(client=client).order_by('date_time')
+            appointments_query = RendezVous.objects.filter(client=request.user).order_by('date_time')
         elif request.user.account_type == 'expert':
             expert = Expert.objects.get(user=request.user)
             appointments_query = RendezVous.objects.filter(expert=expert).order_by('date_time')

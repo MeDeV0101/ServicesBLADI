@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 
@@ -10,6 +10,11 @@ from services.views import (
     fiscal_services_view,
     contact_view
 )
+
+from requests.dashboard_views import client_dashboard_view
+from requests.views import documents_view, client_requests_view, client_appointments_view
+from requests.message_views import client_messages_view, expert_messages_view
+from resources.client_views import client_resources_view
 
 urlpatterns = [
     # Main pages
@@ -31,18 +36,19 @@ urlpatterns = [
     
     # Dashboard pages - these should be login protected
     # Client dashboard
-    path('client/dashboard/', login_required(TemplateView.as_view(template_name='client/dashboard.html')), name='client_dashboard'),
-    path('client/demandes/', login_required(TemplateView.as_view(template_name='client/demandes.html')), name='client_demandes'),
-    path('client/documents/', login_required(TemplateView.as_view(template_name='client/documents.html')), name='client_documents'),
-    path('client/messages/', login_required(TemplateView.as_view(template_name='client/messages.html')), name='client_messages'),
-    path('client/rendezvous/', login_required(TemplateView.as_view(template_name='client/rendezvous.html')), name='client_rendezvous'),
-    path('client/ressources/', login_required(TemplateView.as_view(template_name='client/ressources.html')), name='client_ressources'),
+    path('client/dashboard/', client_dashboard_view, name='client_dashboard'),
+    path('client/demandes/', client_requests_view, name='client_demandes'),
+    path('client/documents/', documents_view, name='client_documents'),
+    path('client/messages/', client_messages_view, name='client_messages'),
+    path('client/rendezvous/', client_appointments_view, name='client_rendezvous'),
+    path('client/ressources/', client_resources_view, name='client_ressources'),
     
     # Expert dashboard
     path('expert/dashboard/', login_required(TemplateView.as_view(template_name='expert/dashboard.html')), name='expert_dashboard'),
     path('expert/demandes/', login_required(TemplateView.as_view(template_name='expert/demandes.html')), name='expert_demandes'),
     path('expert/documents/', login_required(TemplateView.as_view(template_name='expert/documents.html')), name='expert_documents'),
     path('expert/rendezvous/', login_required(TemplateView.as_view(template_name='expert/rendezvous.html')), name='expert_rendezvous'),
+    path('expert/messages/', expert_messages_view, name='expert_messages'),
     path('expert/ressources/', login_required(TemplateView.as_view(template_name='expert/ressources.html')), name='expert_ressources'),
     
     # Admin dashboard

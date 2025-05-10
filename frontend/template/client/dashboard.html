@@ -13,9 +13,7 @@
   <link href="../../static/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -24,6 +22,9 @@
   <link href="../../static/vendor/animate.css/animate.min.css" rel="stylesheet">
   <link href="../../static/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="../../static/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  
+  <!-- Calendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.css" rel="stylesheet">
 
   <!-- Main CSS File -->
   <link href="../../static/css/main.css" rel="stylesheet">
@@ -39,6 +40,165 @@
 
     body {
       background-color: #f8f9fa;
+    }
+    
+    /* Notification Styles */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 350px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin-bottom: 10px;
+      animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    .notification-header {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      background: #f8f9fa;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    
+    .notification-header h6 {
+      margin: 0;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    .notification-list {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+    
+    .notification-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      transition: background 0.3s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .notification-item:hover {
+      background: #f8f9fa;
+    }
+    
+    .notification-item.unread {
+      background: #f8f9fa;
+      border-left: 4px solid #007bff;
+    }
+    
+    .notification-item .service {
+      font-weight: 600;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .notification-item .message {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    
+    .notification-item .time {
+      color: #999;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .notification-item .time i {
+      font-size: 0.9rem;
+    }
+    
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-en_attente, .status-new, .status-pending_info { background: #fff3cd; color: #856404; }
+    .status-en_cours, .status-in_progress { background: #cce5ff; color: #004085; }
+    .status-termine, .status-completed { background: #d4edda; color: #155724; }
+    .status-annule, .status-cancelled, .status-rejected { background: #f8d7da; color: #721c24; }
+    
+    .notification-empty {
+      padding: 20px;
+      text-align: center;
+      color: #666;
+    }
+    
+    .notification-empty i {
+      font-size: 2rem;
+      color: #ddd;
+      margin-bottom: 10px;
+    }
+    
+    .notification-bell {
+      position: relative;
+      margin-right: 20px;
+      cursor: pointer;
+    }
+    
+    .notification-bell i {
+      font-size: 1.5rem;
+      color: #666;
+    }
+    
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #dc3545;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .notification-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      width: 400px;
+      max-height: 500px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      margin-top: 10px;
+    }
+    
+    .notification-dropdown.show {
+      display: block;
     }
 
     .dashboard-wrapper {
@@ -182,26 +342,29 @@
       <div class="sidebar-header">
         <h3>MRE</h3>
       </div>
-      <div class="sidebar-profile">
-        <img src="../../static/img/profile-placeholder.jpg" alt="Profile" class="profile-image">
-        <h5 id="clientName">Mohammed Abd</h5>
-        <p class="text-muted">Client depuis: Mars 2024</p>
+      <div class="sidebar-profile text-center p-3">
+        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}../../static/img/profile-placeholder.jpg{% endif %}" alt="Profile" class="rounded-circle" width="80">
+        <h5 class="mt-3 text-white">{{ user.name }} {{ user.first_name }}</h5>
+        <p class="text-white-50">Client</p>
       </div>
       <nav class="sidebar-menu">
-        <a href="{% url 'client_dashboard' %}" class="d-block p-3 text-white text-decoration-none">
+        <a href="{% url 'client_dashboard' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
           <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
         </a>
-        <a href="{% url 'client_demandes' %}" class="d-block p-3 text-white text-decoration-none">
+        <a href="{% url 'client_demandes' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_demandes' %}active{% endif %}">
           <i class="bi bi-file-text me-2"></i>Mes demandes
         </a>
-        <a href="{% url 'client_documents' %}" class="d-block p-3 text-white text-decoration-none">
+        <a href="{% url 'client_documents' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_documents' %}active{% endif %}">
           <i class="bi bi-folder me-2"></i>Mes documents
         </a>
-        <a href="{% url 'client_rendezvous' %}" class="d-block p-3 text-white text-decoration-none">
+        <a href="{% url 'client_rendezvous' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_rendezvous' %}active{% endif %}">
           <i class="bi bi-calendar me-2"></i>Rendez-vous
         </a>
-        <a href="{% url 'client_ressources' %}" class="d-block p-3 text-white text-decoration-none">
+        <a href="{% url 'client_ressources' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_ressources' %}active{% endif %}">
           <i class="bi bi-book me-2"></i>Ressources
+        </a>
+        <a href="{% url 'client_messages' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_messages' %}active{% endif %}">
+          <i class="bi bi-envelope me-2"></i>Messages
         </a>
         <a href="{% url 'accounts:logout' %}" class="d-block p-3 text-white text-decoration-none">
           <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
@@ -215,13 +378,80 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Tableau de bord</h2>
         <div>
-          <button class="btn btn-primary me-2">
-            <i class="bi bi-plus-circle"></i> Nouvelle demande
-          </button>
-          <button class="btn btn-outline-primary">
+          <div class="dropdown d-inline-block">
+            <button class="btn btn-primary me-2 dropdown-toggle" type="button" id="newRequestDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-plus-circle"></i> Nouvelle demande
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="newRequestDropdown">
+              {% for service in available_services %}
+                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('service')">{{ service.title }}</a></li>
+              {% empty %}
+                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('admin')">Services Administratifs</a></li>
+                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('tourisme')">Tourisme</a></li>
+                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('immobilier')">Immobilier</a></li>
+                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('fiscal')">Fiscalité</a></li>
+                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('investissement')">Investissement</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+          <button class="btn btn-outline-primary notification-bell" onclick="toggleNotifications()">
             <i class="bi bi-bell"></i>
-            <span class="badge bg-danger">3</span>
+            <span class="badge bg-danger notification-badge">{{ unread_notifications_count|default:"3" }}</span>
           </button>
+          <div class="notification-dropdown" id="notificationDropdown">
+            <div class="notification-header">
+              <div class="d-flex justify-content-between align-items-center">
+                <h6>Notifications</h6>
+                <span class="badge bg-primary">{{ unread_notifications_count|default:"3" }} non lue(s)</span>
+              </div>
+            </div>
+            <ul class="notification-list">
+              {% if notifications %}
+                {% for notification in notifications %}
+                  <li class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                    <div class="service">
+                      <span>{{ notification.title }}</span>
+                      <span class="status-badge status-{{ notification.type }}">
+                        {{ notification.get_type_display }}
+                      </span>
+                    </div>
+                    <div class="message">{{ notification.content }}</div>
+                    <div class="time">
+                      <i class="bi bi-clock"></i>
+                      {{ notification.created_at|date:"d/m/Y H:i" }}
+                    </div>
+                  </li>
+                {% endfor %}
+              {% else %}
+                <li class="notification-item unread">
+                  <div class="service">
+                    <span>Services Administratifs</span>
+                    <span class="status-badge status-en_cours">
+                      En cours
+                    </span>
+                  </div>
+                  <div class="message">Votre dossier est en cours de traitement</div>
+                  <div class="time">
+                    <i class="bi bi-clock"></i>
+                    07/05/2025 10:30
+                  </div>
+                </li>
+                <li class="notification-item">
+                  <div class="service">
+                    <span>Immobilier</span>
+                    <span class="status-badge status-termine">
+                      Terminé
+                    </span>
+                  </div>
+                  <div class="message">Votre rendez-vous a été confirmé</div>
+                  <div class="time">
+                    <i class="bi bi-clock"></i>
+                    06/05/2025 15:45
+                  </div>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -232,8 +462,8 @@
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 class="text-muted">Services Actifs</h6>
-                  <h3>3</h3>
+                  <h6 class="text-muted">Services Terminés</h6>
+                  <h3>{{ completed_requests }}</h3>
                 </div>
                 <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
               </div>
@@ -246,7 +476,7 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <h6 class="text-muted">Demandes en cours</h6>
-                  <h3>2</h3>
+                  <h3>{{ active_requests }}</h3>
                 </div>
                 <i class="bi bi-clock-fill text-warning" style="font-size: 2rem;"></i>
               </div>
@@ -259,7 +489,7 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <h6 class="text-muted">Documents</h6>
-                  <h3>5</h3>
+                  <h3>{{ documents_count }}</h3>
                 </div>
                 <i class="bi bi-file-earmark-text-fill text-primary" style="font-size: 2rem;"></i>
               </div>
@@ -272,13 +502,67 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <h6 class="text-muted">Ressources</h6>
-                  <h3>8</h3>
+                  <h3>{{ resources_count }}</h3>
                 </div>
                 <i class="bi bi-book-fill text-info" style="font-size: 2rem;"></i>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      
+      <!-- Service Cards -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h4 class="mb-3">Nos Services</h4>
+        </div>
+        {% if available_services %}
+          {% for service in available_services %}
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('service')">
+              <i class="bi bi-{{ service.icon }} service-icon"></i>
+              <h3>{{ service.title }}</h3>
+              <p>{{ service.description|truncatewords:10 }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('admin')">
+              <i class="bi bi-file-earmark-text service-icon"></i>
+              <h3>Services Administratifs</h3>
+              <p>Gestion de vos démarches administratives</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('tourisme')">
+              <i class="bi bi-airplane service-icon"></i>
+              <h3>Tourisme</h3>
+              <p>Organisation de vos voyages au Maroc</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('immobilier')">
+              <i class="bi bi-house-door service-icon"></i>
+              <h3>Immobilier</h3>
+              <p>Gestion de vos biens immobiliers</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('fiscal')">
+              <i class="bi bi-calculator service-icon"></i>
+              <h3>Fiscalité</h3>
+              <p>Conseils et gestion fiscale</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('investissement')">
+              <i class="bi bi-graph-up service-icon"></i>
+              <h3>Investissement</h3>
+              <p>Opportunités d'investissement au Maroc</p>
+            </div>
+          </div>
+        {% endif %}
       </div>
 
       <!-- Services and Documents -->
@@ -287,31 +571,44 @@
           <div class="dashboard-card">
             <div class="card-header">
               <h5 class="mb-0">Services Actifs</h5>
-              <a href="#" class="btn btn-sm btn-primary">Voir tout</a>
+              <a href="{% url 'client_demandes' %}" class="btn btn-sm btn-primary">Voir tout</a>
             </div>
             <div class="card-body">
               <div class="list-group">
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Consultation Fiscale</h6>
-                    <small class="text-muted">Dernière mise à jour: 15/03/2024</small>
+                {% if recent_requests %}
+                  {% for request in recent_requests %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <h6 class="mb-1">{{ request.title }}</h6>
+                        <small class="text-muted">Dernière mise à jour: {{ request.updated_at|date:"d/m/Y" }}</small>
+                      </div>
+                      <span class="status-badge status-{{ request.status }}">
+                        {% if request.status == 'new' %}Nouveau
+                        {% elif request.status == 'in_progress' %}En Cours
+                        {% elif request.status == 'pending_info' %}En Attente
+                        {% elif request.status == 'completed' %}Terminé
+                        {% elif request.status == 'cancelled' %}Annulé
+                        {% elif request.status == 'rejected' %}Rejeté
+                        {% else %}{{ request.get_status_display }}
+                        {% endif %}
+                      </span>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="list-group-item text-center">
+                    <p class="mb-0">Aucune demande de service active.</p>
+                    <button class="btn btn-sm btn-primary mt-2" type="button" id="createRequestBtn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-reference="#newRequestDropdown">
+                      Créer une nouvelle demande
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="createRequestBtn">
+                      <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('admin')">Services Administratifs</a></li>
+                      <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('tourisme')">Tourisme</a></li>
+                      <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('immobilier')">Immobilier</a></li>
+                      <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('fiscal')">Fiscalité</a></li>
+                      <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('investissement')">Investissement</a></li>
+                    </ul>
                   </div>
-                  <span class="status-badge status-active">Actif</span>
-                </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Suivi Immobilier</h6>
-                    <small class="text-muted">Dernière mise à jour: 14/03/2024</small>
-                  </div>
-                  <span class="status-badge status-active">Actif</span>
-                </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Assistance Administrative</h6>
-                    <small class="text-muted">Dernière mise à jour: 13/03/2024</small>
-                  </div>
-                  <span class="status-badge status-active">Actif</span>
-                </div>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -320,36 +617,32 @@
           <div class="dashboard-card">
             <div class="card-header">
               <h5 class="mb-0">Documents Récents</h5>
-              <a href="#" class="btn btn-sm btn-primary">Voir tout</a>
+              <a href="{% url 'client_documents' %}" class="btn btn-sm btn-primary">Voir tout</a>
             </div>
             <div class="card-body">
-              <div class="document-item">
-                <i class="bi bi-file-pdf document-icon"></i>
-                <div>
-                  <h6 class="mb-1">Passeport</h6>
-                  <small class="text-muted">15/03/2024</small>
+              {% if recent_documents %}
+                {% for doc in recent_documents %}
+                  <div class="document-item">
+                    <i class="bi bi-file-{% if doc.mime_type == 'application/pdf' %}pdf{% elif doc.mime_type and 'image' in doc.mime_type %}image{% else %}earmark-text{% endif %} document-icon"></i>
+                    <div>
+                      <h6 class="mb-1">{{ doc.name }}</h6>
+                      <small class="text-muted">{{ doc.upload_date|date:"d/m/Y" }}</small>
+                    </div>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="text-center py-3">
+                  <i class="bi bi-file-earmark-x text-muted" style="font-size: 2rem;"></i>
+                  <p class="mt-2">Aucun document récent</p>
+                  <a href="{% url 'requests:upload_document' %}" class="btn btn-sm btn-primary">Ajouter un document</a>
                 </div>
-              </div>
-              <div class="document-item">
-                <i class="bi bi-file-pdf document-icon"></i>
-                <div>
-                  <h6 class="mb-1">Contrat Immobilier</h6>
-                  <small class="text-muted">10/03/2024</small>
-                </div>
-              </div>
-              <div class="document-item">
-                <i class="bi bi-file-pdf document-icon"></i>
-                <div>
-                  <h6 class="mb-1">Déclaration Fiscale</h6>
-                  <small class="text-muted">05/03/2024</small>
-                </div>
-              </div>
+              {% endif %}
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Calendar and Resources -->
+      <!-- Calendar and Appointments -->
       <div class="row">
         <div class="col-md-8">
           <div class="dashboard-card">
@@ -364,31 +657,38 @@
         <div class="col-md-4">
           <div class="dashboard-card">
             <div class="card-header">
-              <h5 class="mb-0">Prochaines Échéances</h5>
+              <h5 class="mb-0">Prochains Rendez-vous</h5>
+              <a href="{% url 'client_rendezvous' %}" class="btn btn-sm btn-primary">Voir tout</a>
             </div>
             <div class="card-body">
               <div class="list-group">
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Rendez-vous Fiscal</h6>
-                    <small class="text-muted">Dans 2 jours</small>
+                {% if upcoming_appointments %}
+                  {% for appointment in upcoming_appointments %}
+                    <div class="list-group-item">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">{{ appointment.consultation_type|title }}</h6>
+                        <small class="text-muted">{{ appointment.date_time|date:"d/m/Y H:i" }}</small>
+                      </div>
+                      <p class="mb-1">
+                        {% if appointment.service_request %}
+                          {{ appointment.service_request.title }}
+                        {% endif %}
+                        avec 
+                        {% if appointment.expert %}
+                          {{ appointment.expert.name }} {{ appointment.expert.first_name }}
+                        {% else %}
+                          un expert
+                        {% endif %}
+                      </p>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="text-center py-3">
+                    <i class="bi bi-calendar-x text-muted" style="font-size: 2rem;"></i>
+                    <p class="mt-2">Aucun rendez-vous à venir</p>
+                    <a href="{% url 'client_rendezvous' %}" class="btn btn-sm btn-primary">Planifier un rendez-vous</a>
                   </div>
-                  <p class="mb-1">Consultation avec M. Ahmed</p>
-                </div>
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Renouvellement Visa</h6>
-                    <small class="text-muted">Dans 5 jours</small>
-                  </div>
-                  <p class="mb-1">Documents à préparer</p>
-                </div>
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Paiement Taxe</h6>
-                    <small class="text-muted">Dans 7 jours</small>
-                  </div>
-                  <p class="mb-1">Échéance fiscale</p>
-                </div>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -402,11 +702,17 @@
   <script src="../../static/vendor/aos/aos.js"></script>
   <script src="../../static/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="../../static/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js"></script>
 
   <!-- Main JS File -->
   <script src="../../static/js/main.js"></script>
+  <script src="../../static/js/calendar-init.js"></script>
+
+  <!-- Calendar CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.css">
 
   <!-- Dashboard specific JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js"></script>
   <script>
     // Initialize AOS
     AOS.init({
@@ -420,9 +726,102 @@
     document.querySelector('.btn-outline-primary').addEventListener('click', function() {
       document.querySelector('.sidebar').classList.toggle('active');
     });
-
-    // Update client name
-    document.getElementById('clientName').textContent = 'Mohammed Abd';
+    
+    // Function to redirect to the appropriate service request page
+    function redirectToCreateRequest(serviceType) {
+      // Map service types to URLs with correct paths including the /requests/ prefix
+      const serviceUrls = {
+        'admin': '/requests/client/create/administrative/',
+        'administrative': '/requests/client/create/administrative/',
+        'tourisme': '/requests/client/create/tourism/',
+        'tourism': '/requests/client/create/tourism/',
+        'immobilier': '/requests/client/create/real_estate/',
+        'real_estate': '/requests/client/create/real_estate/',
+        'fiscal': '/requests/client/create/fiscal/',
+        'tax': '/requests/client/create/fiscal/',
+        'investissement': '/requests/client/create/investment/',
+        'investment': '/requests/client/create/investment/',
+        'service': '/requests/client/create/administrative/'
+      };
+      
+      // Use the mapped URL or default to the base URL
+      const redirectUrl = serviceUrls[serviceType] || '/requests/client/create/administrative/';
+      window.location.href = redirectUrl;
+    }
+    
+    // Toggle notifications dropdown
+    function toggleNotifications() {
+      const dropdown = document.getElementById('notificationDropdown');
+      dropdown.classList.toggle('show');
+      
+      // Mark notifications as read when dropdown is opened
+      if (dropdown.classList.contains('show')) {
+        // In a real implementation, this would use an AJAX call
+        const badge = document.querySelector('.notification-badge');
+        if (badge) {
+          badge.textContent = "0";
+        }
+      }
+    }
+    
+    // Initialize calendar with appointments
+    document.addEventListener('DOMContentLoaded', function() {
+      const calendarEl = document.getElementById('calendar');
+      if (calendarEl) {
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          },
+          events: [
+            {% for appointment in upcoming_appointments %}
+            {
+              title: '{{ appointment.consultation_type|title }}',
+              start: '{{ appointment.date_time|date:"Y-m-d\TH:i:s" }}',
+              end: '{{ appointment.date_time|date:"Y-m-d\TH:i:s" }}',
+              url: '{% url "client_rendezvous" %}',
+              backgroundColor: '#1e3c72',
+              borderColor: '#1e3c72'
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ]
+        });
+        calendar.render();
+      }
+    });
+    
+    // Close notifications dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      const dropdown = document.getElementById('notificationDropdown');
+      const bell = document.querySelector('.notification-bell');
+      if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+    
+    // Close notification function
+    function closeNotification(id) {
+      const notification = document.getElementById('notification-' + id);
+      notification.style.animation = 'slideOut 0.5s ease-out';
+      setTimeout(() => {
+          notification.remove();
+      }, 500);
+    }
+    
+    // Auto close notifications after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+      const notifications = document.querySelectorAll('.notification');
+      notifications.forEach(notification => {
+          setTimeout(() => {
+              notification.style.animation = 'slideOut 0.5s ease-out';
+              setTimeout(() => {
+                  notification.remove();
+              }, 500);
+          }, 5000);
+      });
+    });
   </script>
 </body>
-</html> 
+</html>
