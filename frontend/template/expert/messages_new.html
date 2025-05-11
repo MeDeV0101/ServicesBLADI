@@ -1,0 +1,216 @@
+{% extends 'expert/base.html' %}
+
+{% block title %}Messages - MRE{% endblock %}
+
+{% block content %}
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Messagerie</h2>
+    <div class="d-flex">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#composeMessageModal">
+        <i class="bi bi-plus-lg me-2"></i>Nouveau message
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Conversations List -->
+    <div class="col-md-4 col-lg-3">
+      <div class="dashboard-card mb-4">
+        <div class="card-header">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Rechercher...">
+            <button class="btn btn-outline-primary" type="button">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="list-group list-group-flush">
+          {% if conversations %}
+            {% for conversation in conversations %}
+              <a href="#" class="list-group-item list-group-item-action p-3 {% if conversation.unread_count > 0 %}fw-bold{% endif %}" 
+                 data-conversation-id="{{ conversation.id }}" onclick="loadConversation({{ conversation.id }})">
+                <div class="d-flex w-100 justify-content-between mb-1">
+                  <h6 class="mb-0">{{ conversation.other_party.name }} {{ conversation.other_party.first_name }}</h6>
+                  <small class="text-muted">{{ conversation.last_message.timestamp|date:"H:i" }}</small>
+                </div>
+                <div class="d-flex w-100 justify-content-between">
+                  <small class="text-muted text-truncate" style="max-width: 70%;">
+                    {{ conversation.last_message.content|truncatechars:40 }}
+                  </small>
+                  {% if conversation.unread_count > 0 %}
+                    <span class="badge rounded-pill bg-primary">{{ conversation.unread_count }}</span>
+                  {% endif %}
+                </div>
+              </a>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-4">
+              <p class="text-muted mb-0">Aucune conversation</p>
+              <small>Commencez une nouvelle conversation</small>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Messages -->
+    <div class="col-md-8 col-lg-9">
+      <div class="dashboard-card mb-4">
+        <!-- Selected conversation header -->
+        <div class="card-header" id="conversation-header">
+          <div class="d-flex align-items-center">
+            <h5 class="mb-0" id="conversation-title">
+              {% if selected_conversation %}
+                {{ selected_conversation.other_party.name }} {{ selected_conversation.other_party.first_name }}
+              {% else %}
+                Sélectionnez une conversation
+              {% endif %}
+            </h5>
+          </div>
+        </div>
+        
+        <!-- Messages container -->
+        <div class="card-body p-0">
+          <div class="message-container p-3" id="messages-container">
+            {% if selected_conversation %}
+              {% for message in selected_conversation.messages %}
+                <div class="message mb-3 {% if message.sender == request.user %}message-sent{% else %}message-received{% endif %}">
+                  <div class="message-bubble">
+                    <p class="mb-0">{{ message.content }}</p>
+                  </div>
+                  <div class="message-info">
+                    <small class="text-muted">{{ message.timestamp|date:"d/m/Y H:i" }}</small>
+                    {% if message.sender == request.user and message.is_read %}
+                      <small class="ms-1"><i class="bi bi-check2-all"></i></small>
+                    {% elif message.sender == request.user %}
+                      <small class="ms-1"><i class="bi bi-check2"></i></small>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="text-center py-5">
+                <i class="bi bi-chat-text" style="font-size: 4rem; opacity: 0.2;"></i>
+                <p class="mt-3">Sélectionnez une conversation pour voir les messages</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        <!-- Message input -->
+        <div class="card-footer">
+          <form id="message-form" class="d-flex">
+            {% csrf_token %}
+            <input type="hidden" id="conversation-id" name="conversation_id" value="{{ selected_conversation.id|default:'' }}">
+            <input type="text" class="form-control me-2" id="message-input" placeholder="Tapez votre message..." 
+                   {% if not selected_conversation %}disabled{% endif %}>
+            <button class="btn btn-primary" type="submit" {% if not selected_conversation %}disabled{% endif %}>
+              <i class="bi bi-send"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compose Message Modal -->
+  <div class="modal fade" id="composeMessageModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Nouveau message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="compose-form" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="recipient" class="form-label">Destinataire</label>
+              <select class="form-select" id="recipient" name="recipient_id" required>
+                <option value="">Sélectionner un destinataire</option>
+                <optgroup label="Clients">
+                  {% for client in clients %}
+                    <option value="client_{{ client.id }}">{{ client.user.name }} {{ client.user.first_name }}</option>
+                  {% endfor %}
+                </optgroup>
+                <optgroup label="Personnel">
+                  {% for admin in admins %}
+                    <option value="admin_{{ admin.id }}">{{ admin.name }} {{ admin.first_name }} (Admin)</option>
+                  {% endfor %}
+                </optgroup>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="message-subject" class="form-label">Sujet</label>
+              <input type="text" class="form-control" id="message-subject" name="subject" required>
+            </div>
+            <div class="mb-3">
+              <label for="message-content" class="form-label">Message</label>
+              <textarea class="form-control" id="message-content" name="content" rows="5" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="message-attachment" class="form-label">Pièce jointe (optionnel)</label>
+              <input type="file" class="form-control" id="message-attachment" name="attachment">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" form="compose-form" class="btn btn-primary">Envoyer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+    .message-container {
+      height: 400px;
+      overflow-y: auto;
+    }
+    
+    .message {
+      display: flex;
+      flex-direction: column;
+      max-width: 70%;
+    }
+    
+    .message-sent {
+      align-self: flex-end;
+      align-items: flex-end;
+      margin-left: auto;
+    }
+    
+    .message-received {
+      align-self: flex-start;
+      align-items: flex-start;
+      margin-right: auto;
+    }
+    
+    .message-bubble {
+      padding: 10px 15px;
+      border-radius: 18px;
+      margin-bottom: 2px;
+    }
+    
+    .message-sent .message-bubble {
+      background-color: #dcf8c6;
+    }
+    
+    .message-received .message-bubble {
+      background-color: #f1f0f0;
+    }
+    
+    .message-info {
+      font-size: 0.75rem;
+    }
+  </style>
+  
+  <script>
+    // This script would be implemented in a proper JS file
+    function loadConversation(conversationId) {
+      // AJAX call to load conversation
+      console.log("Loading conversation: " + conversationId);
+    }
+  </script>
+{% endblock %}

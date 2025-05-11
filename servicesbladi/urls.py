@@ -21,6 +21,10 @@ from django.conf.urls.static import static
 from django.utils.translation import gettext_lazy as _
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LogoutView
+
+# Import message_views from requests app for direct URL mapping
+from requests.message_views import expert_check_messages
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -60,6 +64,9 @@ urlpatterns = [
     
     # Language change
     path('i18n/', include('django.conf.urls.i18n')),
+
+    # Add direct URL mapping for expert_check_messages
+    path('expert/messages/check/', expert_check_messages, name='expert_messages_check'),
 ]
 
 # Add static and media URLs in development

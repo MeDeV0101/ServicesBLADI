@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ressources - ServicesBLADI{% endblock %}
+{% block meta_description %}Ressources documentaires et informations utiles - ServicesBLADI{% endblock %}
+{% block meta_keywords %}ressources, documents, guides, ServicesBLADI{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <h1 class="mb-4">Ressources</h1>
+  
+  <!-- Filtres -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <form method="get" action="{% url 'resources:resource_list' %}">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Catégorie</label>
+            <select name="category" class="form-select">
+              <option value="">Toutes les catégories</option>
+              <option value="legal" {% if category == 'legal' %}selected{% endif %}>Légal</option>
+              <option value="administrative" {% if category == 'administrative' %}selected{% endif %}>Administratif</option>
+              <option value="fiscal" {% if category == 'fiscal' %}selected{% endif %}>Fiscal</option>
+              <option value="tourism" {% if category == 'tourism' %}selected{% endif %}>Tourisme</option>
+              <option value="real_estate" {% if category == 'real_estate' %}selected{% endif %}>Immobilier</option>
+              <option value="other" {% if category == 'other' %}selected{% endif %}>Autre</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Langue</label>
+            <select name="language" class="form-select">
+              <option value="">Toutes les langues</option>
+              <option value="fr" {% if current_language == 'fr' %}selected{% endif %}>Français</option>
+              <option value="en" {% if current_language == 'en' %}selected{% endif %}>Anglais</option>
+              <option value="ar" {% if current_language == 'ar' %}selected{% endif %}>Arabe</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">&nbsp;</label>
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-filter me-2"></i> Filtrer
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  {% if not resources %}
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle me-2"></i> Aucune ressource disponible pour les critères sélectionnés.
+    </div>
+  {% else %}
+    <!-- Ressources par catégorie -->
+    {% regroup resources by category as resource_categories %}
+    
+    {% for category in resource_categories %}
+      <div class="mb-5">
+        <h2 class="mb-3">
+          {% if category.grouper == 'legal' %}Documents Légaux
+          {% elif category.grouper == 'administrative' %}Documents Administratifs
+          {% elif category.grouper == 'fiscal' %}Documents Fiscaux
+          {% elif category.grouper == 'tourism' %}Tourisme
+          {% elif category.grouper == 'real_estate' %}Immobilier
+          {% else %}Autres Documents
+          {% endif %}
+        </h2>
+        
+        <div class="row">
+          {% for resource in category.list %}
+            <div class="col-md-4 mb-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title">{{ resource.title }}</h5>
+                  <p class="card-text text-muted">{{ resource.description|truncatechars:120 }}</p>
+                  
+                  <div class="mb-3">
+                    {% for lang in resource.available_languages.split %}
+                      <span class="badge bg-secondary me-1">{{ lang }}</span>
+                    {% endfor %}
+                    <span class="badge bg-info text-dark">
+                      <i class="bi bi-eye me-1"></i> {{ resource.view_count }}
+                    </span>
+                  </div>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                  <a href="{% url 'resources:resource_detail' resource.id %}" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-file-earmark-text me-1"></i> Voir les détails
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+{% endblock %} 

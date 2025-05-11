@@ -1,0 +1,216 @@
+{% extends 'expert/base.html' %}
+
+{% block title %}Gestion des Documents - MRE{% endblock %}
+
+{% block content %}
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestion des Documents</h2>
+    <div class="d-flex">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
+        <i class="bi bi-upload me-2"></i>Importer un document
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="dashboard-card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Type de document</label>
+          <select class="form-select">
+            <option value="">Tous les types</option>
+            <option value="identity">Pièce d'identité</option>
+            <option value="fiscal">Document fiscal</option>
+            <option value="real_estate">Document immobilier</option>
+            <option value="other">Autre</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Client</label>
+          <select class="form-select">
+            <option value="">Tous les clients</option>
+            {% for client in clients %}
+              <option value="{{ client.id }}">{{ client.user.name }} {{ client.user.first_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Rechercher</label>
+          <input type="text" class="form-control" placeholder="Nom du document...">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">&nbsp;</label>
+          <button class="btn btn-outline-primary w-100">Filtrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documents List -->
+  <div class="dashboard-card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Documents des clients</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Type</th>
+              <th>Client</th>
+              <th>Date d'ajout</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if client_documents %}
+              {% for document in client_documents %}
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-file-earmark-{% if document.file_type == 'pdf' %}pdf{% elif document.file_type == 'image' %}image{% else %}text{% endif %} me-2"></i>
+                      {{ document.name }}
+                    </div>
+                  </td>
+                  <td>{{ document.get_document_type_display }}</td>
+                  <td>{{ document.client.user.name }} {{ document.client.user.first_name }}</td>
+                  <td>{{ document.uploaded_at|date:"d/m/Y" }}</td>
+                  <td>
+                    <span class="badge bg-{% if document.status == 'verified' %}success{% elif document.status == 'pending' %}warning{% elif document.status == 'rejected' %}danger{% else %}secondary{% endif %}">
+                      {{ document.get_status_display }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <a href="{{ document.file.url }}" target="_blank" class="btn btn-sm btn-primary">
+                        <i class="bi bi-eye"></i>
+                      </a>
+                      <a href="{{ document.file.url }}" download class="btn btn-sm btn-success">
+                        <i class="bi bi-download"></i>
+                      </a>
+                      <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#shareDocumentModal">
+                        <i class="bi bi-share"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="6" class="text-center py-3">Aucun document disponible</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Documents -->
+  <div class="dashboard-card">
+    <div class="card-header">
+      <h5 class="mb-0">Mes documents</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Type</th>
+              <th>Date d'ajout</th>
+              <th>Taille</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if expert_documents %}
+              {% for document in expert_documents %}
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-file-earmark-{% if document.file_type == 'pdf' %}pdf{% elif document.file_type == 'image' %}image{% else %}text{% endif %} me-2"></i>
+                      {{ document.name }}
+                    </div>
+                  </td>
+                  <td>{{ document.get_document_type_display }}</td>
+                  <td>{{ document.uploaded_at|date:"d/m/Y" }}</td>
+                  <td>{{ document.get_file_size_display }}</td>
+                  <td>
+                    <div class="btn-group">
+                      <a href="{{ document.file.url }}" target="_blank" class="btn btn-sm btn-primary">
+                        <i class="bi bi-eye"></i>
+                      </a>
+                      <a href="{{ document.file.url }}" download class="btn btn-sm btn-success">
+                        <i class="bi bi-download"></i>
+                      </a>
+                      <button class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="5" class="text-center py-3">Aucun document personnel</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Document Modal -->
+  <div class="modal fade" id="uploadDocumentModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Importer un document</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="uploadDocumentForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="documentName" class="form-label">Nom du document</label>
+              <input type="text" class="form-control" id="documentName" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="documentType" class="form-label">Type de document</label>
+              <select class="form-select" id="documentType" name="document_type" required>
+                <option value="">Sélectionner un type</option>
+                <option value="identity">Pièce d'identité</option>
+                <option value="fiscal">Document fiscal</option>
+                <option value="real_estate">Document immobilier</option>
+                <option value="other">Autre</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="documentFile" class="form-label">Fichier</label>
+              <input type="file" class="form-control" id="documentFile" name="file" required>
+            </div>
+            <div class="mb-3">
+              <label for="clientSelect" class="form-label">Associer à un client (optionnel)</label>
+              <select class="form-select" id="clientSelect" name="client_id">
+                <option value="">Personnel</option>
+                {% for client in clients %}
+                  <option value="{{ client.id }}">{{ client.user.name }} {{ client.user.first_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" form="uploadDocumentForm" class="btn btn-primary">Importer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

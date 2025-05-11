@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import client_views
+from . import expert_views
 
 app_name = 'resources'
 
@@ -30,4 +31,10 @@ urlpatterns = [
     path('api/embassy/', views.api_embassy_list, name='api_embassy_list'),
     path('api/embassy/<str:country>/', views.api_embassy_country, name='api_embassy_country'),
     path('api/faq/', views.api_faq_list, name='api_faq_list'),
+    
+    # Expert resource views
+    path('add/', expert_views.add_resource, name='add_resource'),
+    path('edit/<int:resource_id>/', expert_views.edit_resource, name='edit_resource'),
+    path('delete/<int:resource_id>/', expert_views.delete_resource, name='delete_resource'),
+    path('expert/add/', expert_views.add_resource, name='expert_add_resource'),
 ]

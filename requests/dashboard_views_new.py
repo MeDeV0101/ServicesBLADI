@@ -312,3 +312,24 @@ def admin_dashboard_view(request):
         'user': request.user
     }
     return render(request, 'admin/dashboard.html', context)
+
+@login_required
+def dashboard_redirect_view(request):
+    """Redirect users to the appropriate dashboard based on their account type"""
+    print(f"Dashboard redirect for user: {request.user.email}, account_type={request.user.account_type}")
+    
+    # Check account type case-insensitively
+    account_type = request.user.account_type.lower()
+    
+    if account_type == 'admin':
+        print("Redirecting to admin dashboard")
+        return redirect('admin_dashboard')
+    elif account_type == 'expert':
+        print("Redirecting to expert dashboard")
+        return redirect('expert_dashboard')
+    elif account_type == 'client':
+        print("Redirecting to client dashboard")
+        return redirect('client_dashboard')
+    else:
+        print(f"Unknown account type: {account_type}, redirecting to home")
+        return redirect('home')

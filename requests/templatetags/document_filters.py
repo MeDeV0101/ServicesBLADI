@@ -12,6 +12,13 @@ def display_type(obj):
         return obj.get_type_display()
     return ""
 
+@register.filter(name='filter_by_category')
+def filter_by_category(resources, category):
+    """
+    Filter resources by their category
+    """
+    return resources.filter(category=category)
+
 @register.filter(name='document_type_name')
 def document_type_name(doc_type):
     """

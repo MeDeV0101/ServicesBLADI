@@ -22,6 +22,9 @@ urlpatterns = [
     # Expert views
     path('expert/', views.expert_requests_view, name='expert_requests'),
     path('expert/appointments/', views.expert_appointments_view, name='expert_appointments'),
+    path('expert/upload_document/', views.upload_document_view, name='expert_upload_document'),
+    path('expert/add_appointment/', views.create_appointment_view, name='expert_add_appointment'),
+    path('expert/add_resource/', views.upload_document_view, name='expert_add_resource'),
     
     # Document views
     path('documents/', views.documents_view, name='documents'),

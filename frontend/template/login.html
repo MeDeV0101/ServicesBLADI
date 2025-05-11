@@ -148,6 +148,7 @@
         <div class="{% if messages.tags == 'error' %}error-message{% else %}alert alert-success{% endif %}">
           {% for message in messages %}
             {{ message }}
+            {% if not forloop.last %}<br>{% endif %}
           {% endfor %}
         </div>
         {% endif %}

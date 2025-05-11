@@ -11,9 +11,10 @@ from services.views import (
     contact_view
 )
 
-from requests.dashboard_views import client_dashboard_view
-from requests.views import documents_view, client_requests_view, client_appointments_view
+from requests.dashboard_views import client_dashboard_view, expert_dashboard_view
+from requests.views import documents_view, client_requests_view, client_appointments_view, expert_requests_view, expert_appointments_view
 from requests.message_views import client_messages_view, expert_messages_view
+from requests.expert_views import expert_documents_view, expert_appointments_view as expert_appointments_view_new, expert_messages_view as expert_messages_view_new, expert_resources_view, expert_requests_view_new
 from resources.client_views import client_resources_view
 
 urlpatterns = [
@@ -44,12 +45,17 @@ urlpatterns = [
     path('client/ressources/', client_resources_view, name='client_ressources'),
     
     # Expert dashboard
-    path('expert/dashboard/', login_required(TemplateView.as_view(template_name='expert/dashboard.html')), name='expert_dashboard'),
-    path('expert/demandes/', login_required(TemplateView.as_view(template_name='expert/demandes.html')), name='expert_demandes'),
-    path('expert/documents/', login_required(TemplateView.as_view(template_name='expert/documents.html')), name='expert_documents'),
-    path('expert/rendezvous/', login_required(TemplateView.as_view(template_name='expert/rendezvous.html')), name='expert_rendezvous'),
+    path('expert/dashboard/', expert_dashboard_view, name='expert_dashboard'),
+    path('expert/demandes/', expert_requests_view, name='expert_demandes'),
+    path('expert/demandes-new/', expert_requests_view_new, name='expert_demandes_new'),
+    path('expert/documents/', documents_view, name='expert_documents'),
+    path('expert/documents-new/', expert_documents_view, name='expert_documents_new'),
+    path('expert/rendezvous/', expert_appointments_view, name='expert_rendezvous'),
+    path('expert/rendezvous-new/', expert_appointments_view_new, name='expert_rendezvous_new'),
     path('expert/messages/', expert_messages_view, name='expert_messages'),
+    path('expert/messages-new/', expert_messages_view_new, name='expert_messages_new'),
     path('expert/ressources/', login_required(TemplateView.as_view(template_name='expert/ressources.html')), name='expert_ressources'),
+    path('expert/ressources-new/', expert_resources_view, name='expert_ressources_new'),
     
     # Admin dashboard
     path('admin/dashboard/', login_required(TemplateView.as_view(template_name='admin/dashboard.html')), name='admin_dashboard'),

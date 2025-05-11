@@ -125,12 +125,14 @@ def create_request_by_type_view(request, service_type):
                 # If no service found in category, get any active service
                 service = Service.objects.filter(is_active=True).first()
                 if not service:
+                    # Store single error message in session
                     messages.error(request, _('No active services found. Please contact support.'))
                     return redirect('client_dashboard')
         except ServiceCategory.DoesNotExist:
             # If category not found, get any active service
             service = Service.objects.filter(is_active=True).first()
             if not service:
+                # Store single error message in session
                 messages.error(request, _('No active services found. Please contact support.'))
                 return redirect('client_dashboard')
         
@@ -531,7 +533,7 @@ def expert_requests_view(request):
     """Display requests assigned to expert"""
     try:
         expert = Expert.objects.get(user=request.user)
-        requests = ServiceRequest.objects.filter(assigned_expert=expert).order_by('-created_at')
+        requests = ServiceRequest.objects.filter(expert=expert.user).order_by('-created_at')
         
         context = {
             'requests': requests,
@@ -547,7 +549,7 @@ def expert_appointments_view(request):
     """Display expert's appointments"""
     try:
         expert = Expert.objects.get(user=request.user)
-        appointments = RendezVous.objects.filter(expert=expert).order_by('date_time')
+        appointments = RendezVous.objects.filter(expert=expert.user).order_by('date_time')
         
         context = {
             'appointments': appointments,
@@ -591,8 +593,8 @@ def documents_view(request):
             expert = Expert.objects.get(user=request.user)
             # Get documents from expert's assigned requests
             documents_query = documents_query.filter(
-                Q(service_request__expert=expert) |
-                Q(rendez_vous__expert=expert) |
+                Q(service_request__expert=expert.user) |
+                Q(rendez_vous__expert=expert.user) |
                 Q(uploaded_by=request.user)
             ).distinct()
             service_requests = []
@@ -731,8 +733,8 @@ def upload_document_view(request):
     elif request.user.account_type == 'expert':
         try:
             expert = Expert.objects.get(user=request.user)
-            demandes = ServiceRequest.objects.filter(assigned_expert=expert)
-            appointments = RendezVous.objects.filter(expert=expert)
+            demandes = ServiceRequest.objects.filter(expert=expert.user)
+            appointments = RendezVous.objects.filter(expert=expert.user)
         except Expert.DoesNotExist:
             demandes = []
             appointments = []
@@ -908,7 +910,7 @@ def send_message_view(request):
     elif request.user.account_type == 'expert':
         try:
             expert = Expert.objects.get(user=request.user)
-            demandes = ServiceRequest.objects.filter(assigned_expert=expert)
+            demandes = ServiceRequest.objects.filter(expert=expert.user)
         except Expert.DoesNotExist:
             demandes = []
     elif request.user.account_type == 'admin':
@@ -1203,7 +1205,7 @@ def api_expert_requests(request):
     """API endpoint for expert requests"""
     try:
         expert = Expert.objects.get(user=request.user)
-        requests_query = ServiceRequest.objects.filter(assigned_expert=expert).order_by('-created_at')
+        requests_query = ServiceRequest.objects.filter(expert=expert.user).order_by('-created_at')
         
         # Apply status filter if provided
         status = request.GET.get('status')

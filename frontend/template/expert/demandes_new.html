@@ -1,0 +1,131 @@
+{% extends 'expert/base.html' %}
+
+{% block title %}Demandes Assignées - MRE{% endblock %}
+
+{% block content %}
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Demandes Assignées</h2>
+    <div class="d-flex">
+      <div class="input-group me-2" style="max-width: 300px;">
+        <input type="text" class="form-control" placeholder="Rechercher une demande...">
+        <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          <i class="bi bi-funnel"></i> Filtrer
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">Toutes</a></li>
+          <li><a class="dropdown-item" href="#">Nouvelles demandes</a></li>
+          <li><a class="dropdown-item" href="#">En cours</a></li>
+          <li><a class="dropdown-item" href="#">En attente</a></li>
+          <li><a class="dropdown-item" href="#">Complétées</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Requests List -->
+  <div class="dashboard-card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Demandes Actives</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Client</th>
+              <th>Service</th>
+              <th>Date</th>
+              <th>Statut</th>
+              <th>Priorité</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if requests %}
+              {% for request in requests %}
+                <tr>
+                  <td>{{ request.id }}</td>
+                  <td>{{ request.client.user.name }} {{ request.client.user.first_name }}</td>
+                  <td>{{ request.service.title }}</td>
+                  <td>{{ request.created_at|date:"d/m/Y" }}</td>
+                  <td>
+                    <span class="status-badge
+                      {% if request.status == 'new' %}status-urgent
+                      {% elif request.status == 'in_progress' %}status-active
+                      {% elif request.status == 'pending_info' %}status-pending
+                      {% elif request.status == 'completed' %}status-completed
+                      {% else %}status-pending{% endif %}">
+                      {{ request.get_status_display|default:request.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge bg-{% if request.priority == 'high' %}danger{% elif request.priority == 'medium' %}warning{% else %}success{% endif %}">
+                      {{ request.get_priority_display|default:request.priority }}
+                    </span>
+                  </td>
+                  <td>
+                    <a href="#" class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></a>
+                    <a href="#" class="btn btn-sm btn-info"><i class="bi bi-chat-dots"></i></a>
+                    <a href="#" class="btn btn-sm btn-success"><i class="bi bi-calendar-check"></i></a>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="7" class="text-center py-3">Aucune demande assignée actuellement</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completed Requests -->
+  <div class="dashboard-card">
+    <div class="card-header">
+      <h5 class="mb-0">Demandes Complétées</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Client</th>
+              <th>Service</th>
+              <th>Date</th>
+              <th>Date de complétion</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if completed_requests %}
+              {% for request in completed_requests %}
+                <tr>
+                  <td>{{ request.id }}</td>
+                  <td>{{ request.client.user.name }} {{ request.client.user.first_name }}</td>
+                  <td>{{ request.service.title }}</td>
+                  <td>{{ request.created_at|date:"d/m/Y" }}</td>
+                  <td>{{ request.completed_at|date:"d/m/Y" }}</td>
+                  <td>
+                    <a href="#" class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></a>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="6" class="text-center py-3">Aucune demande complétée</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

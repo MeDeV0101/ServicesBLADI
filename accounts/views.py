@@ -15,6 +15,18 @@ from requests.models import Document, Message
 # Authentication views
 def custom_login_view(request):
     """Custom login view that handles both form and API requests"""
+    # Clear any existing service-related error messages
+    storage = messages.get_messages(request)
+    # Convert messages to a list to extract them
+    existing_messages = list(storage)
+    # Clear storage
+    storage.used = True
+
+    # Restore only authentication-related messages, discard service-related ones
+    for msg in existing_messages:
+        if 'No active services found' not in str(msg):
+            messages.add_message(request, msg.level, msg.message)
+    
     if request.method == 'POST':
         # Check if this is an API call
         if request.content_type == 'application/json':
@@ -27,10 +39,13 @@ def custom_login_view(request):
                 user = authenticate(request, email=email, password=password)
                 
                 if user is not None:
+                    print(f"API login successful for user: {user.email}, account_type: {user.account_type}")
                     login(request, user)
+                    redirect_url = request.GET.get('next', '/accounts/dashboard/')
+                    print(f"API login redirecting to: {redirect_url}")
                     return JsonResponse({
                         'success': True,
-                        'redirect': request.GET.get('next', '/accounts/dashboard/'),
+                        'redirect': redirect_url,
                         'user': {
                             'id': user.id,
                             'email': user.email,
@@ -140,11 +155,10 @@ def register_view(request):
             elif account_type == 'expert':
                 Expert.objects.create(
                     user=user,
-                    title=request.POST.get('title', ''),
                     specialty=request.POST.get('expertise', ''),
-                    bio=request.POST.get('bio', ''),
-                    experience_years=request.POST.get('experience', 0),
-                    languages=request.POST.get('languages', 'fr'),
+                    biography=request.POST.get('bio', ''),
+                    spoken_languages=request.POST.get('languages', 'fr') or 'fr',
+                    hourly_rate=0  # Default value
                 )
             
             # Create address if provided
@@ -176,12 +190,23 @@ def register_view(request):
 @login_required
 def dashboard_redirect_view(request):
     """Redirect users to the appropriate dashboard based on their account type"""
-    if request.user.account_type == 'admin':
+    print(f"Dashboard redirect for user: {request.user.email}, account_type={request.user.account_type}")
+    
+    # Check account type case-insensitively
+    account_type = request.user.account_type.lower()
+    
+    if account_type == 'admin':
+        print("Redirecting to admin dashboard")
         return redirect('admin_dashboard')
-    elif request.user.account_type == 'expert':
+    elif account_type == 'expert':
+        print("Redirecting to expert dashboard")
         return redirect('expert_dashboard')
-    else:  # client is the default
+    elif account_type == 'client':
+        print("Redirecting to client dashboard")
         return redirect('client_dashboard')
+    else:
+        print(f"Unknown account type: {account_type}, redirecting to home")
+        return redirect('home')
 
 # Profile views
 @login_required
@@ -465,11 +490,10 @@ def admin_create_user_view(request):
         elif user_type == 'EXPERT':
             Expert.objects.create(
                 user=user,
-                title=request.POST.get('title', ''),
                 specialty=request.POST.get('specialty', ''),
-                bio=request.POST.get('bio', ''),
-                experience_years=int(request.POST.get('experience_years', 0)),
-                languages=request.POST.get('languages', 'fr'),
+                biography=request.POST.get('bio', ''),
+                spoken_languages=request.POST.get('languages', 'fr') or 'fr',
+                hourly_rate=0  # Default value
             )
         
         # Create address if provided

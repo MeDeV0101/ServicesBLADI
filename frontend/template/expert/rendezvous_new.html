@@ -1,0 +1,246 @@
+{% extends 'expert/base.html' %}
+
+{% block title %}Rendez-vous - MRE{% endblock %}
+
+{% block content %}
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestion des Rendez-vous</h2>
+    <div class="d-flex">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createAppointmentModal">
+        <i class="bi bi-calendar-plus me-2"></i>Nouveau rendez-vous
+      </button>
+    </div>
+  </div>
+
+  <!-- Calendar and Appointments Container -->
+  <div class="row">
+    <!-- Calendar -->
+    <div class="col-lg-8">
+      <div class="dashboard-card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Calendrier</h5>
+        </div>
+        <div class="card-body">
+          <!-- Calendar will be rendered here by JavaScript -->
+          <div id="expert-calendar"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Upcoming Appointments -->
+    <div class="col-lg-4">
+      <div class="dashboard-card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Rendez-vous à venir</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% if upcoming_appointments %}
+              {% for appointment in upcoming_appointments %}
+                <div class="list-group-item p-3">
+                  <div class="d-flex w-100 justify-content-between mb-1">
+                    <h6 class="mb-0">{{ appointment.client.user.name }} {{ appointment.client.user.first_name }}</h6>
+                    <small class="text-muted">{{ appointment.start_time|date:"d/m/Y H:i" }}</small>
+                  </div>
+                  <p class="mb-1">{{ appointment.title }}</p>
+                  <small class="d-flex justify-content-between">
+                    <span>
+                      <i class="bi bi-clock me-1"></i>{{ appointment.duration }} minutes
+                    </span>
+                    <span class="badge bg-{% if appointment.status == 'scheduled' %}primary{% elif appointment.status == 'confirmed' %}success{% elif appointment.status == 'canceled' %}danger{% else %}warning{% endif %}">
+                      {{ appointment.get_status_display }}
+                    </span>
+                  </small>
+                  <div class="mt-2">
+                    <a href="#" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#viewAppointmentModal" 
+                       data-appointment-id="{{ appointment.id }}">
+                      <i class="bi bi-eye"></i> Détails
+                    </a>
+                    {% if appointment.status != 'canceled' %}
+                      <a href="#" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelAppointmentModal" 
+                         data-appointment-id="{{ appointment.id }}">
+                        <i class="bi bi-x-circle"></i> Annuler
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="text-center py-4">
+                <p class="mb-0">Aucun rendez-vous à venir</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointment Requests -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h5 class="mb-0">Demandes de rendez-vous</h5>
+          {% if appointment_requests_count > 0 %}
+            <span class="badge bg-danger">{{ appointment_requests_count }}</span>
+          {% endif %}
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% if appointment_requests %}
+              {% for request in appointment_requests %}
+                <div class="list-group-item p-3">
+                  <div class="d-flex w-100 justify-content-between mb-1">
+                    <h6 class="mb-0">{{ request.client.user.name }} {{ request.client.user.first_name }}</h6>
+                    <small class="text-muted">{{ request.created_at|date:"d/m/Y" }}</small>
+                  </div>
+                  <p class="mb-1">{{ request.subject }}</p>
+                  <p class="mb-1 small text-muted">{{ request.message|truncatechars:100 }}</p>
+                  <div class="mt-2">
+                    <a href="#" class="btn btn-sm btn-success me-1" data-bs-toggle="modal" 
+                       data-bs-target="#scheduleAppointmentModal" data-request-id="{{ request.id }}">
+                      <i class="bi bi-calendar-check"></i> Programmer
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" 
+                       data-bs-target="#viewRequestModal" data-request-id="{{ request.id }}">
+                      <i class="bi bi-eye"></i> Détails
+                    </a>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="text-center py-4">
+                <p class="mb-0">Aucune demande de rendez-vous</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Appointments -->
+  <div class="dashboard-card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Historique des rendez-vous</h5>
+      <div>
+        <button class="btn btn-sm btn-outline-primary me-2 filter-btn" data-filter="all">Tous</button>
+        <button class="btn btn-sm btn-outline-primary me-2 filter-btn" data-filter="scheduled">Planifiés</button>
+        <button class="btn btn-sm btn-outline-primary me-2 filter-btn" data-filter="completed">Terminés</button>
+        <button class="btn btn-sm btn-outline-primary filter-btn" data-filter="canceled">Annulés</button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Titre</th>
+              <th>Date</th>
+              <th>Heure</th>
+              <th>Durée</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if all_appointments %}
+              {% for appointment in all_appointments %}
+                <tr class="appointment-row" data-status="{{ appointment.status }}">
+                  <td>{{ appointment.client.user.name }} {{ appointment.client.user.first_name }}</td>
+                  <td>{{ appointment.title }}</td>
+                  <td>{{ appointment.start_time|date:"d/m/Y" }}</td>
+                  <td>{{ appointment.start_time|date:"H:i" }}</td>
+                  <td>{{ appointment.duration }} minutes</td>
+                  <td>
+                    <span class="badge bg-{% if appointment.status == 'scheduled' %}primary{% elif appointment.status == 'confirmed' %}success{% elif appointment.status == 'completed' %}info{% elif appointment.status == 'canceled' %}danger{% else %}warning{% endif %}">
+                      {{ appointment.get_status_display }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#viewAppointmentModal"
+                              data-appointment-id="{{ appointment.id }}">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                      {% if appointment.status == 'scheduled' or appointment.status == 'confirmed' %}
+                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#markCompletedModal"
+                                data-appointment-id="{{ appointment.id }}">
+                          <i class="bi bi-check-lg"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#cancelAppointmentModal"
+                                data-appointment-id="{{ appointment.id }}">
+                          <i class="bi bi-x-lg"></i>
+                        </button>
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="7" class="text-center py-3">Aucun rendez-vous trouvé</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <!-- Create Appointment Modal -->
+  <div class="modal fade" id="createAppointmentModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Créer un rendez-vous</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="createAppointmentForm" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="clientSelect" class="form-label">Client</label>
+              <select class="form-select" id="clientSelect" name="client_id" required>
+                <option value="">Sélectionner un client</option>
+                {% for client in clients %}
+                  <option value="{{ client.id }}">{{ client.user.name }} {{ client.user.first_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="appointmentTitle" class="form-label">Titre</label>
+              <input type="text" class="form-control" id="appointmentTitle" name="title" required>
+            </div>
+            <div class="mb-3">
+              <label for="appointmentDate" class="form-label">Date</label>
+              <input type="date" class="form-control" id="appointmentDate" name="date" required>
+            </div>
+            <div class="mb-3">
+              <label for="appointmentTime" class="form-label">Heure</label>
+              <input type="time" class="form-control" id="appointmentTime" name="time" required>
+            </div>
+            <div class="mb-3">
+              <label for="appointmentDuration" class="form-label">Durée (minutes)</label>
+              <input type="number" class="form-control" id="appointmentDuration" name="duration" value="60" min="15" step="15" required>
+            </div>
+            <div class="mb-3">
+              <label for="appointmentNotes" class="form-label">Notes</label>
+              <textarea class="form-control" id="appointmentNotes" name="notes" rows="3"></textarea>
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="sendNotification" name="send_notification" checked>
+              <label class="form-check-label" for="sendNotification">
+                Envoyer une notification au client
+              </label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" form="createAppointmentForm" class="btn btn-primary">Créer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

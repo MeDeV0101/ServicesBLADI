@@ -59,9 +59,9 @@
             <li class="dropdown">
               <a href="#"><span>{{ user.first_name|default:user.email }}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
               <ul>
-                {% if user.user_type == 'admin' %}
+                {% if user.account_type == 'admin' %}
                   <li><a href="{% url 'admin_dashboard' %}">Tableau de bord</a></li>
-                {% elif user.user_type == 'expert' %}
+                {% elif user.account_type == 'expert' %}
                   <li><a href="{% url 'expert_dashboard' %}">Tableau de bord</a></li>
                 {% else %}
                   <li><a href="{% url 'client_dashboard' %}">Tableau de bord</a></li>
