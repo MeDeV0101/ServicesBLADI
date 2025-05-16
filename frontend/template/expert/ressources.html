@@ -24,39 +24,60 @@
       color: var(--primary-color);
     }
 
-  .resource-type {
+    .resource-type {
       padding: 0.25rem 0.75rem;
       border-radius: 15px;
       font-size: 0.8rem;
-    background-color: #e6f7ff;
-    color: #1890ff;
+      background-color: #e6f7ff;
+      color: #1890ff;
     }
 
-  .category-badge {
+    .category-badge {
       padding: 0.25rem 0.75rem;
       border-radius: 15px;
       font-size: 0.8rem;
-    margin-left: 0.5rem;
+      margin-left: 0.5rem;
     }
 
-  .category-guide {
+    .category-guide {
       background-color: #e3fcef;
       color: #00a854;
     }
 
-  .category-form {
+    .category-form {
       background-color: #fff7e6;
       color: #fa8c16;
     }
 
-  .category-template {
-    background-color: #f9f0ff;
-    color: #722ed1;
-  }
+    .category-template {
+      background-color: #f9f0ff;
+      color: #722ed1;
+    }
   
-  .category-procedure {
-    background-color: #e6f7ff;
-    color: #1890ff;
+    .category-procedure {
+      background-color: #e6f7ff;
+      color: #1890ff;
+    }
+    
+    /* Styles pour les boutons */
+    .resource-card .btn-group {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .resource-card .btn-outline-primary:hover {
+      background-color: #0d6efd;
+      color: white;
+    }
+    
+    .resource-card .btn-outline-success:hover {
+      background-color: #198754;
+      color: white;
+    }
+    
+    .resource-card .btn-outline-danger:hover {
+      background-color: #dc3545;
+      color: white;
     }
   </style>
 {% endblock %}
@@ -131,9 +152,19 @@
           <p class="text-muted mb-3">{{ resource.description|truncatechars:100 }}</p>
           <div class="d-flex justify-content-between align-items-center">
             <small class="text-muted">Mis à jour: {{ resource.updated_at|date:"d/m/Y" }}</small>
-            <a href="{{ resource.file.url }}" class="btn btn-sm btn-primary" {% if resource.file %} download {% endif %}>
-              <i class="bi bi-download me-1"></i> Télécharger
-            </a>
+            <div class="btn-group">
+              <a href="{% url 'resources:edit_resource' resource.id %}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-pencil"></i> Modifier
+              </a>
+              {% if resource.files.first %}
+              <a href="{{ resource.files.first.file.url }}" class="btn btn-outline-success btn-sm" download>
+                <i class="bi bi-download"></i> Télécharger
+              </a>
+              {% endif %}
+              <a href="{% url 'resources:delete_resource' resource.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette ressource?');">
+                <i class="bi bi-trash"></i> Supprimer
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -172,9 +203,19 @@
           <p class="text-muted mb-3">{{ resource.description|truncatechars:100 }}</p>
           <div class="d-flex justify-content-between align-items-center">
             <small class="text-muted">Mis à jour: {{ resource.updated_at|date:"d/m/Y" }}</small>
-            <a href="{{ resource.file.url }}" class="btn btn-sm btn-primary" {% if resource.file %} download {% endif %}>
-              <i class="bi bi-download me-1"></i> Télécharger
-            </a>
+            <div class="btn-group">
+              <a href="{% url 'resources:edit_resource' resource.id %}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-pencil"></i> Modifier
+              </a>
+              {% if resource.files.first %}
+              <a href="{{ resource.files.first.file.url }}" class="btn btn-outline-success btn-sm" download>
+                <i class="bi bi-download"></i> Télécharger
+              </a>
+              {% endif %}
+              <a href="{% url 'resources:delete_resource' resource.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette ressource?');">
+                <i class="bi bi-trash"></i> Supprimer
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -190,7 +231,7 @@
 
 <!-- Modal Ajout Ressource -->
 <div class="modal fade" id="addResourceModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Ajouter une ressource</h5>
@@ -199,35 +240,72 @@
       <div class="modal-body">
         <form method="post" action="{% url 'resources:expert_add_resource' %}" enctype="multipart/form-data">
           {% csrf_token %}
+          
           <div class="mb-3">
-            <label class="form-label">Titre</label>
+            <label class="form-label">Titre <span class="text-danger">*</span></label>
             <input type="text" class="form-control" name="title" required>
           </div>
+          
           <div class="mb-3">
-            <label class="form-label">Catégorie</label>
+            <label class="form-label">Catégorie <span class="text-danger">*</span></label>
             <select class="form-select" name="category" required>
+              <option value="">Sélectionner une catégorie</option>
               <option value="guide">Guide</option>
               <option value="form">Formulaire</option>
-              <option value="template">Modèle de document</option>
+              <option value="documentation">Documentation</option>
               <option value="procedure">Procédure</option>
+              <option value="video">Vidéo</option>
+              <option value="tool">Outil</option>
+              <option value="other">Autre</option>
             </select>
           </div>
+          
           <div class="mb-3">
-            <label class="form-label">Description</label>
+            <label class="form-label">Description <span class="text-danger">*</span></label>
             <textarea class="form-control" name="description" rows="3" required></textarea>
           </div>
+          
           <div class="mb-3">
-            <label class="form-label">Fichier</label>
-            <input type="file" class="form-control" name="file">
+            <label class="form-label">Langues disponibles</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="languages" value="fr" id="lang_fr" checked>
+              <label class="form-check-label" for="lang_fr">Français</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="languages" value="en" id="lang_en">
+              <label class="form-check-label" for="lang_en">English</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="languages" value="ar" id="lang_ar">
+              <label class="form-check-label" for="lang_ar">العربية</label>
+            </div>
           </div>
+          
           <div class="mb-3">
-            <label class="form-label">URL externe (optionnel)</label>
-            <input type="url" class="form-control" name="external_url" placeholder="https://...">
-            <small class="text-muted">Utilisez soit un fichier soit une URL externe</small>
+            <label class="form-label">Fichiers</label>
+            <input type="file" class="form-control" name="files" multiple>
+            <small class="text-muted">Vous pouvez sélectionner plusieurs fichiers</small>
           </div>
+          
+          <div id="links-container" class="mb-3">
+            <label class="form-label">Liens externes</label>
+            <div class="input-group mb-2">
+              <input type="text" class="form-control" name="links" placeholder="URL du lien">
+              <input type="text" class="form-control" name="link_titles" placeholder="Titre du lien">
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-primary mt-1" id="addLinkBtn">
+              <i class="bi bi-plus-circle me-1"></i> Ajouter un autre lien
+            </button>
+          </div>
+          
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="is_active" name="is_active" checked>
+            <label class="form-check-label" for="is_active">Ressource active (visible pour les utilisateurs)</label>
+          </div>
+          
           <div class="text-end">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <button type="submit" class="btn btn-primary">Ajouter</button>
+            <button type="submit" class="btn btn-primary">Ajouter la ressource</button>
           </div>
         </form>
       </div>
@@ -239,7 +317,120 @@
 {% block extra_scripts %}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Resource filtering logic can be added here
+    // Gestion du formulaire avec AJAX
+    const resourceForm = document.querySelector('#addResourceModal form');
+    if (resourceForm) {
+      resourceForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        // Afficher un indicateur de chargement
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Traitement...';
+        submitBtn.disabled = true;
+        
+        fetch('/resources/expert/add/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Afficher les données complètes pour déboguer
+          console.log("Réponse du serveur:", data);
+          
+          // Restaurer le bouton
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          
+          if (data.success) {
+            // Fermer le modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addResourceModal'));
+            modal.hide();
+            
+            // Afficher un message de succès
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show';
+            alertDiv.innerHTML = `
+              <strong>Succès!</strong> ${data.message}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.d-flex.justify-content-between.align-items-center.mb-4').after(alertDiv);
+            
+            // Rafraîchir la page après 3 secondes au lieu de 1
+            setTimeout(() => {
+              console.log("Rechargement de la page après ajout réussi...");
+              window.location.reload();
+            }, 3000);
+          } else {
+            // Afficher le message d'erreur
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-danger';
+            errorDiv.textContent = data.error || 'Une erreur est survenue lors de l\'ajout de la ressource.';
+            resourceForm.prepend(errorDiv);
+          }
+        })
+        .catch(error => {
+          // Restaurer le bouton
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          
+          // Afficher un message d'erreur général
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'alert alert-danger';
+          errorDiv.textContent = 'Erreur de connexion au serveur. Veuillez réessayer.';
+          resourceForm.prepend(errorDiv);
+          console.error('Error:', error);
+        });
+      });
+    }
+  
+    // Ajout dynamique de liens
+    const linksContainer = document.getElementById('links-container');
+    const addLinkBtn = document.getElementById('addLinkBtn');
+    
+    if (addLinkBtn) {
+      addLinkBtn.addEventListener('click', function() {
+        const linkGroup = document.createElement('div');
+        linkGroup.className = 'input-group mb-2';
+        linkGroup.innerHTML = `
+          <input type="text" class="form-control" name="links" placeholder="URL du lien">
+          <input type="text" class="form-control" name="link_titles" placeholder="Titre du lien">
+          <button type="button" class="btn btn-outline-danger remove-link">
+            <i class="bi bi-dash-circle"></i>
+          </button>
+        `;
+        
+        // Insérer avant le bouton d'ajout
+        linksContainer.insertBefore(linkGroup, addLinkBtn.parentElement);
+        
+        // Ajouter l'événement de suppression
+        const removeBtn = linkGroup.querySelector('.remove-link');
+        removeBtn.addEventListener('click', function() {
+          linkGroup.remove();
+        });
+      });
+    }
+    
+    // Filtrage des ressources
+    const categoryFilter = document.getElementById('category-filter');
+    if (categoryFilter) {
+      categoryFilter.addEventListener('change', function() {
+        const category = this.value;
+        document.querySelectorAll('.resource-card').forEach(function(card) {
+          const cardCategory = card.querySelector('.category-badge').textContent.trim().toLowerCase();
+          if (!category || cardCategory.includes(category.toLowerCase())) {
+            card.closest('.col-md-4').style.display = 'block';
+          } else {
+            card.closest('.col-md-4').style.display = 'none';
+          }
+        });
+      });
+    }
   });
 </script>
 {% endblock %} 

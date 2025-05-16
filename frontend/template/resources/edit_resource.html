@@ -1,0 +1,182 @@
+{% extends 'expert/base.html' %}
+{% load static %}
+
+{% block title %}Modifier une ressource - MRE{% endblock %}
+{% block meta_description %}Modifier une ressource existante{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'expert_ressources' %}">Ressources</a></li>
+          <li class="breadcrumb-item active">Modifier une ressource</li>
+        </ol>
+      </nav>
+      
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Modifier la ressource: {{ resource.title }}</h5>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Messages d'erreur ou de succès -->
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+            
+            <div class="mb-3">
+              <label class="form-label">Titre <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="title" value="{{ resource.title }}" required>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Catégorie <span class="text-danger">*</span></label>
+              <select class="form-select" name="category" required>
+                <option value="">Sélectionner une catégorie</option>
+                {% for code, name in resource_categories %}
+                  <option value="{{ code }}" {% if resource.category == code %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Description <span class="text-danger">*</span></label>
+              <textarea class="form-control" name="description" rows="3" required>{{ resource.description }}</textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Langues disponibles</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="languages" value="fr" id="lang_fr" {% if 'fr' in available_languages %}checked{% endif %}>
+                <label class="form-check-label" for="lang_fr">Français</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="languages" value="en" id="lang_en" {% if 'en' in available_languages %}checked{% endif %}>
+                <label class="form-check-label" for="lang_en">English</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="languages" value="ar" id="lang_ar" {% if 'ar' in available_languages %}checked{% endif %}>
+                <label class="form-check-label" for="lang_ar">العربية</label>
+              </div>
+            </div>
+            
+            <!-- Fichiers existants -->
+            {% if files %}
+              <div class="mb-3">
+                <label class="form-label">Fichiers existants</label>
+                <div class="list-group">
+                  {% for file in files %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                      <a href="{{ file.file.url }}" target="_blank" class="text-decoration-none">
+                        <i class="bi bi-file-earmark me-2"></i>{{ file.file.name|slice:"16:" }}
+                      </a>
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="delete_file_{{ file.id }}" name="delete_file_{{ file.id }}">
+                        <label class="form-check-label text-danger" for="delete_file_{{ file.id }}">Supprimer</label>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+            
+            <div class="mb-3">
+              <label class="form-label">Ajouter de nouveaux fichiers</label>
+              <input type="file" class="form-control" name="files" multiple>
+              <small class="text-muted">Vous pouvez sélectionner plusieurs fichiers</small>
+            </div>
+            
+            <!-- Liens existants -->
+            {% if links %}
+              <div class="mb-3">
+                <label class="form-label">Liens existants</label>
+                <div class="list-group">
+                  {% for link in links %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                      <div class="flex-grow-1">
+                        <input type="text" class="form-control mb-1" name="link_url_{{ link.id }}" value="{{ link.url }}" placeholder="URL">
+                        <input type="text" class="form-control" name="link_title_{{ link.id }}" value="{{ link.title }}" placeholder="Titre">
+                        <input type="hidden" name="edit_link_{{ link.id }}" value="1">
+                      </div>
+                      <div class="form-check form-switch ms-3">
+                        <input class="form-check-input" type="checkbox" id="delete_link_{{ link.id }}" name="delete_link_{{ link.id }}">
+                        <label class="form-check-label text-danger" for="delete_link_{{ link.id }}">Supprimer</label>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+            
+            <div id="links-container" class="mb-3">
+              <label class="form-label">Ajouter de nouveaux liens</label>
+              <div class="input-group mb-2">
+                <input type="text" class="form-control" name="new_links" placeholder="URL du lien">
+                <input type="text" class="form-control" name="new_link_titles" placeholder="Titre du lien">
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-primary mt-1" id="addLinkBtn">
+                <i class="bi bi-plus-circle me-1"></i> Ajouter un autre lien
+              </button>
+            </div>
+            
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="is_active" name="is_active" {% if resource.is_active %}checked{% endif %}>
+              <label class="form-check-label" for="is_active">Ressource active (visible pour les utilisateurs)</label>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'expert_ressources' %}" class="btn btn-secondary">Annuler</a>
+              <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Gestion du formulaire avec AJAX
+    const resourceForm = document.querySelector('form');
+    
+    // Ajout dynamique de liens
+    const linksContainer = document.getElementById('links-container');
+    const addLinkBtn = document.getElementById('addLinkBtn');
+    
+    if (addLinkBtn) {
+      addLinkBtn.addEventListener('click', function() {
+        const linkGroup = document.createElement('div');
+        linkGroup.className = 'input-group mb-2';
+        linkGroup.innerHTML = `
+          <input type="text" class="form-control" name="new_links" placeholder="URL du lien">
+          <input type="text" class="form-control" name="new_link_titles" placeholder="Titre du lien">
+          <button type="button" class="btn btn-outline-danger remove-link">
+            <i class="bi bi-dash-circle"></i>
+          </button>
+        `;
+        
+        // Insérer avant le bouton d'ajout
+        linksContainer.insertBefore(linkGroup, addLinkBtn.parentElement);
+        
+        // Ajouter l'événement de suppression
+        const removeBtn = linkGroup.querySelector('.remove-link');
+        removeBtn.addEventListener('click', function() {
+          linkGroup.remove();
+        });
+      });
+    }
+  });
+</script>
+{% endblock %} 
