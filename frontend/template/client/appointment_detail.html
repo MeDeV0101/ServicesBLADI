@@ -1,14 +1,740 @@
 {% extends 'client/base.html' %}
 
-{% block title %}Détails du rendez-vous - MRE{% endblock %}
+{% block title %}Détails du Rendez-vous - MRE{% endblock %}
 {% block meta_description %}Détails du rendez-vous client MRE{% endblock %}
-{% block meta_keywords %}MRE, rendez-vous, services, détail{% endblock %}
+{% block meta_keywords %}MRE, rendez-vous, détails{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2>Détails du Rendez-vous</h2>
+<style>
+  /* Définition des variables si elles ne sont pas disponibles */
+  :root {
+    --primary-color: #1e3c72;
+    --secondary-color: #2a5298;
+    --accent-color: #4a6fa5;
+    --text-color: #2c3e50;
+    --light-bg: #f8f9fa;
+    --card-bg: #ffffff;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+  }
+
+  /* Design moderne et esthétique pour la page de détails de rendez-vous */
+  .appointment-detail-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+    padding: 2.5rem;
+    margin-bottom: 2.5rem;
+    border-top: 5px solid var(--primary-color, #1e3c72);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .appointment-detail-container:hover {
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+  }
+  
+  .appointment-detail-container::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(30, 60, 114, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    z-index: 0;
+  }
+  
+  .appointment-detail-container::after {
+    content: "";
+    position: absolute;
+    bottom: -50px;
+    left: -50px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(42, 82, 152, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    z-index: 0;
+  }
+  
+  .appointment-title {
+    color: var(--primary-color, #1e3c72);
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 0.75rem;
+    transition: all 0.3s ease;
+  }
+  
+  .appointment-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color, #1e3c72), var(--secondary-color, #2a5298));
+    border-radius: 30px;
+    transition: width 0.3s ease;
+  }
+  
+  .appointment-detail-container:hover .appointment-title::after {
+    width: 80px;
+  }
+  
+  .appointment-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .appointment-status {
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+  
+  .appointment-status:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+  }
+  
+  .status-pending {
+    background: linear-gradient(135deg, #fff7e0 0%, #fff3cd 100%);
+    color: #856404;
+  }
+  
+  .status-confirmed {
+    background: linear-gradient(135deg, #e3f8e9 0%, #d4edda 100%);
+    color: #155724;
+  }
+  
+  .status-completed {
+    background: linear-gradient(135deg, #e0f2ff 0%, #cce5ff 100%);
+    color: #004085;
+  }
+  
+  .status-cancelled {
+    background: linear-gradient(135deg, #fbe7e9 0%, #f8d7da 100%);
+    color: #721c24;
+  }
+  
+  .appointment-info-section {
+    background-color: var(--card-bg, #ffffff);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+  }
+  
+  .appointment-info-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  .section-title {
+    color: var(--primary-color, #1e3c72);
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    position: relative;
+  }
+  
+  .section-title i {
+    opacity: 0.85;
+    transition: transform 0.3s ease;
+  }
+  
+  .appointment-info-section:hover .section-title i {
+    transform: scale(1.1);
+  }
+  
+  .info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .info-item {
+    display: flex;
+    margin-bottom: 1.2rem;
+    align-items: flex-start;
+    transition: transform 0.2s ease;
+  }
+  
+  .info-item:hover {
+    transform: translateX(3px);
+  }
+  
+  .info-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .info-label {
+    font-weight: 500;
+    color: #6c757d;
+    width: 140px;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  
+  .info-label i {
+    color: var(--primary-color, #1e3c72);
+    opacity: 0.85;
+    font-size: 0.95rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .info-item:hover .info-label i {
+    transform: scale(1.15);
+  }
+  
+  .info-value {
+    flex: 1;
+    font-weight: 500;
+    color: var(--text-color, #2c3e50);
+  }
+  
+  .info-card {
+    background-color: var(--light-bg, #f8f9fa);
+    border-left: 3px solid var(--primary-color, #1e3c72);
+    padding: 1.25rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    transition: all 0.3s ease;
+  }
+  
+  .info-card:hover {
+    background-color: #f0f4f8;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .action-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .action-btn:focus {
+    box-shadow: 0 0 0 0.25rem rgba(30, 60, 114, 0.25);
+  }
+  
+  .action-btn i {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .action-btn:hover i {
+    transform: translateX(2px);
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color, #1e3c72), var(--secondary-color, #2a5298));
+    border: none;
+    box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(30, 60, 114, 0.3);
+    transform: translateY(-3px);
+  }
+  
+  .btn-outline-primary {
+    border: 2px solid var(--primary-color, #1e3c72);
+    color: var(--primary-color, #1e3c72);
+    background: transparent;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+  
+  .btn-outline-primary::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    background-color: var(--primary-color, #1e3c72);
+    transition: height 0.3s ease;
+    z-index: -1;
+  }
+  
+  .btn-outline-primary:hover {
+    color: white;
+  }
+  
+  .btn-outline-primary:hover::after {
+    height: 100%;
+  }
+  
+  .btn-danger {
+    background: linear-gradient(135deg, #dc3545, #e05d6f);
+    border: none;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+  }
+  
+  .btn-danger:hover {
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+    transform: translateY(-3px);
+  }
+  
+  .date-badge {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #e0f0ff 0%, #e8f4ff 100%);
+    color: var(--primary-color, #1e3c72);
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    gap: 0.5rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .date-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(30, 60, 114, 0.1);
+  }
+  
+  .date-badge i {
+    transition: transform 0.3s ease;
+  }
+  
+  .date-badge:hover i {
+    transform: scale(1.2);
+  }
+  
+  .modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    border-bottom: none;
+    padding: 1.75rem;
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.05), rgba(42, 82, 152, 0.05));
+    border-radius: 16px 16px 0 0;
+  }
+  
+  .modal-body {
+    padding: 1.75rem;
+  }
+  
+  .modal-footer {
+    border-top: none;
+    padding: 1.5rem 1.75rem;
+    background: rgba(0, 0, 0, 0.01);
+  }
+  
+  .modal-title {
+    color: var(--primary-color, #1e3c72);
+    font-weight: 700;
+  }
+  
+  .alert-warning {
+    background-color: #fff8e6;
+    border-color: #ffe8b3;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+  }
+  
+  .note-section {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .note-section:hover {
+    background-color: #f0f4f8;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.03);
+  }
+  
+  .note-section p {
+    font-style: italic;
+    color: #6c757d;
+    margin-bottom: 0;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-15px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  .appointment-detail-container {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .appointment-info-section:nth-child(1) { animation: fadeIn 0.8s ease-out; }
+  .appointment-info-section:nth-child(2) { animation: fadeIn 1s ease-out; }
+  .appointment-info-section:nth-child(3) { animation: fadeIn 1.2s ease-out; }
+  
+  .info-item {
+    animation: slideIn 0.5s ease-out;
+    animation-fill-mode: both;
+  }
+  
+  .info-item:nth-child(1) { animation-delay: 0.1s; }
+  .info-item:nth-child(2) { animation-delay: 0.2s; }
+  .info-item:nth-child(3) { animation-delay: 0.3s; }
+  .info-item:nth-child(4) { animation-delay: 0.4s; }
+  .info-item:nth-child(5) { animation-delay: 0.5s; }
+  
+  /* Expert profile styling */
+  .expert-profile {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .expert-avatar {
+    width: 120px;
+    height: 120px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f0f4f9, #e6ecf5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.25rem;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .expert-avatar::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 50%;
+    border: 2px dashed rgba(30, 60, 114, 0.15);
+    animation: spin 20s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .expert-avatar i {
+    font-size: 3rem;
+    color: var(--primary-color, #1e3c72);
+    opacity: 0.85;
+    transition: transform 0.3s ease;
+  }
+  
+  .expert-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .expert-avatar:hover i {
+    transform: scale(1.1);
+  }
+  
+  .expert-name {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--text-color, #2c3e50);
+    margin-bottom: 0.5rem;
+  }
+  
+  .expert-specialty {
+    display: inline-block;
+    padding: 0.35rem 0.8rem;
+    background-color: rgba(30, 60, 114, 0.1);
+    color: var(--primary-color, #1e3c72);
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .appointment-detail-container {
+      padding: 1.5rem;
+    }
+    
+    .appointment-detail-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .info-item {
+      flex-direction: column;
+    }
+    
+    .info-label {
+      width: 100%;
+      margin-bottom: 0.25rem;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+      width: 100%;
+    }
+    
+    .action-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  /* Force application des styles de base */
+  .container-fluid {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+  
+  .col-lg-8 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+  
+  .col-lg-4 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+  
+  @media (min-width: 992px) {
+    .col-lg-8 {
+      flex: 0 0 66.666667%;
+      max-width: 66.666667%;
+    }
+    
+    .col-lg-4 {
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%;
+    }
+  }
+  
+  /* Accessibilité améliorée */
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  
+  /* Fix pour Bootstrap */
+  .breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    list-style: none;
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+  }
+  
+  .breadcrumb-item + .breadcrumb-item {
+    padding-left: 0.5rem;
+  }
+  
+  .breadcrumb-item + .breadcrumb-item::before {
+    display: inline-block;
+    padding-right: 0.5rem;
+    color: #6c757d;
+    content: "/";
+  }
+  
+  .breadcrumb-item.active {
+    color: #6c757d;
+  }
+
+  .btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  
+  .btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+  
+  /* Styles pour Bootstrap Icons si non disponibles */
+  .bi {
+    display: inline-block;
+    vertical-align: -0.125em;
+    width: 1em;
+    height: 1em;
+  }
+  
+  .bi-arrow-left::before {
+    content: "←";
+  }
+  
+  .bi-calendar-check::before {
+    content: "📅";
+  }
+  
+  .bi-clock::before {
+    content: "⏰";
+  }
+  
+  .bi-check-circle::before {
+    content: "✓";
+  }
+  
+  .bi-trophy::before {
+    content: "🏆";
+  }
+  
+  .bi-x-circle::before {
+    content: "✕";
+  }
+  
+  .bi-info-circle::before {
+    content: "ℹ";
+  }
+  
+  .bi-tag::before {
+    content: "🏷️";
+  }
+  
+  .bi-calendar-date::before {
+    content: "📆";
+  }
+  
+  .bi-hourglass-split::before {
+    content: "⌛";
+  }
+  
+  .bi-geo-alt::before {
+    content: "📍";
+  }
+  
+  .bi-camera-video::before {
+    content: "📹";
+  }
+  
+  .bi-box-arrow-up-right::before {
+    content: "↗";
+  }
+  
+  .bi-file-earmark-text::before {
+    content: "📄";
+  }
+  
+  .bi-file-earmark::before {
+    content: "📃";
+  }
+  
+  .bi-chat-text::before {
+    content: "💬";
+  }
+  
+  .bi-journal-text::before {
+    content: "📒";
+  }
+  
+  .bi-person::before {
+    content: "👤";
+  }
+  
+  .bi-person-badge::before {
+    content: "👨‍💼";
+  }
+  
+  .bi-person-x::before {
+    content: "🚷";
+  }
+  
+  .bi-envelope::before {
+    content: "✉";
+  }
+  
+  .bi-telephone::before {
+    content: "📞";
+  }
+  
+  .bi-gear::before {
+    content: "⚙";
+  }
+  
+  .bi-exclamation-triangle::before {
+    content: "⚠";
+  }
+</style>
+
+<div class="container-fluid py-4">
+  <div class="appointment-detail-container">
+    <div class="mb-4">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="{% url 'client_dashboard' %}">Tableau de bord</a></li>
@@ -17,199 +743,199 @@
         </ol>
       </nav>
     </div>
-    <a href="{% url 'custom_requests:client_appointments' %}" class="btn btn-outline-primary">
+    <a href="{% url 'custom_requests:client_appointments' %}" class="btn btn-outline-primary mb-4">
       <i class="bi bi-arrow-left me-2"></i>Retour aux rendez-vous
     </a>
-  </div>
-
-  <div class="card mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Informations générales</h5>
-      <span class="status-badge status-{{ appointment.status }}">
-        {% if appointment.status == 'scheduled' %}
-          En attente
-        {% elif appointment.status == 'confirmed' %}
-          Confirmé
-        {% elif appointment.status == 'completed' %}
-          Terminé
-        {% elif appointment.status == 'cancelled' %}
-          Annulé
-        {% else %}
-          {{ appointment.get_status_display }}
-        {% endif %}
-      </span>
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-6">
-          <h6 class="text-muted mb-2">Type de consultation</h6>
-          <p class="mb-3">
-            {% if appointment.consultation_type == 'in_person' %}
-              <i class="bi bi-person-square me-2"></i>Consultation en personne
-            {% elif appointment.consultation_type == 'video' %}
-              <i class="bi bi-camera-video me-2"></i>Consultation par vidéo
-            {% elif appointment.consultation_type == 'phone' %}
-              <i class="bi bi-telephone me-2"></i>Consultation téléphonique
-            {% else %}
-              {{ appointment.get_consultation_type_display }}
-            {% endif %}
-          </p>
-
-          <h6 class="text-muted mb-2">Date et heure</h6>
-          <p class="mb-3"><i class="bi bi-calendar-event me-2"></i>{{ appointment.date_time|date:"d F Y - H:i" }}</p>
-
-          <h6 class="text-muted mb-2">Durée</h6>
-          <p class="mb-3"><i class="bi bi-clock me-2"></i>{{ appointment.duration }} minutes</p>
-        </div>
-        <div class="col-md-6">
-          <h6 class="text-muted mb-2">Expert</h6>
-          <p class="mb-3"><i class="bi bi-person me-2"></i>{{ appointment.expert.name }} {{ appointment.expert.first_name }}</p>
-
-          {% if appointment.service %}
-            <h6 class="text-muted mb-2">Service</h6>
-            <p class="mb-3"><i class="bi bi-briefcase me-2"></i>{{ appointment.service.title }}</p>
-          {% endif %}
-
-          {% if appointment.service_request %}
-            <h6 class="text-muted mb-2">Demande associée</h6>
-            <p class="mb-3">
-              <i class="bi bi-file-earmark-text me-2"></i>
-              <a href="{% url 'custom_requests:request_detail' appointment.service_request.id %}">{{ appointment.service_request.title }}</a>
-            </p>
-          {% endif %}
+  
+    <div class="appointment-detail-header">
+      <div>
+        <h2 class="appointment-title">Rendez-vous {{ appointment.consultation_type|default:"vidéo" }}</h2>
+        <div class="date-badge">
+          <i class="bi bi-calendar-check"></i>
+          {{ appointment.date_time|date:"d/m/Y à H:i" }}
         </div>
       </div>
-
-      {% if appointment.notes %}
-        <div class="row mt-3">
-          <div class="col-12">
-            <h6 class="text-muted mb-2">Notes</h6>
-            <div class="p-3 bg-light rounded">
-              <p class="mb-0">{{ appointment.notes }}</p>
-            </div>
+      <div>
+        {% if appointment.status == 'pending' %}
+          <span class="appointment-status status-pending">
+            <i class="bi bi-clock"></i> En attente de confirmation
+          </span>
+        {% elif appointment.status == 'confirmed' %}
+          <span class="appointment-status status-confirmed">
+            <i class="bi bi-check-circle"></i> Confirmé
+          </span>
+        {% elif appointment.status == 'completed' %}
+          <span class="appointment-status status-completed">
+            <i class="bi bi-trophy"></i> Terminé
+          </span>
+        {% elif appointment.status == 'cancelled' %}
+          <span class="appointment-status status-cancelled">
+            <i class="bi bi-x-circle"></i> Annulé
+          </span>
+        {% endif %}
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-lg-8">
+        <!-- Détails du rendez-vous -->
+        <div class="appointment-info-section">
+          <h3 class="section-title"><i class="bi bi-info-circle"></i> Informations sur le rendez-vous</h3>
+          <ul class="info-list">
+            <li class="info-item">
+              <span class="info-label"><i class="bi bi-tag"></i> Type :</span>
+              <span class="info-value">{{ appointment.consultation_type|default:"Vidéo" }}</span>
+            </li>
+            <li class="info-item">
+              <span class="info-label"><i class="bi bi-calendar-date"></i> Date :</span>
+              <span class="info-value">{{ appointment.date_time|date:"d/m/Y" }}</span>
+            </li>
+            <li class="info-item">
+              <span class="info-label"><i class="bi bi-clock"></i> Heure :</span>
+              <span class="info-value">{{ appointment.date_time|date:"H:i" }}</span>
+            </li>
+            <li class="info-item">
+              <span class="info-label"><i class="bi bi-hourglass-split"></i> Durée :</span>
+              <span class="info-value">{{ appointment.duration|default:"60" }} minutes</span>
+            </li>
+            {% if appointment.location %}
+            <li class="info-item">
+              <span class="info-label"><i class="bi bi-geo-alt"></i> Lieu :</span>
+              <span class="info-value">{{ appointment.location }}</span>
+            </li>
+            {% endif %}
+            {% if appointment.meeting_link %}
+            <li class="info-item">
+              <span class="info-label"><i class="bi bi-camera-video"></i> Lien :</span>
+              <span class="info-value">
+                <a href="{{ appointment.meeting_link }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-box-arrow-up-right me-1"></i> Rejoindre la réunion
+                </a>
+              </span>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+        
+        <!-- Détails de la demande -->
+        {% if appointment.service_request %}
+        <div class="appointment-info-section">
+          <h3 class="section-title"><i class="bi bi-file-earmark-text"></i> Demande associée</h3>
+          <ul class="info-list">
+            <li class="info-item">
+              <span class="info-label"><i class="bi bi-file-earmark"></i> Demande :</span>
+              <span class="info-value">
+                <a href="{% url 'custom_requests:request_detail' appointment.service_request.id %}">{{ appointment.service_request.title }}</a>
+              </span>
+            </li>
+            <li class="info-item">
+              <span class="info-label"><i class="bi bi-chat-text"></i> Description :</span>
+              <div class="info-value info-card">
+                {{ appointment.service_request.description|linebreaks }}
+              </div>
+            </li>
+          </ul>
+        </div>
+        {% endif %}
+        
+        <!-- Notes -->
+        {% if appointment.notes %}
+        <div class="appointment-info-section">
+          <h3 class="section-title"><i class="bi bi-journal-text"></i> Notes</h3>
+          <div class="note-section">
+            <p>{{ appointment.notes|linebreaks }}</p>
           </div>
         </div>
-      {% endif %}
-    </div>
-    <div class="card-footer">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <small class="text-muted">Créé le {{ appointment.created_at|date:"d F Y" }}</small>
-          {% if appointment.updated_at != appointment.created_at %}
-            <small class="text-muted ms-3">Dernière mise à jour le {{ appointment.updated_at|date:"d F Y" }}</small>
+        {% endif %}
+      </div>
+      
+      <div class="col-lg-4">
+        <!-- Informations sur l'expert -->
+        <div class="appointment-info-section">
+          <h3 class="section-title"><i class="bi bi-person"></i> Expert</h3>
+          {% if appointment.expert %}
+          <div class="expert-profile">
+            <div class="expert-avatar">
+              <i class="bi bi-person-badge"></i>
+            </div>
+            <h4 class="expert-name">{{ appointment.expert.user.name|default:'' }} {{ appointment.expert.user.first_name|default:'' }}</h4>
+            {% if appointment.expert.specialty %}
+              <div class="expert-specialty">{{ appointment.expert.specialty }}</div>
+            {% endif %}
+          </div>
+          <ul class="info-list">
+            {% if appointment.expert.user.email %}
+            <li class="info-item">
+              <span class="info-label"><i class="bi bi-envelope"></i> Email :</span>
+              <span class="info-value">{{ appointment.expert.user.email }}</span>
+            </li>
+            {% endif %}
+            {% if appointment.expert.user.phone %}
+            <li class="info-item">
+              <span class="info-label"><i class="bi bi-telephone"></i> Téléphone :</span>
+              <span class="info-value">{{ appointment.expert.user.phone }}</span>
+            </li>
+            {% endif %}
+          </ul>
+          {% else %}
+          <div class="text-center">
+            <div class="expert-avatar">
+              <i class="bi bi-person-x"></i>
+            </div>
+            <p class="mt-2">Aucun expert assigné pour le moment</p>
+          </div>
           {% endif %}
         </div>
-        {% if appointment.status == 'scheduled' or appointment.status == 'confirmed' %}
-          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
-            <i class="bi bi-x-circle me-2"></i>Annuler le rendez-vous
-          </button>
-        {% endif %}
+        
+        <!-- Actions -->
+        <div class="appointment-info-section">
+          <h3 class="section-title"><i class="bi bi-gear"></i> Actions</h3>
+          <div class="action-buttons">
+            {% if appointment.status == 'pending' or appointment.status == 'confirmed' %}
+              <button type="button" class="btn btn-danger action-btn" data-bs-toggle="modal" data-bs-target="#cancelAppointmentModal">
+                <i class="bi bi-x-circle"></i> Annuler le rendez-vous
+              </button>
+            {% endif %}
+            {% if appointment.service_request %}
+              <a href="{% url 'custom_requests:request_detail' appointment.service_request.id %}" class="btn btn-outline-primary action-btn">
+                <i class="bi bi-file-earmark-text"></i> Voir la demande
+              </a>
+            {% endif %}
+            {% if appointment.meeting_link %}
+              <a href="{{ appointment.meeting_link }}" target="_blank" class="btn btn-primary action-btn">
+                <i class="bi bi-camera-video"></i> Rejoindre la réunion
+              </a>
+            {% endif %}
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
-  {% if documents %}
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="mb-0">Documents associés</h5>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Type</th>
-                <th>Téléchargé par</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for doc in documents %}
-                <tr>
-                  <td>{{ doc.name }}</td>
-                  <td>
-                    {% if doc.type == 'identity' %}
-                      <span class="badge bg-primary">Pièce d'identité</span>
-                    {% elif doc.type == 'proof' %}
-                      <span class="badge bg-info">Justificatif</span>
-                    {% elif doc.type == 'contract' %}
-                      <span class="badge bg-success">Contrat</span>
-                    {% elif doc.type == 'invoice' %}
-                      <span class="badge bg-warning">Facture</span>
-                    {% elif doc.type == 'report' %}
-                      <span class="badge bg-secondary">Rapport</span>
-                    {% else %}
-                      <span class="badge bg-dark">Autre</span>
-                    {% endif %}
-                  </td>
-                  <td>{{ doc.uploaded_by.name }} {{ doc.uploaded_by.first_name }}</td>
-                  <td>{{ doc.upload_date|date:"d/m/Y H:i" }}</td>
-                  <td>
-                    <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
-                      <i class="bi bi-download"></i>
-                    </a>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  {% endif %}
 </div>
 
 <!-- Modal d'annulation -->
-{% if appointment.status == 'scheduled' or appointment.status == 'confirmed' %}
-  <div class="modal fade" id="cancelModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Confirmer l'annulation</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<div class="modal fade" id="cancelAppointmentModal" tabindex="-1" aria-labelledby="cancelAppointmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelAppointmentModalLabel">
+          <i class="bi bi-exclamation-triangle text-danger me-2"></i>
+          Confirmer l'annulation
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Êtes-vous sûr de vouloir annuler ce rendez-vous prévu le <strong>{{ appointment.date_time|date:"d/m/Y à H:i" }}</strong> ?</p>
+        <div class="alert alert-warning">
+          <i class="bi bi-info-circle me-2"></i>
+          Cette action est irréversible. Une notification sera envoyée à l'expert concerné.
         </div>
-        <div class="modal-body">
-          <p>Êtes-vous sûr de vouloir annuler ce rendez-vous ?</p>
-          <p class="text-danger"><strong>Attention:</strong> Cette action est irréversible.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non, garder</button>
-          <a href="{% url 'custom_requests:cancel_appointment' appointment.id %}" class="btn btn-danger">Oui, annuler</a>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non, garder</button>
+        <a href="{% url 'custom_requests:cancel_appointment' appointment.id %}" class="btn btn-danger">Oui, annuler</a>
       </div>
     </div>
   </div>
-{% endif %}
-
-<!-- CSS personnalisé pour les badges de statut -->
-<style>
-  .status-badge {
-    padding: 0.5rem 1rem;
-    border-radius: 30px;
-    font-weight: 500;
-    font-size: 0.85rem;
-  }
-  
-  .status-scheduled {
-    background-color: #e2f0fb;
-    color: #1976d2;
-  }
-  
-  .status-confirmed {
-    background-color: #e0f7fa;
-    color: #0097a7;
-  }
-  
-  .status-completed {
-    background-color: #e8f5e9;
-    color: #388e3c;
-  }
-  
-  .status-cancelled {
-    background-color: #ffebee;
-    color: #d32f2f;
-  }
-</style>
-{% endblock %} 
+</div>
+{% endblock %}

@@ -14,11 +14,11 @@
           <i class="bi bi-plus-lg me-2"></i>Nouvelle demande
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="newRequestDropdown">
-          <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Administratif')">Service Administratif</a></li>
-          <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Tourisme')">Service Tourisme</a></li>
-          <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Immobilier')">Service Immobilier</a></li>
-          <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Fiscal')">Service Fiscal</a></li>
-          <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Investissement')">Service Investissement</a></li>
+          <li><a class="dropdown-item" href="#" data-service="Service Administratif">Services Administratifs</a></li>
+          <li><a class="dropdown-item" href="#" data-service="Service Tourisme">Tourisme</a></li>
+          <li><a class="dropdown-item" href="#" data-service="Service Immobilier">Immobilier</a></li>
+          <li><a class="dropdown-item" href="#" data-service="Service Fiscal">Fiscalité</a></li>
+          <li><a class="dropdown-item" href="#" data-service="Service Investissement">Investissement</a></li>
         </ul>
       </div>
     </div>
@@ -492,9 +492,10 @@
   // Initialisation des gestionnaires d'événements
   function initializeEventHandlers() {
     // Gestionnaire pour les items du dropdown
-    document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(item => {
+    document.querySelectorAll('.dropdown-item[data-service]').forEach(item => {
       item.addEventListener('click', function(e) {
-        const serviceType = this.textContent.trim();
+        e.preventDefault();
+        const serviceType = this.getAttribute('data-service');
         console.log('Option de service cliquée:', serviceType);
         showServiceRequestForm(serviceType);
       });
