@@ -2,6 +2,10 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.contrib import messages
+from django.urls import reverse
+from django.shortcuts import get_object_or_404, redirect
+from django.utils.translation import gettext as _
 
 from services.views import (
     tourism_services_view, 
@@ -31,7 +35,8 @@ from custom_requests.admin_views import (
     admin_complete_appointment, admin_cancel_appointment, admin_reschedule_appointment,
     admin_add_resource, admin_edit_resource, admin_delete_resource,
     admin_toggle_resource_visibility, admin_messages_view, admin_mark_message_read,
-    admin_profile_view, admin_edit_profile_view
+    admin_profile_view, admin_edit_profile_view, admin_assign_expert, admin_update_request_status,
+    admin_request_detail, admin_send_message, admin_user_detail
 )
 
 # Import admin bulk action views
@@ -39,6 +44,9 @@ from custom_requests.admin_bulk_actions import (
     admin_bulk_toggle_users_status, admin_bulk_delete_users,
     admin_bulk_verify_documents, admin_bulk_reject_documents
 )
+
+from custom_requests.models import ServiceRequest, Message, Notification
+from accounts.models import Utilisateur
 
 urlpatterns = [
     # Main pages
@@ -83,10 +91,12 @@ urlpatterns = [
     # Admin dashboard - all using dynamic views
     path('admin/dashboard/', admin_dashboard_view, name='admin_dashboard'),
     path('admin/demandes/', admin_requests_view, name='admin_demandes'),
+    path('admin/demandes/<int:request_id>/', admin_request_detail, name='admin_request_detail'),
     path('admin/documents/', admin_documents_view, name='admin_documents'),
     path('admin/rendezvous/', admin_appointments_view, name='admin_rendezvous'),
     path('admin/ressources/', admin_resources_view, name='admin_ressources'),
     path('admin/users/', admin_users_view, name='admin_users'),
+    path('admin/users/<int:user_id>/', admin_user_detail, name='admin_user_detail'),
     path('admin/users/add/', admin_add_user, name='admin_add_user'),
     path('admin/users/bulk-toggle-status/', admin_bulk_toggle_users_status, name='admin_bulk_toggle_users_status'),
     path('admin/users/bulk-delete/', admin_bulk_delete_users, name='admin_bulk_delete_users'),
@@ -109,4 +119,7 @@ urlpatterns = [
     path('admin/messages/<int:message_id>/mark-read/', admin_mark_message_read, name='admin_mark_message_read'),
     path('admin/profile/', admin_profile_view, name='admin_profile'),
     path('admin/profile/edit/', admin_edit_profile_view, name='admin_edit_profile'),
+    path('admin/demandes/<int:request_id>/assign-expert/', admin_assign_expert, name='admin_assign_expert'),
+    path('admin/demandes/<int:request_id>/update-status/', admin_update_request_status, name='admin_update_request_status'),
+    path('admin/send-message/', admin_send_message, name='admin_send_message'),
 ]

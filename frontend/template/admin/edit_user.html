@@ -1,0 +1,158 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Modifier Utilisateur | Administration{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+  <!-- Back button and header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <a href="{% url 'admin_user_detail' user_id=target_user.id %}" class="btn btn-outline-primary me-2">
+        <i class="bi bi-arrow-left"></i> Retour aux détails
+      </a>
+      <h2 class="d-inline-block">Modifier l'utilisateur</h2>
+    </div>
+  </div>
+
+  <!-- Edit User Form -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Informations de l'utilisateur</h6>
+    </div>
+    <div class="card-body">
+      <form method="post" action="{% url 'admin_edit_user' user_id=target_user.id %}">
+        {% csrf_token %}
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="first_name" class="form-label">Prénom</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ target_user.first_name }}" required>
+          </div>
+          <div class="col-md-6">
+            <label for="name" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ target_user.name }}" required>
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ target_user.email }}" required>
+          </div>
+          <div class="col-md-6">
+            <label for="phone" class="form-label">Téléphone</label>
+            <input type="text" class="form-control" id="phone" name="phone" value="{{ target_user.phone|default:'' }}">
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="password" class="form-label">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+            <input type="password" class="form-control" id="password" name="password">
+            <div class="form-text text-muted">Laissez vide si vous ne souhaitez pas changer le mot de passe</div>
+          </div>
+          <div class="col-md-6">
+            <label for="account_type" class="form-label">Type de compte</label>
+            <select class="form-select" id="account_type" name="account_type" disabled>
+              <option value="client" {% if target_user.account_type == 'CLIENT' or target_user.account_type == 'client' %}selected{% endif %}>Client</option>
+              <option value="expert" {% if target_user.account_type == 'EXPERT' or target_user.account_type == 'expert' %}selected{% endif %}>Expert</option>
+              <option value="admin" {% if target_user.account_type == 'ADMIN' or target_user.account_type == 'admin' %}selected{% endif %}>Administrateur</option>
+            </select>
+            <div class="form-text text-muted">Le type de compte ne peut pas être modifié</div>
+          </div>
+        </div>
+        
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" id="is_active" name="is_active" {% if target_user.is_active %}checked{% endif %}>
+          <label class="form-check-label" for="is_active">
+            Compte actif
+          </label>
+        </div>
+        
+        <!-- Additional fields based on account type -->
+        {% if target_user.account_type == 'CLIENT' or target_user.account_type == 'client' %}
+          {% if client_profile %}
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Informations du client</h6>
+            </div>
+            <div class="card-body">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="mre_status" name="mre_status" {% if client_profile.mre_status %}checked{% endif %}>
+                    <label class="form-check-label" for="mre_status">
+                      Statut MRE
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="origin_country" class="form-label">Pays d'origine</label>
+                  <input type="text" class="form-control" id="origin_country" name="origin_country" value="{{ client_profile.origin_country|default:'' }}">
+                </div>
+              </div>
+              
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="last_visit" class="form-label">Dernière visite au Maroc</label>
+                  <input type="date" class="form-control" id="last_visit" name="last_visit" value="{{ client_profile.last_visit|date:'Y-m-d'|default:'' }}">
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        {% elif target_user.account_type == 'EXPERT' or target_user.account_type == 'expert' %}
+          {% if expert_profile %}
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Informations de l'expert</h6>
+            </div>
+            <div class="card-body">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="specialty" class="form-label">Spécialité</label>
+                  <input type="text" class="form-control" id="specialty" name="specialty" value="{{ expert_profile.specialty|default:'' }}">
+                </div>
+                <div class="col-md-6">
+                  <label for="spoken_languages" class="form-label">Langues parlées</label>
+                  <input type="text" class="form-control" id="spoken_languages" name="spoken_languages" value="{{ expert_profile.spoken_languages|default:'' }}">
+                  <div class="form-text text-muted">Séparées par des virgules (ex: fr,en,ar)</div>
+                </div>
+              </div>
+              
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="years_of_experience" class="form-label">Années d'expérience</label>
+                  <input type="number" class="form-control" id="years_of_experience" name="years_of_experience" value="{{ expert_profile.years_of_experience|default:0 }}">
+                </div>
+                <div class="col-md-6">
+                  <label for="hourly_rate" class="form-label">Tarif horaire (Dh)</label>
+                  <input type="number" step="0.01" class="form-control" id="hourly_rate" name="hourly_rate" value="{{ expert_profile.hourly_rate|default:0 }}">
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="biography" class="form-label">Biographie</label>
+                <textarea class="form-control" id="biography" name="biography" rows="3">{{ expert_profile.biography|default:'' }}</textarea>
+              </div>
+              
+              <div class="mb-3">
+                <label for="competencies" class="form-label">Compétences</label>
+                <textarea class="form-control" id="competencies" name="competencies" rows="3">{{ expert_profile.competencies|default:'' }}</textarea>
+                <div class="form-text text-muted">Entrez les compétences au format JSON ou séparées par des virgules</div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        {% endif %}
+        
+        <div class="mt-4 d-flex justify-content-between">
+          <a href="{% url 'admin_user_detail' user_id=target_user.id %}" class="btn btn-secondary">Annuler</a>
+          <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} 

@@ -16,7 +16,7 @@
         <div class="icon text-primary">
           <i class="bi bi-clipboard-data"></i>
         </div>
-        <div class="count">{{ stats.total }}</div>
+        <div class="count">{{ total_requests }}</div>
         <div class="title">Total Demandes</div>
       </div>
     </div>
@@ -26,7 +26,7 @@
         <div class="icon text-warning">
           <i class="bi bi-hourglass-split"></i>
         </div>
-        <div class="count">{{ stats.pending }}</div>
+        <div class="count">{{ pending_requests }}</div>
         <div class="title">En Attente</div>
       </div>
     </div>
@@ -36,7 +36,7 @@
         <div class="icon text-info">
           <i class="bi bi-gear-wide-connected"></i>
         </div>
-        <div class="count">{{ stats.in_progress }}</div>
+        <div class="count">{{ in_progress_requests }}</div>
         <div class="title">En Cours</div>
       </div>
     </div>
@@ -46,7 +46,7 @@
         <div class="icon text-success">
           <i class="bi bi-check-circle"></i>
         </div>
-        <div class="count">{{ stats.completed }}</div>
+        <div class="count">{{ completed_requests }}</div>
         <div class="title">Terminées</div>
       </div>
     </div>
@@ -119,11 +119,11 @@
             </tr>
           </thead>
           <tbody>
-            {% for request in requests %}
+            {% for request in service_requests %}
             <tr>
               <td>{{ request.id }}</td>
-              <td>{{ request.client.user.first_name }} {{ request.client.user.name }}</td>
-              <td>{{ request.service.name }}</td>
+              <td>{{ request.client.first_name }} {{ request.client.name }}</td>
+              <td>{{ request.service.title }}</td>
               <td>{{ request.created_at|date:"d/m/Y H:i" }}</td>
               <td>
                 {% if request.status == 'pending' %}
@@ -138,7 +138,7 @@
               </td>
               <td>
                 {% if request.expert %}
-                {{ request.expert.user.first_name }} {{ request.expert.user.name }}
+                {{ request.expert.first_name }} {{ request.expert.name }}
                 {% else %}
                 <span class="text-muted">Non assigné</span>
                 {% endif %}
@@ -167,17 +167,17 @@
       </div>
 
       <!-- Pagination -->
-      {% if requests.paginator.num_pages > 1 %}
+      {% if service_requests.paginator.num_pages > 1 %}
       <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center mt-4">
-          {% if requests.has_previous %}
+          {% if service_requests.has_previous %}
             <li class="page-item">
               <a class="page-link" href="?page=1{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="First">
                 <span aria-hidden="true">&laquo;&laquo;</span>
               </a>
             </li>
             <li class="page-item">
-              <a class="page-link" href="?page={{ requests.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Previous">
+              <a class="page-link" href="?page={{ service_requests.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
@@ -190,24 +190,24 @@
             </li>
           {% endif %}
           
-          {% for i in requests.paginator.page_range %}
-            {% if requests.number == i %}
+          {% for i in service_requests.paginator.page_range %}
+            {% if service_requests.number == i %}
               <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-            {% elif i > requests.number|add:'-3' and i < requests.number|add:'3' %}
+            {% elif i > service_requests.number|add:'-3' and i < service_requests.number|add:'3' %}
               <li class="page-item">
                 <a class="page-link" href="?page={{ i }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ i }}</a>
               </li>
             {% endif %}
           {% endfor %}
           
-          {% if requests.has_next %}
+          {% if service_requests.has_next %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ requests.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Next">
+              <a class="page-link" href="?page={{ service_requests.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
               </a>
             </li>
             <li class="page-item">
-              <a class="page-link" href="?page={{ requests.paginator.num_pages }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Last">
+              <a class="page-link" href="?page={{ service_requests.paginator.num_pages }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Last">
                 <span aria-hidden="true">&raquo;&raquo;</span>
               </a>
             </li>
@@ -227,7 +227,7 @@
 </div>
 
 <!-- Assign Expert Modals -->
-{% for request in requests %}
+{% for request in service_requests %}
 <div class="modal fade" id="assignModal{{ request.id }}" tabindex="-1" aria-labelledby="assignModalLabel{{ request.id }}" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -242,9 +242,8 @@
             <label for="expert" class="form-label">Expert:</label>
             <select class="form-select" id="expert" name="expert_id" required>
               <option value="">Sélectionner un expert</option>
-              <!-- TODO: Replace with actual experts from the view context -->
               {% for expert in experts %}
-              <option value="{{ expert.id }}" {% if request.expert and request.expert.id == expert.id %}selected{% endif %}>{{ expert.user.first_name }} {{ expert.user.name }}</option>
+              <option value="{{ expert.id }}" {% if request.expert and request.expert.id == expert.id %}selected{% endif %}>{{ expert.first_name }} {{ expert.name }}</option>
               {% endfor %}
             </select>
           </div>
