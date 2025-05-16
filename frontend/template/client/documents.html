@@ -17,7 +17,7 @@
     </div>
 
     <!-- Filtres -->
-    <form method="get" action="{% url 'requests:documents' %}">
+    <form method="get" action="{% url 'custom_requests:documents' %}">
       <div class="card mb-4">
         <div class="card-body">
           <div class="row g-3">
@@ -75,7 +75,7 @@
                   <a href="{{ document.file.url }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">
                     <i class="bi bi-eye"></i>
                   </a>
-                  <button class="btn btn-sm btn-outline-danger" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce document?')) window.location.href='{% url 'requests:delete_document' document.id %}';">
+                  <button class="btn btn-sm btn-outline-danger" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce document?')) { window.location.href='{% url 'custom_requests:delete_document' document.id %}'; }">
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>
@@ -102,7 +102,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form method="post" action="{% url 'requests:upload_document' %}" enctype="multipart/form-data">
+          <form method="post" action="{% url 'custom_requests:upload_document' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="mb-3">
               <label class="form-label">Nom du document</label>

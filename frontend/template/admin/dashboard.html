@@ -1,659 +1,387 @@
-{% extends 'base.html' %}
+{% extends 'admin/base.html' %}
 {% load static %}
 
-{% block title %}ServicesBladi - Administration{% endblock %}
-{% block meta_description %}Tableau de bord administrateur pour la gestion des services ServicesBladi{% endblock %}
-{% block meta_keywords %}admin, dashboard, tableau, bord, gestion, services{% endblock %}
+{% block title %}Tableau de bord | Administration{% endblock %}
 
-{% block extra_css %}
-  <style>
-  .dashboard-page {
-    background-color: #f5f5f5;
-    }
-
-    .dashboard-wrapper {
-      display: flex;
-      min-height: 100vh;
-    padding-top: 60px;
-    }
-
-    .sidebar {
-    width: 250px;
-    background-color: #0ea2bd;
-    color: #fff;
-      position: fixed;
-    top: 60px;
-      left: 0;
-    bottom: 0;
-    overflow-y: auto;
-    z-index: 100;
-    transition: all 0.3s;
-    }
-
-    .sidebar-header {
-    padding: 20px 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .sidebar-profile {
-    padding: 20px 15px;
-      text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .profile-image {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #fff;
-    margin-bottom: 10px;
-  }
-
-  .sidebar-menu a {
-    color: rgba(255, 255, 255, 0.8);
-    transition: all 0.3s;
-  }
-
-  .sidebar-menu a:hover, .sidebar-menu a.active {
-    color: #fff;
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .main-content {
-    flex: 1;
-    padding: 20px;
-    margin-left: 250px;
-    transition: all 0.3s;
-  }
-
-  .dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  .dashboard-title {
-    margin: 0;
-    }
-
-    .dashboard-card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
-    overflow: hidden;
-    }
-
-    .card-header {
-    padding: 15px 20px;
-    background-color: #f8f9fa;
-      border-bottom: 1px solid #eee;
-    }
-
-    .card-body {
-    padding: 20px;
-  }
-
+{% block admin_content %}
+<style>
   .stats-card {
-    border-left: 4px solid #0ea2bd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    background-color: #fff;
+    transition: transform 0.3s ease;
   }
-
-  .stats-icon {
-    font-size: 3rem;
-    color: rgba(14, 162, 189, 0.2);
+  
+  .stats-card:hover {
+    transform: translateY(-5px);
   }
-
-  .stats-number {
-    font-size: 1.5rem;
-    font-weight: bold;
-    }
-
-    .status-badge {
-    padding: 5px 10px;
-      border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    }
-
-    .status-active {
-    background-color: rgba(40, 167, 69, 0.15);
-    color: #28a745;
-    }
-
-    .status-pending {
-    background-color: rgba(255, 193, 7, 0.15);
-    color: #ffc107;
-  }
-
-  .status-inactive {
-    background-color: rgba(108, 117, 125, 0.15);
-    color: #6c757d;
-  }
-
-  .status-termine {
-    background-color: rgba(0, 123, 255, 0.15);
-    color: #007bff;
-  }
-
-  .priority-badge {
-    padding: 3px 8px;
-    border-radius: 5px;
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-
-  .priority-haute {
-    background-color: rgba(220, 53, 69, 0.15);
-    color: #dc3545;
-  }
-
-  .priority-moyenne {
-    background-color: rgba(255, 193, 7, 0.15);
-    color: #ffc107;
-  }
-
-  .priority-basse {
-    background-color: rgba(40, 167, 69, 0.15);
-    color: #28a745;
-  }
-
-  .table th {
-    border-top: 0;
-  }
-
-  .activity-item {
-    position: relative;
-    padding-left: 30px;
+  
+  .stats-card .icon {
+    font-size: 36px;
     margin-bottom: 15px;
   }
-
-  .activity-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 2px;
-    background-color: #eee;
+  
+  .stats-card h2 {
+    font-size: 32px;
+    margin-bottom: 5px;
+    font-weight: bold;
   }
-
-  .activity-icon {
-    position: absolute;
-    left: -8px;
-    top: 0;
-    width: 18px;
-    height: 18px;
-      border-radius: 50%;
+  
+  .stats-card p {
+    color: #6c757d;
+    margin-bottom: 0;
+  }
+  
+  .bg-primary-light {
+    background-color: #e6f2ff;
+  }
+  
+  .bg-success-light {
+    background-color: #e7f7ed;
+  }
+  
+  .bg-warning-light {
+    background-color: #fff8e6;
+  }
+  
+  .bg-info-light {
+    background-color: #e6f9ff;
+  }
+  
+  .activity-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    background-color: #fff;
+    overflow: hidden;
+  }
+  
+  .activity-card .card-header {
     background-color: #0ea2bd;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     color: #fff;
-    font-size: 0.7rem;
+    padding: 15px 20px;
   }
-
-    @media (max-width: 992px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-      .main-content {
-        margin-left: 0;
-      }
-      .sidebar.active {
-        transform: translateX(0);
-      }
+  
+  .activity-card .card-body {
+    padding: 20px;
+  }
+  
+  .activity-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+  
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: #fff;
+  }
+  
+  .chart-container {
+    height: 300px;
+  }
+  
+  .mobile-toggle {
+    display: none;
+  }
+  
+  @media (max-width: 992px) {
+    .mobile-toggle {
+      display: block;
+      margin-bottom: 20px;
     }
-  </style>
-{% endblock %}
+  }
+</style>
 
-{% block body_class %}dashboard-page{% endblock %}
-
-{% block content %}
-  <div class="dashboard-wrapper">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h3>MRE Admin</h3>
-      </div>
-      <div class="sidebar-profile">
-        <img src="{% static 'img/team/team-1.jpg' %}" alt="Admin Profile" class="profile-image">
-        <h5 id="adminName">{{ request.user.first_name }} {{ request.user.last_name }}</h5>
-        <p class="text-muted">Administrateur Système</p>
-      </div>
-      <nav class="sidebar-menu">
-        <a href="{% url 'admin_dashboard' %}" class="d-block p-3 text-white text-decoration-none active">
-          <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
-        </a>
-        <a href="{% url 'admin_users' %}" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-people me-2"></i>Utilisateurs
-        </a>
-        <a href="{% url 'admin_demandes' %}" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-file-text me-2"></i>Demandes
-        </a>
-        <a href="{% url 'admin_documents' %}" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-folder me-2"></i>Documents
-        </a>
-        <a href="{% url 'admin_rendezvous' %}" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-calendar me-2"></i>Rendez-vous
-        </a>
-        <a href="{% url 'admin_messages' %}" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-chat-dots me-2"></i>Messages
-        </a>
-        <a href="{% url 'admin_ressources' %}" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-box me-2"></i>Ressources
-        </a>
-        <a href="{% url 'accounts:logout' %}" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
-        </a>
-      </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="dashboard-header">
-        <div>
-          <h1 class="dashboard-title">Tableau de bord</h1>
-          <p class="text-muted">Bienvenue sur votre tableau de bord administrateur</p>
-        </div>
-        <button class="btn btn-outline-primary d-lg-none">
-          <i class="bi bi-list"></i>
-        </button>
-      </div>
-
-      <!-- Stats Cards -->
-      <div class="row">
-        <div class="col-xl-3 col-md-6">
-          <div class="dashboard-card stats-card">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                <p class="text-muted mb-1">Total Utilisateurs</p>
-                <h3 class="stats-number">{{ total_users|default:"345" }}</h3>
-                </div>
-              <div>
-                <i class="bi bi-people stats-icon"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-          <div class="dashboard-card stats-card">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                <p class="text-muted mb-1">Demandes en Attente</p>
-                <h3 class="stats-number">{{ pending_requests|default:"28" }}</h3>
-                </div>
-              <div>
-                <i class="bi bi-file-earmark-text stats-icon"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-          <div class="dashboard-card stats-card">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                <p class="text-muted mb-1">Rendez-vous Aujourd'hui</p>
-                <h3 class="stats-number">{{ todays_appointments|default:"12" }}</h3>
-                </div>
-              <div>
-                <i class="bi bi-calendar-event stats-icon"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-          <div class="dashboard-card stats-card">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                <p class="text-muted mb-1">Messages Non Lus</p>
-                <h3 class="stats-number">{{ unread_messages|default:"45" }}</h3>
-                </div>
-              <div>
-                <i class="bi bi-envelope stats-icon"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Content Cards -->
-      <div class="row">
-        <div class="col-lg-8">
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h5 class="mb-0">Demandes Récentes</h5>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Client</th>
-                      <th>Service</th>
-                      <th>Date</th>
-                      <th>Statut</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% if recent_requests %}
-                      {% for request in recent_requests %}
-                      <tr>
-                        <td>#{{ request.id }}</td>
-                        <td>{{ request.client.first_name }} {{ request.client.last_name }}</td>
-                        <td>{{ request.service_type }}</td>
-                        <td>{{ request.created_at|date:"d/m/Y" }}</td>
-                        <td>
-                          <span class="status-badge status-{{ request.status|lower }}">{{ request.get_status_display }}</span>
-                        </td>
-                        <td>
-                          <a href="#" class="btn btn-sm btn-outline-primary" title="Voir détails">
-                            <i class="bi bi-eye"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-success" title="Approuver">
-                            <i class="bi bi-check-lg"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-danger" title="Rejeter">
-                            <i class="bi bi-x-lg"></i>
-                          </a>
-                        </td>
-                      </tr>
-                      {% endfor %}
-                    {% else %}
-                      <tr>
-                        <td>#1254</td>
-                        <td>Mohammed Alami</td>
-                        <td>Consultation Fiscale</td>
-                        <td>05/05/2024</td>
-                        <td>
-                          <span class="status-badge status-pending">En attente</span>
-                        </td>
-                        <td>
-                          <a href="#" class="btn btn-sm btn-outline-primary" title="Voir détails">
-                            <i class="bi bi-eye"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-success" title="Approuver">
-                            <i class="bi bi-check-lg"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-danger" title="Rejeter">
-                            <i class="bi bi-x-lg"></i>
-                          </a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>#1253</td>
-                        <td>Nadia Tahiri</td>
-                        <td>Immobilier</td>
-                        <td>04/05/2024</td>
-                        <td>
-                          <span class="status-badge status-active">En cours</span>
-                        </td>
-                        <td>
-                          <a href="#" class="btn btn-sm btn-outline-primary" title="Voir détails">
-                            <i class="bi bi-eye"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-success" title="Approuver">
-                            <i class="bi bi-check-lg"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-danger" title="Rejeter">
-                            <i class="bi bi-x-lg"></i>
-                          </a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>#1252</td>
-                        <td>Karim Bensouda</td>
-                        <td>Administratif</td>
-                        <td>03/05/2024</td>
-                        <td>
-                          <span class="status-badge status-termine">Terminé</span>
-                        </td>
-                        <td>
-                          <a href="#" class="btn btn-sm btn-outline-primary" title="Voir détails">
-                            <i class="bi bi-eye"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-success" title="Approuver">
-                            <i class="bi bi-check-lg"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-danger" title="Rejeter">
-                            <i class="bi bi-x-lg"></i>
-                          </a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>#1251</td>
-                        <td>Fatima Ouazzani</td>
-                        <td>Tourisme</td>
-                        <td>02/05/2024</td>
-                        <td>
-                          <span class="status-badge status-pending">En attente</span>
-                        </td>
-                        <td>
-                          <a href="#" class="btn btn-sm btn-outline-primary" title="Voir détails">
-                            <i class="bi bi-eye"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-success" title="Approuver">
-                            <i class="bi bi-check-lg"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-danger" title="Rejeter">
-                            <i class="bi bi-x-lg"></i>
-                          </a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>#1250</td>
-                        <td>Ahmed Benjelloun</td>
-                        <td>Investissement</td>
-                        <td>01/05/2024</td>
-                        <td>
-                          <span class="status-badge status-inactive">Annulé</span>
-                        </td>
-                        <td>
-                          <a href="#" class="btn btn-sm btn-outline-primary" title="Voir détails">
-                            <i class="bi bi-eye"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-success" title="Approuver">
-                            <i class="bi bi-check-lg"></i>
-                          </a>
-                          <a href="#" class="btn btn-sm btn-outline-danger" title="Rejeter">
-                            <i class="bi bi-x-lg"></i>
-                          </a>
-                        </td>
-                      </tr>
-                    {% endif %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h5 class="mb-0">Activité Récente</h5>
-            </div>
-            <div class="card-body">
-              <div class="list-group">
-                {% if recent_activities %}
-                  {% for activity in recent_activities %}
-                  <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h6 class="mb-1">{{ activity.title }}</h6>
-                      <small class="text-muted">{{ activity.created_at|timesince }}</small>
-                    </div>
-                    <p class="mb-1">{{ activity.description }}</p>
-                  </div>
-                  {% endfor %}
-                {% else %}
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Nouveau Client</h6>
-                    <small class="text-muted">Il y a 5 min</small>
-                  </div>
-                  <p class="mb-1">M. Mohammed Abd - Consultation Fiscale</p>
-                </div>
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Document Ajouté</h6>
-                    <small class="text-muted">Il y a 1 heure</small>
-                  </div>
-                  <p class="mb-1">Guide Fiscal MRE 2024</p>
-                </div>
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Expert Ajouté</h6>
-                    <small class="text-muted">Il y a 2 heures</small>
-                  </div>
-                    <p class="mb-1">Mme. Leila Hakimi - Expert Immobilier</p>
-                  </div>
-                  <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h6 class="mb-1">Demande Approuvée</h6>
-                      <small class="text-muted">Il y a 3 heures</small>
-                    </div>
-                    <p class="mb-1">Demande #1247 - Service Administratif</p>
-                  </div>
-                  <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h6 class="mb-1">Message Reçu</h6>
-                      <small class="text-muted">Il y a 5 heures</small>
-                    </div>
-                    <p class="mb-1">De Karim Bensouda - Question sur investissement</p>
-                </div>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6">
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h5 class="mb-0">État du Système</h5>
-            </div>
-            <div class="card-body">
-              <div class="list-group">
-                {% if system_status %}
-                  {% for status in system_status %}
-                  <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                      <h6 class="mb-1">{{ status.name }}</h6>
-                      <small class="text-muted">Status: {{ status.description }}</small>
-                    </div>
-                    <span class="status-badge status-{{ status.status }}">{{ status.get_status_display }}</span>
-                  </div>
-                  {% endfor %}
-                {% else %}
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Serveur Web</h6>
-                    <small class="text-muted">Status: Opérationnel</small>
-                  </div>
-                  <span class="status-badge status-active">Actif</span>
-                </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Base de Données</h6>
-                    <small class="text-muted">Status: Opérationnel</small>
-                  </div>
-                  <span class="status-badge status-active">Actif</span>
-                </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Sauvegarde</h6>
-                    <small class="text-muted">Dernière: Aujourd'hui 00:00</small>
-                  </div>
-                  <span class="status-badge status-active">Complète</span>
-                </div>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h5 class="mb-0">Documents Système</h5>
-            </div>
-            <div class="card-body">
-              <div class="list-group">
-                {% if system_documents %}
-                  {% for document in system_documents %}
-                  <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h6 class="mb-1">{{ document.title }}</h6>
-                      <small class="text-muted">Mis à jour le {{ document.updated_at }}</small>
-                    </div>
-                    <p class="mb-1">{{ document.description }}</p>
-                  </div>
-                  {% endfor %}
-                {% else %}
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Guide d'Utilisation</h6>
-                      <small class="text-muted">Mis à jour le 20/03/2024</small>
-                    </div>
-                    <p class="mb-1">Guide complet pour les administrateurs</p>
-                  </div>
-                  <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h6 class="mb-1">Documentation API</h6>
-                      <small class="text-muted">Mis à jour le 15/03/2024</small>
-                  </div>
-                  <p class="mb-1">Documentation système pour les experts</p>
-                </div>
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Politique de Confidentialité</h6>
-                    <small class="text-muted">Mis à jour le 10/03/2024</small>
-                  </div>
-                  <p class="mb-1">Règles de protection des données</p>
-                </div>
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Procédures Administratives</h6>
-                    <small class="text-muted">Mis à jour le 05/03/2024</small>
-                  </div>
-                  <p class="mb-1">Guide des procédures internes</p>
-                </div>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+<div class="container-fluid py-4">
+  <!-- Mobile Sidebar Toggle Button -->
+  <div class="mobile-toggle">
+    <button class="btn btn-outline-primary btn-sm mb-3">
+      <i class="bi bi-list"></i> Menu
+    </button>
   </div>
+  
+  <div class="row">
+    <div class="col-12">
+      <h1 class="mb-4">Tableau de bord</h1>
+    </div>
+  </div>
+
+  <!-- Stats Cards Row -->
+  <div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-12">
+      <div class="stats-card bg-primary-light">
+        <div class="icon text-primary">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <h2>{{ total_users|default:"0" }}</h2>
+        <p>Utilisateurs</p>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 col-sm-12">
+      <div class="stats-card bg-success-light">
+        <div class="icon text-success">
+          <i class="bi bi-person-vcard"></i>
+        </div>
+        <h2>{{ total_clients|default:"0" }}</h2>
+        <p>Clients</p>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 col-sm-12">
+      <div class="stats-card bg-warning-light">
+        <div class="icon text-warning">
+          <i class="bi bi-person-workspace"></i>
+        </div>
+        <h2>{{ total_experts|default:"0" }}</h2>
+        <p>Experts</p>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 col-sm-12">
+      <div class="stats-card bg-info-light">
+        <div class="icon text-info">
+          <i class="bi bi-file-text"></i>
+        </div>
+        <h2>{{ total_requests|default:"0" }}</h2>
+        <p>Demandes</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="row my-4">
+    <div class="col-lg-8 col-md-12 mb-4">
+      <div class="activity-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Demandes par service</h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            {% if service_requests %}
+              <canvas id="requestsChart"></canvas>
+            {% else %}
+              <div class="text-center py-5">
+                <i class="bi bi-bar-chart-line text-muted" style="font-size: 3rem;"></i>
+                <p class="mt-3">Aucune donnée disponible pour le moment.</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-4 col-md-12 mb-4">
+      <div class="activity-card">
+        <div class="card-header">
+          <h5 class="mb-0">Utilisateurs par type</h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            {% if user_type_counts %}
+              <canvas id="userTypeChart"></canvas>
+            {% else %}
+              <div class="text-center py-5">
+                <i class="bi bi-pie-chart text-muted" style="font-size: 3rem;"></i>
+                <p class="mt-3">Aucune donnée disponible pour le moment.</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity Row -->
+  <div class="row">
+    <div class="col-lg-6 col-md-12 mb-4">
+      <div class="activity-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Demandes récentes</h5>
+          <a href="{% url 'admin_demandes' %}" class="btn btn-sm btn-light">Voir tout</a>
+        </div>
+        <div class="card-body">
+          {% if recent_requests %}
+            {% for request in recent_requests %}
+              <div class="activity-item d-flex align-items-center">
+                <div class="activity-icon bg-primary">
+                  <i class="bi bi-file-text"></i>
+                </div>
+                <div>
+                  <h6 class="mb-1">{{ request.service.name }}</h6>
+                  <small class="text-muted">
+                    <i class="bi bi-person me-1"></i> {{ request.client.user.first_name }} {{ request.client.user.name }}
+                    <i class="bi bi-clock ms-2 me-1"></i> {{ request.created_at|date:"d/m/Y" }}
+                  </small>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-4">
+              <i class="bi bi-inbox text-muted" style="font-size: 2rem;"></i>
+              <p class="mt-2">Aucune demande récente</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-6 col-md-12 mb-4">
+      <div class="activity-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Utilisateurs récents</h5>
+          <a href="{% url 'admin_users' %}" class="btn btn-sm btn-light">Voir tout</a>
+        </div>
+        <div class="card-body">
+          {% if recent_users %}
+            {% for user in recent_users %}
+              <div class="activity-item d-flex align-items-center">
+                <div class="activity-icon 
+                  {% if user.account_type == 'client' %}bg-success
+                  {% elif user.account_type == 'expert' %}bg-warning
+                  {% else %}bg-info{% endif %}">
+                  <i class="bi bi-person"></i>
+                </div>
+                <div>
+                  <h6 class="mb-1">{{ user.first_name }} {{ user.name }}</h6>
+                  <small class="text-muted">
+                    <i class="bi bi-envelope me-1"></i> {{ user.email }}
+                    <span class="badge 
+                      {% if user.account_type == 'client' %}bg-success
+                      {% elif user.account_type == 'expert' %}bg-warning
+                      {% else %}bg-info{% endif %} ms-2">
+                      {{ user.account_type|title }}
+                    </span>
+                  </small>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-4">
+              <i class="bi bi-people text-muted" style="font-size: 2rem;"></i>
+              <p class="mt-2">Aucun nouvel utilisateur</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
-  <script>
-    // Initialize AOS
-    AOS.init({
-      duration: 1000,
-      easing: 'ease-in-out',
-      once: true,
-      mirror: false
-    });
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Initialize AOS
+  AOS.init({
+    duration: 1000,
+    easing: 'ease-in-out',
+    once: true,
+    mirror: false
+  });
 
-    // Toggle sidebar on mobile
-    document.querySelector('.btn-outline-primary').addEventListener('click', function() {
-      document.querySelector('.sidebar').classList.toggle('active');
-    });
+  // Toggle sidebar on mobile
+  document.querySelector('.btn-outline-primary').addEventListener('click', function() {
+    document.querySelector('.sidebar').classList.toggle('active');
+  });
 
   // Update admin name if not already set by Django
   document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('adminName').textContent.trim() === ' ') {
+    if (document.getElementById('adminName') && document.getElementById('adminName').textContent.trim() === ' ') {
       document.getElementById('adminName').textContent = 'Admin';
     }
+
+    // Requests by service chart
+    {% if service_requests %}
+    const requestsCtx = document.getElementById('requestsChart').getContext('2d');
+    new Chart(requestsCtx, {
+      type: 'bar',
+      data: {
+        labels: [{% for item in service_requests %}'{{ item.name }}',{% endfor %}],
+        datasets: [{
+          label: 'Nombre de demandes',
+          data: [{% for item in service_requests %}{{ item.count }},{% endfor %}],
+          backgroundColor: [
+            'rgba(54, 162, 235, 0.6)',
+            'rgba(255, 99, 132, 0.6)',
+            'rgba(255, 206, 86, 0.6)',
+            'rgba(75, 192, 192, 0.6)',
+            'rgba(153, 102, 255, 0.6)',
+          ],
+          borderColor: [
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        }
+      }
+    });
+    {% endif %}
+
+    // User type chart
+    {% if user_type_counts %}
+    const userTypeCtx = document.getElementById('userTypeChart').getContext('2d');
+    new Chart(userTypeCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Clients', 'Experts', 'Administrateurs'],
+        datasets: [{
+          data: [
+            {{ user_type_counts.client|default:0 }}, 
+            {{ user_type_counts.expert|default:0 }}, 
+            {{ user_type_counts.admin|default:0 }}
+          ],
+          backgroundColor: [
+            'rgba(40, 167, 69, 0.7)',
+            'rgba(255, 193, 7, 0.7)',
+            'rgba(23, 162, 184, 0.7)'
+          ],
+          borderColor: [
+            'rgba(40, 167, 69, 1)',
+            'rgba(255, 193, 7, 1)',
+            'rgba(23, 162, 184, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+    {% endif %}
   });
-  </script>
+</script>
 {% endblock %}

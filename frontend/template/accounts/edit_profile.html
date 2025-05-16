@@ -1,0 +1,365 @@
+{% extends 'expert/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Modifier mon Profil" %} - {{ block.super }}{% endblock %}
+
+{% block extra_styles %}
+<style>
+  /* Styles améliorés pour la page de modification de profil */
+  .profile-page-container {
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Styles des cartes */
+  .profile-card {
+    margin-bottom: 2rem;
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    background-color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  
+  .profile-card .card-header {
+    background: linear-gradient(135deg, #00539f 0%, #007bff 100%);
+    color: white;
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+    position: relative;
+  }
+
+  .profile-card .card-header h5 {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-card .card-header h5 i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .profile-card .card-body {
+    padding: 2rem;
+  }
+
+  /* Styles des formulaires */
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-size: 0.95rem;
+  }
+  
+  .form-control, .form-select {
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+  
+  .form-control:focus, .form-select:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+  }
+  
+  .form-control::placeholder {
+    color: #adb5bd;
+    opacity: 0.7;
+  }
+
+  /* Styles des boutons */
+  .btn {
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #00539f 0%, #007bff 100%);
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #003b71 0%, #0056b3 100%);
+    transform: translateY(-2px);
+  }
+  
+  .btn-primary i {
+    margin-right: 8px;
+  }
+
+  .btn-outline-primary {
+    border: 2px solid #007bff;
+    color: #007bff;
+    background: transparent;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  /* Section d'en-tête */
+  .page-header {
+    background-color: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .page-header h2 {
+    font-weight: 600;
+    margin-bottom: 0;
+    color: #00539f;
+    display: flex;
+    align-items: center;
+  }
+  
+  .page-header h2 i {
+    margin-right: 10px;
+    font-size: 1.5rem;
+  }
+
+  /* Styles des alertes */
+  .alert {
+    border-radius: 10px;
+    border: none;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  }
+
+  .alert-dismissible .btn-close {
+    padding: 1.25rem;
+  }
+
+  /* Séparateurs de section */
+  .section-divider {
+    margin: 2rem 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0, 123, 255, 0.5), transparent);
+  }
+  
+  /* Styles pour les champs spécifiques */
+  .form-section-title {
+    color: #00539f;
+    font-weight: 500;
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .form-section-title i {
+    margin-right: 8px;
+  }
+
+  /* Animation pour les boutons */
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+  }
+  
+  .btn-pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  /* Classe pour les grands textarea */
+  .textarea-large {
+    height: 120px !important;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- En-tête de page avec titre -->
+<div class="dashboard-card mb-4">
+    <div class="card-header">
+        <h4 class="m-0"><i class="bi bi-person-circle me-2"></i>{% trans "Modifier mon Profil" %}</h4>
+        <a href="{% url 'accounts:profile' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left me-2"></i>{% trans "Retour au Profil" %}</a>
+    </div>
+</div>
+
+    <!-- Affichage des messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <i class="bi {% if message.tags == 'success' %}bi-check-circle{% elif message.tags == 'error' %}bi-exclamation-triangle{% elif message.tags == 'warning' %}bi-exclamation-circle{% else %}bi-info-circle{% endif %} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Carte pour les informations personnelles -->
+    <div class="dashboard-card mb-4">
+        <div class="card-header">
+            <h5 class="m-0"><i class="bi bi-person-fill me-2"></i>{% trans "Informations Personnelles" %}</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate class="profile-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="user_profile">
+
+                                <!-- Informations de base -->
+                <div class="form-section-title">
+                    <i class="bi bi-person-fill"></i>{% trans "Informations de base" %}
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            {{ user_form.first_name }}
+                            <label for="{{ user_form.first_name.id_for_label }}">{{ user_form.first_name.label }}</label>
+                            {% if user_form.first_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ user_form.first_name.errors|join:", " }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            {{ user_form.last_name }}
+                            <label for="{{ user_form.last_name.id_for_label }}">{{ user_form.last_name.label }}</label>
+                            {% if user_form.last_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ user_form.last_name.errors|join:", " }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section-title">
+                    <i class="bi bi-envelope-fill"></i>{% trans "Contact" %}
+                </div>
+                
+                <div class="form-floating mb-4">
+                    {{ user_form.email }}
+                    <label for="{{ user_form.email.id_for_label }}">{{ user_form.email.label }}</label>
+                    {% if user_form.email.errors %}
+                        <div class="invalid-feedback d-block">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ user_form.email.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-section-title">
+                    <i class="bi bi-geo-alt-fill"></i>{% trans "Adresse" %}
+                </div>
+                
+                <!-- Champs d'adresse -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" name="street" id="id_street" class="form-control" value="{{ address.street|default_if_none:'' }}" placeholder="{% trans 'Rue' %}">
+                            <label for="id_street">{% trans "Rue" %}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" name="city" id="id_city" class="form-control" value="{{ address.city|default_if_none:'' }}" placeholder="{% trans 'Ville' %}">
+                            <label for="id_city">{% trans "Ville" %}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" name="postal_code" id="id_postal_code" class="form-control" value="{{ address.postal_code|default_if_none:'' }}" placeholder="{% trans 'Code Postal' %}">
+                            <label for="id_postal_code">{% trans "Code Postal" %}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <select name="country" id="id_country" class="form-select" aria-label="{% trans 'Pays' %}">
+                                <option value="">{% trans "Sélectionner un pays" %}</option>
+                                {% for country_code, country_name in countries %}
+                                    <option value="{{ country_code }}" {% if address.country == country_code %}selected{% endif %}>{{ country_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="id_country">{% trans "Pays" %}</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Champs spécifiques aux experts -->
+                {% if account_type == 'EXPERT' and profile_specific %}
+                    <div class="section-divider"></div>
+                    
+                    <div class="form-section-title">
+                        <i class="bi bi-briefcase-fill"></i>{% trans "Informations Professionnelles" %}
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="title" id="id_title" class="form-control" value="{{ profile_specific.title|default_if_none:'' }}" placeholder="{% trans 'Titre/Profession' %}">
+                                <label for="id_title">{% trans "Titre/Profession" %}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="specialty" id="id_specialty" class="form-control" value="{{ profile_specific.specialty|default_if_none:'' }}" placeholder="{% trans 'Spécialité' %}">
+                                <label for="id_specialty">{% trans "Spécialité" %}</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-floating mb-4">
+                        <textarea name="bio" id="id_bio" class="form-control textarea-large" placeholder="{% trans 'Bio' %}">{{ profile_specific.bio|default_if_none:'' }}</textarea>
+                        <label for="id_bio">{% trans "Bio" %}</label>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="number" name="experience_years" id="id_experience_years" class="form-control" value="{{ profile_specific.experience_years|default_if_none:0 }}" placeholder="{% trans 'Années d\'expérience' %}">
+                                <label for="id_experience_years">{% trans "Années d'expérience" %}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="languages" id="id_languages" class="form-control" value="{{ profile_specific.languages|default_if_none:'' }}" placeholder="{% trans 'Langues parlées' %}">
+                                <label for="id_languages">{% trans "Langues parlées (séparées par des virgules)" %}</label>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <button type="submit" name="update_profile" class="btn btn-primary btn-pulse">
+                        <i class="bi bi-check-circle-fill me-2"></i>{% trans "Sauvegarder les modifications" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- La partie changement de mot de passe a été supprimée -->
+{% endblock %}

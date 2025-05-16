@@ -6,112 +6,112 @@
 {% block meta_keywords %}documents, expert, fichiers, gestion documentaire{% endblock %}
 
 {% block extra_styles %}
-<style>
-  .document-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 1rem;
-    transition: transform 0.2s;
-  }
+  <style>
+    .document-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+      transition: transform 0.2s;
+    }
 
-  .document-card:hover {
-    transform: translateY(-2px);
-  }
+    .document-card:hover {
+      transform: translateY(-2px);
+    }
 
-  .document-icon {
-    font-size: 2rem;
-    color: var(--primary-color);
-  }
+    .document-icon {
+      font-size: 2rem;
+      color: var(--primary-color);
+    }
 
-  .document-type {
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    background-color: #e3fcef;
-    color: #00a854;
-  }
+    .document-type {
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      background-color: #e3fcef;
+      color: #00a854;
+    }
 
-  .document-status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-  }
+    .document-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
+    }
 
-  .status-verifie {
-    background-color: #e3fcef;
-    color: #00a854;
-  }
+    .status-verifie {
+      background-color: #e3fcef;
+      color: #00a854;
+    }
 
-  .status-en-attente {
-    background-color: #fff7e6;
-    color: #fa8c16;
-  }
+    .status-en-attente {
+      background-color: #fff7e6;
+      color: #fa8c16;
+    }
 
-  .status-rejete {
-    background-color: #fff1f0;
-    color: #f5222d;
-  }
-</style>
+    .status-rejete {
+      background-color: #fff1f0;
+      color: #f5222d;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
-<!-- Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h2>Gestion des Documents</h2>
-  <div class="d-flex">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
-      <i class="bi bi-upload me-2"></i>Importer un document
-    </button>
-  </div>
-</div>
-
-<!-- Filters -->
-<div class="dashboard-card mb-4">
-  <div class="card-body">
-    <div class="row g-3">
-      <div class="col-md-3">
-        <label class="form-label">Type de document</label>
-        <select class="form-select">
-          <option value="">Tous les types</option>
-          <option value="identity">Pièce d'identité</option>
-          <option value="fiscal">Document fiscal</option>
-          <option value="real_estate">Document immobilier</option>
-          <option value="other">Autre</option>
-        </select>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">Statut</label>
-        <select class="form-select">
-          <option value="">Tous les statuts</option>
-          <option value="verifie">Vérifié</option>
-          <option value="en-attente">En attente</option>
-          <option value="rejete">Rejeté</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Recherche</label>
-        <input type="text" class="form-control" placeholder="Rechercher un document...">
-      </div>
-      <div class="col-md-2">
-        <label class="form-label">&nbsp;</label>
-        <button class="btn btn-outline-primary w-100">Filtrer</button>
-      </div>
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestion des Documents</h2>
+    <div class="d-flex">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
+        <i class="bi bi-upload me-2"></i>Importer un document
+      </button>
     </div>
   </div>
-</div>
 
-<!-- Liste des documents -->
+  <!-- Filters -->
+  <div class="dashboard-card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Type de document</label>
+          <select class="form-select">
+            <option value="">Tous les types</option>
+            <option value="identity">Pièce d'identité</option>
+            <option value="fiscal">Document fiscal</option>
+            <option value="real_estate">Document immobilier</option>
+            <option value="other">Autre</option>
+          </select>
+        </div>
+              <div class="col-md-3">
+        <label class="form-label">Statut</label>
+                <select class="form-select">
+                  <option value="">Tous les statuts</option>
+                  <option value="verifie">Vérifié</option>
+                  <option value="en-attente">En attente</option>
+                  <option value="rejete">Rejeté</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+        <label class="form-label">Recherche</label>
+                <input type="text" class="form-control" placeholder="Rechercher un document...">
+              </div>
+              <div class="col-md-2">
+        <label class="form-label">&nbsp;</label>
+                <button class="btn btn-outline-primary w-100">Filtrer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Liste des documents -->
 {% if documents %}
   {% for document in documents %}
-    <div class="document-card p-3 mb-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
+        <div class="document-card p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
           <i class="bi bi-file-{% if document.mime_type == 'application/pdf' %}pdf{% elif 'image/' in document.mime_type %}image{% else %}text{% endif %} document-icon me-3"></i>
           <div>
             <h5 class="mb-1">{{ document.name }}</h5>
             <p class="text-muted mb-1">Téléversé le {{ document.upload_date|date:"d/m/Y" }} par {{ document.uploaded_by.name }}</p>
-            <div>
+              <div>
               <span class="document-type">{{ document.type|title }}</span>
               {% if document.is_official %}
                 <span class="document-status status-verifie ms-2">Officiel</span>
@@ -119,7 +119,7 @@
             </div>
           </div>
         </div>
-        <div>
+              <div>
           <a href="{{ document.file.url }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">
             <i class="bi bi-eye me-1"></i>Voir
           </a>
@@ -131,9 +131,9 @@
             <i class="bi bi-trash me-1"></i>Supprimer
           </button>
           {% endif %}
-        </div>
-      </div>
-    </div>
+                </div>
+              </div>
+            </div>
   {% endfor %}
 {% else %}
   <div class="alert alert-info">
@@ -148,9 +148,9 @@
       <div class="modal-header">
         <h5 class="modal-title">Téléverser un document</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
+            </div>
       <div class="modal-body">
-        <form method="post" action="{% url 'requests:expert_upload_document' %}" enctype="multipart/form-data">
+        <form method="post" action="{% url 'custom_requests:expert_upload_document' %}" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="mb-3">
             <label class="form-label">Nom du document</label>
@@ -165,24 +165,24 @@
               <option value="official">Document officiel</option>
               <option value="other">Autre</option>
             </select>
-          </div>
+        </div>
           <div class="mb-3">
             <label class="form-label">Fichier</label>
             <input type="file" class="form-control" name="file" required>
-          </div>
+                </div>
           <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" name="is_official" id="isOfficial">
             <label class="form-check-label" for="isOfficial">Document officiel</label>
-          </div>
+              </div>
           <div class="text-end">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
             <button type="submit" class="btn btn-primary">Téléverser</button>
-          </div>
+            </div>
         </form>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 {% endblock %}
 
 {% block extra_scripts %}

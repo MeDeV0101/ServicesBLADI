@@ -1,0 +1,77 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Créer un administrateur | ServicesBLADI{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Créer un nouvel administrateur</h5>
+        </div>
+        <div class="card-body">
+          {% if messages %}
+          <div class="messages mb-4">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+              {{ message }}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          
+          <form method="post" action="{% url 'create_admin' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="email" class="form-label">Email *</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="name" class="form-label">Nom</label>
+                  <input type="text" class="form-control" id="name" name="name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="first_name" class="form-label">Prénom</label>
+                  <input type="text" class="form-control" id="first_name" name="first_name">
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Mot de passe *</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="mb-3">
+              <label for="confirm_password" class="form-label">Confirmer le mot de passe *</label>
+              <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+            </div>
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'admin_users' %}" class="btn btn-secondary">Annuler</a>
+              <button type="submit" class="btn btn-primary">Créer l'administrateur</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm_password').value;
+      
+      if (password !== confirmPassword) {
+        event.preventDefault();
+        alert('Les mots de passe ne correspondent pas.');
+      }
+    });
+  });
+</script>
+{% endblock %}

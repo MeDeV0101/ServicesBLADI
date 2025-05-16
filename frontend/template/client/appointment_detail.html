@@ -1,0 +1,215 @@
+{% extends 'client/base.html' %}
+
+{% block title %}Détails du rendez-vous - MRE{% endblock %}
+{% block meta_description %}Détails du rendez-vous client MRE{% endblock %}
+{% block meta_keywords %}MRE, rendez-vous, services, détail{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2>Détails du Rendez-vous</h2>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'client_dashboard' %}">Tableau de bord</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'custom_requests:client_appointments' %}">Mes Rendez-vous</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Détails</li>
+        </ol>
+      </nav>
+    </div>
+    <a href="{% url 'custom_requests:client_appointments' %}" class="btn btn-outline-primary">
+      <i class="bi bi-arrow-left me-2"></i>Retour aux rendez-vous
+    </a>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Informations générales</h5>
+      <span class="status-badge status-{{ appointment.status }}">
+        {% if appointment.status == 'scheduled' %}
+          En attente
+        {% elif appointment.status == 'confirmed' %}
+          Confirmé
+        {% elif appointment.status == 'completed' %}
+          Terminé
+        {% elif appointment.status == 'cancelled' %}
+          Annulé
+        {% else %}
+          {{ appointment.get_status_display }}
+        {% endif %}
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <h6 class="text-muted mb-2">Type de consultation</h6>
+          <p class="mb-3">
+            {% if appointment.consultation_type == 'in_person' %}
+              <i class="bi bi-person-square me-2"></i>Consultation en personne
+            {% elif appointment.consultation_type == 'video' %}
+              <i class="bi bi-camera-video me-2"></i>Consultation par vidéo
+            {% elif appointment.consultation_type == 'phone' %}
+              <i class="bi bi-telephone me-2"></i>Consultation téléphonique
+            {% else %}
+              {{ appointment.get_consultation_type_display }}
+            {% endif %}
+          </p>
+
+          <h6 class="text-muted mb-2">Date et heure</h6>
+          <p class="mb-3"><i class="bi bi-calendar-event me-2"></i>{{ appointment.date_time|date:"d F Y - H:i" }}</p>
+
+          <h6 class="text-muted mb-2">Durée</h6>
+          <p class="mb-3"><i class="bi bi-clock me-2"></i>{{ appointment.duration }} minutes</p>
+        </div>
+        <div class="col-md-6">
+          <h6 class="text-muted mb-2">Expert</h6>
+          <p class="mb-3"><i class="bi bi-person me-2"></i>{{ appointment.expert.name }} {{ appointment.expert.first_name }}</p>
+
+          {% if appointment.service %}
+            <h6 class="text-muted mb-2">Service</h6>
+            <p class="mb-3"><i class="bi bi-briefcase me-2"></i>{{ appointment.service.title }}</p>
+          {% endif %}
+
+          {% if appointment.service_request %}
+            <h6 class="text-muted mb-2">Demande associée</h6>
+            <p class="mb-3">
+              <i class="bi bi-file-earmark-text me-2"></i>
+              <a href="{% url 'custom_requests:request_detail' appointment.service_request.id %}">{{ appointment.service_request.title }}</a>
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if appointment.notes %}
+        <div class="row mt-3">
+          <div class="col-12">
+            <h6 class="text-muted mb-2">Notes</h6>
+            <div class="p-3 bg-light rounded">
+              <p class="mb-0">{{ appointment.notes }}</p>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <div class="card-footer">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <small class="text-muted">Créé le {{ appointment.created_at|date:"d F Y" }}</small>
+          {% if appointment.updated_at != appointment.created_at %}
+            <small class="text-muted ms-3">Dernière mise à jour le {{ appointment.updated_at|date:"d F Y" }}</small>
+          {% endif %}
+        </div>
+        {% if appointment.status == 'scheduled' or appointment.status == 'confirmed' %}
+          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
+            <i class="bi bi-x-circle me-2"></i>Annuler le rendez-vous
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if documents %}
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Documents associés</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Type</th>
+                <th>Téléchargé par</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for doc in documents %}
+                <tr>
+                  <td>{{ doc.name }}</td>
+                  <td>
+                    {% if doc.type == 'identity' %}
+                      <span class="badge bg-primary">Pièce d'identité</span>
+                    {% elif doc.type == 'proof' %}
+                      <span class="badge bg-info">Justificatif</span>
+                    {% elif doc.type == 'contract' %}
+                      <span class="badge bg-success">Contrat</span>
+                    {% elif doc.type == 'invoice' %}
+                      <span class="badge bg-warning">Facture</span>
+                    {% elif doc.type == 'report' %}
+                      <span class="badge bg-secondary">Rapport</span>
+                    {% else %}
+                      <span class="badge bg-dark">Autre</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ doc.uploaded_by.name }} {{ doc.uploaded_by.first_name }}</td>
+                  <td>{{ doc.upload_date|date:"d/m/Y H:i" }}</td>
+                  <td>
+                    <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                      <i class="bi bi-download"></i>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Modal d'annulation -->
+{% if appointment.status == 'scheduled' or appointment.status == 'confirmed' %}
+  <div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmer l'annulation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Êtes-vous sûr de vouloir annuler ce rendez-vous ?</p>
+          <p class="text-danger"><strong>Attention:</strong> Cette action est irréversible.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non, garder</button>
+          <a href="{% url 'custom_requests:cancel_appointment' appointment.id %}" class="btn btn-danger">Oui, annuler</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<!-- CSS personnalisé pour les badges de statut -->
+<style>
+  .status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 0.85rem;
+  }
+  
+  .status-scheduled {
+    background-color: #e2f0fb;
+    color: #1976d2;
+  }
+  
+  .status-confirmed {
+    background-color: #e0f7fa;
+    color: #0097a7;
+  }
+  
+  .status-completed {
+    background-color: #e8f5e9;
+    color: #388e3c;
+  }
+  
+  .status-cancelled {
+    background-color: #ffebee;
+    color: #d32f2f;
+  }
+</style>
+{% endblock %} 

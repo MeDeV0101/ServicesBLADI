@@ -1,348 +1,865 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends 'admin/base.html' %}
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Gestion des Utilisateurs - MRE</title>
-  <meta name="description" content="Gestion des utilisateurs pour l'administrateur MRE">
-  <meta name="keywords" content="MRE, utilisateurs, admin, services">
+{% load static %}
 
-  <!-- Favicons -->
-  <link href="../../static/img/favicon.png" rel="icon">
-  <link href="../../static/img/apple-touch-icon.png" rel="apple-touch-icon">
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Vendor CSS Files -->
-  <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../../static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+{% block title %}Gestion des Utilisateurs | Administration{% endblock %}
 
-  <!-- Main CSS File -->
-  <link href="../../static/css/main.css" rel="stylesheet">
 
-  <style>
-    :root {
-      --sidebar-width: 280px;
-      --header-height: 60px;
-      --primary-color: #1e3c72;
-      --secondary-color: #2a5298;
-    }
 
-    body {
-      background-color: #f8f9fa;
-    }
+{% block admin_content %}
 
-    .dashboard-wrapper {
-      display: flex;
-      min-height: 100vh;
-    }
+<div class="container-fluid">
 
-    .sidebar {
-      width: var(--sidebar-width);
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-      color: white;
-      position: fixed;
-      height: 100vh;
-      left: 0;
-      top: 0;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
+  <!-- Header -->
 
-    .main-content {
-      margin-left: var(--sidebar-width);
-      flex: 1;
-      padding: 2rem;
-    }
+  <div class="d-flex justify-content-between align-items-center mb-4">
 
-    .user-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 1rem;
-      transition: transform 0.2s;
-    }
+    <h2>Gestion des Utilisateurs</h2>
 
-    .user-card:hover {
-      transform: translateY(-2px);
-    }
+    <div class="d-flex gap-2">
 
-    .user-role {
-      padding: 0.25rem 0.75rem;
-      border-radius: 15px;
-      font-size: 0.8rem;
-    }
+      <a href="{% url 'admin_add_user' %}" class="btn btn-primary">
 
-    .role-admin {
-      background-color: #e6f7ff;
-      color: #1890ff;
-    }
+        <i class="bi bi-person-plus me-2"></i>Nouvel utilisateur
 
-    .role-expert {
-      background-color: #f6ffed;
-      color: #52c41a;
-    }
+      </a>
 
-    .role-client {
-      background-color: #fff7e6;
-      color: #fa8c16;
-    }
-
-    .user-status {
-      padding: 0.25rem 0.75rem;
-      border-radius: 15px;
-      font-size: 0.8rem;
-    }
-
-    .status-active {
-      background-color: #f6ffed;
-      color: #52c41a;
-    }
-
-    .status-inactive {
-      background-color: #fff1f0;
-      color: #f5222d;
-    }
-
-    .status-pending {
-      background-color: #fff7e6;
-      color: #fa8c16;
-    }
-
-    @media (max-width: 992px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-      .main-content {
-        margin-left: 0;
-      }
-      .sidebar.active {
-        transform: translateX(0);
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="dashboard-wrapper">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header p-3">
-        <h3>MRE</h3>
-      </div>
-      <div class="sidebar-profile text-center p-3">
-        <img src="../../static/img/profile-placeholder.jpg" alt="Profile" class="rounded-circle" width="80">
-        <h5 class="mt-3 text-white">Admin</h5>
-        <p class="text-white-50">Administrateur</p>
-      </div>
-      <nav class="sidebar-menu">
-        <a href="dashboard.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
-        </a>
-        <a href="users.html" class="d-block p-3 text-white text-decoration-none active">
-          <i class="bi bi-people me-2"></i>Utilisateurs
-        </a>
-        <a href="demandes.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-file-text me-2"></i>Demandes
-        </a>
-        <a href="documents.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-folder me-2"></i>Documents
-        </a>
-        <a href="rendezvous.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-calendar me-2"></i>Rendez-vous
-        </a>
-        <a href="ressources.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-book me-2"></i>Ressources
-        </a>
-        <a href="../index.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
-        </a>
-      </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2>Gestion des Utilisateurs</h2>
-          <div class="d-flex gap-2">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUserModal">
-              <i class="bi bi-person-plus me-2"></i>Nouvel utilisateur
-            </button>
-          </div>
-        </div>
-
-        <!-- Filtres -->
-        <div class="card mb-4">
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-3">
-                <select class="form-select">
-                  <option value="">Tous les rôles</option>
-                  <option value="admin">Administrateur</option>
-                  <option value="expert">Expert</option>
-                  <option value="client">Client</option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <select class="form-select">
-                  <option value="">Tous les statuts</option>
-                  <option value="active">Actif</option>
-                  <option value="inactive">Inactif</option>
-                  <option value="pending">En attente</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Rechercher un utilisateur...">
-              </div>
-              <div class="col-md-2">
-                <button class="btn btn-outline-primary w-100">Filtrer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Liste des utilisateurs -->
-        <div class="user-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <img src="../../static/img/profile-placeholder.jpg" alt="Profile" class="rounded-circle me-3" width="50">
-              <div>
-                <h5 class="mb-1">Ahmed Benali</h5>
-                <div class="d-flex gap-2">
-                  <span class="user-role role-expert">Expert</span>
-                  <span class="user-status status-active">Actif</span>
-                </div>
-                <small class="text-muted">ahmed.benali@email.com</small>
-              </div>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-success">
-                <i class="bi bi-pencil"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="user-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <img src="../../static/img/profile-placeholder.jpg" alt="Profile" class="rounded-circle me-3" width="50">
-              <div>
-                <h5 class="mb-1">Fatima Zahra</h5>
-                <div class="d-flex gap-2">
-                  <span class="user-role role-client">Client</span>
-                  <span class="user-status status-pending">En attente</span>
-                </div>
-                <small class="text-muted">fatima.zahra@email.com</small>
-              </div>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-success">
-                <i class="bi bi-pencil"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="user-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <img src="../../static/img/profile-placeholder.jpg" alt="Profile" class="rounded-circle me-3" width="50">
-              <div>
-                <h5 class="mb-1">Karim Hassan</h5>
-                <div class="d-flex gap-2">
-                  <span class="user-role role-admin">Administrateur</span>
-                  <span class="user-status status-active">Actif</span>
-                </div>
-                <small class="text-muted">karim.hassan@email.com</small>
-              </div>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-success">
-                <i class="bi bi-pencil"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- Modal Nouvel Utilisateur -->
-  <div class="modal fade" id="newUserModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Nouvel Utilisateur</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <div class="mb-3">
-              <label class="form-label">Nom complet</label>
-              <input type="text" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input type="email" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Rôle</label>
-              <select class="form-select">
-                <option value="admin">Administrateur</option>
-                <option value="expert">Expert</option>
-                <option value="client">Client</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Mot de passe</label>
-              <input type="password" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Confirmer le mot de passe</label>
-              <input type="password" class="form-control">
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="button" class="btn btn-primary">Créer</button>
-        </div>
-      </div>
     </div>
+
   </div>
 
-  <!-- Vendor JS Files -->
-  <script src="../../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../../static/vendor/aos/aos.js"></script>
-  <script src="../../static/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../../static/vendor/swiper/swiper-bundle.min.js"></script>
 
-  <!-- Main JS File -->
-  <script src="../../static/js/main.js"></script>
-</body>
 
-</html> 
+  <!-- Stats Cards -->
+
+  <div class="row mb-4">
+
+    <div class="col-xl-3 col-md-6 mb-3">
+
+      <div class="card border-left-primary shadow h-100 py-2">
+
+        <div class="card-body">
+
+          <div class="row no-gutters align-items-center">
+
+            <div class="col mr-2">
+
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Utilisateurs</div>
+
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total }}</div>
+
+            </div>
+
+            <div class="col-auto">
+
+              <i class="bi bi-people-fill fa-2x text-gray-300"></i>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="col-xl-3 col-md-6 mb-3">
+
+      <div class="card border-left-success shadow h-100 py-2">
+
+        <div class="card-body">
+
+          <div class="row no-gutters align-items-center">
+
+            <div class="col mr-2">
+
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Clients</div>
+
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.clients }}</div>
+
+            </div>
+
+            <div class="col-auto">
+
+              <i class="bi bi-person fa-2x text-gray-300"></i>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="col-xl-3 col-md-6 mb-3">
+
+      <div class="card border-left-warning shadow h-100 py-2">
+
+        <div class="card-body">
+
+          <div class="row no-gutters align-items-center">
+
+            <div class="col mr-2">
+
+              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Experts</div>
+
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.experts }}</div>
+
+            </div>
+
+            <div class="col-auto">
+
+              <i class="bi bi-briefcase fa-2x text-gray-300"></i>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="col-xl-3 col-md-6 mb-3">
+
+      <div class="card border-left-info shadow h-100 py-2">
+
+        <div class="card-body">
+
+          <div class="row no-gutters align-items-center">
+
+            <div class="col mr-2">
+
+              <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Administrateurs</div>
+
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.admins }}</div>
+
+            </div>
+
+            <div class="col-auto">
+
+              <i class="bi bi-shield-lock fa-2x text-gray-300"></i>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- Filters & Search -->
+
+  <div class="card mb-4 shadow">
+
+    <div class="card-body">
+
+      <form method="get" class="row g-3">
+
+        <div class="col-md-3">
+
+          <label for="user_type" class="form-label">Type d'utilisateur</label>
+
+          <select class="form-select" id="user_type" name="user_type">
+
+            <option value="" {% if not user_type %}selected{% endif %}>Tous</option>
+
+            <option value="client" {% if user_type == 'client' %}selected{% endif %}>Clients</option>
+
+            <option value="expert" {% if user_type == 'expert' %}selected{% endif %}>Experts</option>
+
+            <option value="admin" {% if user_type == 'admin' %}selected{% endif %}>Administrateurs</option>
+
+          </select>
+
+        </div>
+
+        <div class="col-md-3">
+
+          <label for="status" class="form-label">Statut</label>
+
+          <select class="form-select" id="status" name="status">
+
+            <option value="" {% if not status_filter %}selected{% endif %}>Tous</option>
+
+            <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Actifs</option>
+
+            <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactifs</option>
+
+          </select>
+
+        </div>
+
+        <div class="col-md-4">
+
+          <label for="search" class="form-label">Recherche</label>
+
+          <div class="input-group">
+
+            <input type="text" class="form-control" id="search" name="search" placeholder="Nom, email..." value="{{ search_query }}">
+
+            <button class="btn btn-outline-primary" type="submit">
+
+              <i class="bi bi-search"></i>
+
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end">
+
+          <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- Actions Buttons -->
+
+  <div class="mb-4">
+
+    <form id="bulk-form" method="post">
+
+      {% csrf_token %}
+
+      <div class="d-flex gap-2">
+
+        <button type="button" class="btn btn-outline-success" onclick="toggleSelectedStatus('active')">
+
+          <i class="bi bi-check-circle me-2"></i>Activer
+
+        </button>
+
+        <button type="button" class="btn btn-outline-warning" onclick="toggleSelectedStatus('inactive')">
+
+          <i class="bi bi-x-circle me-2"></i>Désactiver
+
+        </button>
+
+        <button type="button" class="btn btn-outline-danger" onclick="deleteSelected()">
+
+          <i class="bi bi-trash me-2"></i>Supprimer
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+
+
+  <!-- Users Table -->
+
+  <div class="card shadow mb-4">
+
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+
+      <h6 class="m-0 font-weight-bold text-primary">Liste des Utilisateurs</h6>
+
+      {% if users.paginator.count > 0 %}
+
+      <span class="badge bg-primary">{{ users.paginator.count }} utilisateur(s)</span>
+
+      {% endif %}
+
+    </div>
+
+    <div class="card-body">
+
+      {% if users.paginator.count > 0 %}
+
+      <div class="table-responsive">
+
+        <table class="table table-hover">
+
+          <thead>
+
+            <tr>
+
+              <th width="30">
+
+                <input type="checkbox" id="select-all">
+
+              </th>
+
+              <th>Nom</th>
+
+              <th>Email</th>
+
+              <th>Type</th>
+
+              <th>Date d'inscription</th>
+
+              <th>Statut</th>
+
+              <th>Actions</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            {% for user in users %}
+
+            <tr>
+
+              <td>
+
+                <input type="checkbox" class="user-checkbox" value="{{ user.id }}">
+
+              </td>
+
+              <td>
+
+                <div class="d-flex align-items-center">
+
+                  <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'img/profile-placeholder.jpg' %}{% endif %}" alt="Profile" class="rounded-circle me-2" width="40">
+
+                  <div>
+
+                    <div class="fw-bold">{{ user.name }} {{ user.first_name }}</div>
+
+                    {% if user.phone %}
+
+                    <div class="small text-muted">{{ user.phone }}</div>
+
+                    {% endif %}
+
+                  </div>
+
+                </div>
+
+              </td>
+
+              <td>{{ user.email }}</td>
+
+              <td>
+
+                {% if user.account_type == 'CLIENT' or user.account_type == 'client' %}
+
+                <span class="badge bg-success">Client</span>
+
+                {% elif user.account_type == 'EXPERT' or user.account_type == 'expert' %}
+
+                <span class="badge bg-warning text-dark">Expert</span>
+
+                {% elif user.account_type == 'ADMIN' or user.account_type == 'admin' %}
+
+                <span class="badge bg-info">Admin</span>
+
+                {% else %}
+
+                <span class="badge bg-secondary">{{ user.account_type }}</span>
+
+                {% endif %}
+
+              </td>
+
+              <td>{{ user.date_joined|date:"d/m/Y" }}</td>
+
+              <td>
+
+                {% if user.is_active %}
+
+                <span class="badge bg-success">Actif</span>
+
+                {% else %}
+
+                <span class="badge bg-danger">Inactif</span>
+
+                {% endif %}
+
+              </td>
+
+              <td>
+
+                <div class="d-flex gap-1">
+
+                  <a href="{% url 'admin_user_detail' user_id=user.id %}" class="btn btn-sm btn-outline-primary" title="Voir détails">
+
+                    <i class="bi bi-eye"></i>
+
+                  </a>
+
+                  <a href="{% url 'admin_edit_user' user_id=user.id %}" class="btn btn-sm btn-outline-success" title="Éditer">
+
+                    <i class="bi bi-pencil"></i>
+
+                  </a>
+
+                  <button type="button" class="btn btn-sm btn-outline-warning" 
+
+                    onclick="confirmToggleStatus({{ user.id }}, {% if user.is_active %}false{% else %}true{% endif %})" 
+
+                    title="{% if user.is_active %}Désactiver{% else %}Activer{% endif %}">
+
+                    <i class="bi {% if user.is_active %}bi-x-circle{% else %}bi-check-circle{% endif %}"></i>
+
+                  </button>
+
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+
+                    onclick="confirmDelete({{ user.id }})" 
+
+                    title="Supprimer">
+
+                    <i class="bi bi-trash"></i>
+
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+            {% endfor %}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+
+      <!-- Pagination -->
+
+      {% if users.paginator.num_pages > 1 %}
+
+      <nav aria-label="Pagination">
+
+        <ul class="pagination justify-content-center mt-4">
+
+          {% if users.has_previous %}
+
+          <li class="page-item">
+
+            <a class="page-link" href="?page=1{% if user_type %}&user_type={{ user_type }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="First">
+
+              <span aria-hidden="true">&laquo;&laquo;</span>
+
+            </a>
+
+          </li>
+
+          <li class="page-item">
+
+            <a class="page-link" href="?page={{ users.previous_page_number }}{% if user_type %}&user_type={{ user_type }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Previous">
+
+              <span aria-hidden="true">&laquo;</span>
+
+            </a>
+
+          </li>
+
+          {% else %}
+
+          <li class="page-item disabled">
+
+            <a class="page-link" href="#" aria-label="First">
+
+              <span aria-hidden="true">&laquo;&laquo;</span>
+
+            </a>
+
+          </li>
+
+          <li class="page-item disabled">
+
+            <a class="page-link" href="#" aria-label="Previous">
+
+              <span aria-hidden="true">&laquo;</span>
+
+            </a>
+
+          </li>
+
+          {% endif %}
+
+
+
+          {% for num in users.paginator.page_range %}
+
+          {% if num == users.number %}
+
+          <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+
+          {% elif num > users.number|add:"-3" and num < users.number|add:"3" %}
+
+          <li class="page-item"><a class="page-link" href="?page={{ num }}{% if user_type %}&user_type={{ user_type }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a></li>
+
+          {% endif %}
+
+          {% endfor %}
+
+
+
+          {% if users.has_next %}
+
+          <li class="page-item">
+
+            <a class="page-link" href="?page={{ users.next_page_number }}{% if user_type %}&user_type={{ user_type }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Next">
+
+              <span aria-hidden="true">&raquo;</span>
+
+            </a>
+
+          </li>
+
+          <li class="page-item">
+
+            <a class="page-link" href="?page={{ users.paginator.num_pages }}{% if user_type %}&user_type={{ user_type }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Last">
+
+              <span aria-hidden="true">&raquo;&raquo;</span>
+
+            </a>
+
+          </li>
+
+          {% else %}
+
+          <li class="page-item disabled">
+
+            <a class="page-link" href="#" aria-label="Next">
+
+              <span aria-hidden="true">&raquo;</span>
+
+            </a>
+
+          </li>
+
+          <li class="page-item disabled">
+
+            <a class="page-link" href="#" aria-label="Last">
+
+              <span aria-hidden="true">&raquo;&raquo;</span>
+
+            </a>
+
+          </li>
+
+          {% endif %}
+
+        </ul>
+
+      </nav>
+
+      {% endif %}
+
+
+
+      {% else %}
+
+      <div class="text-center py-5">
+
+        <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+
+        <p class="mt-3 text-muted">Aucun utilisateur trouvé</p>
+
+        {% if user_type or status_filter or search_query %}
+
+        <a href="{% url 'admin_users' %}" class="btn btn-outline-primary mt-2">Réinitialiser les filtres</a>
+
+        {% endif %}
+
+      </div>
+
+      {% endif %}
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- Modals for confirmation actions -->
+
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title" id="statusModalLabel">Changer le statut</h5>
+
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+      </div>
+
+      <div class="modal-body" id="status-modal-body">
+
+        Êtes-vous sûr de vouloir modifier le statut de cet utilisateur ?
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+
+        <a href="#" id="confirm-status-btn" class="btn btn-primary">Confirmer</a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
+
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+      </div>
+
+      <div class="modal-body">
+
+        Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+
+        <a href="#" id="confirm-delete-btn" class="btn btn-danger">Supprimer</a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+  // Select all checkbox functionality
+
+  document.getElementById('select-all').addEventListener('change', function() {
+
+    var checkboxes = document.querySelectorAll('.user-checkbox');
+
+    checkboxes.forEach(checkbox => {
+
+      checkbox.checked = this.checked;
+
+    });
+
+  });
+
+
+
+  // Function to confirm toggling user status
+
+  function confirmToggleStatus(userId, makeActive) {
+
+    var statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+
+    var statusModalBody = document.getElementById('status-modal-body');
+
+    var confirmStatusBtn = document.getElementById('confirm-status-btn');
+
+    
+
+    statusModalBody.innerText = makeActive 
+
+      ? 'Êtes-vous sûr de vouloir activer cet utilisateur ?'
+
+      : 'Êtes-vous sûr de vouloir désactiver cet utilisateur ?';
+
+    
+
+    confirmStatusBtn.href = "{% url 'admin_toggle_user_status' user_id=0 %}".replace('0', userId);
+
+    statusModal.show();
+
+  }
+
+
+
+  // Function to confirm user deletion
+
+  function confirmDelete(userId) {
+
+    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+    var confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+
+    
+
+    confirmDeleteBtn.href = "{% url 'admin_delete_user' user_id=0 %}".replace('0', userId);
+
+    deleteModal.show();
+
+  }
+
+
+
+  // Function to toggle selected users' status
+
+  function toggleSelectedStatus(status) {
+
+    var selected = getSelectedUsers();
+
+    if (selected.length === 0) {
+
+      alert('Veuillez sélectionner au moins un utilisateur.');
+
+      return;
+
+    }
+
+    
+
+    if (confirm('Êtes-vous sûr de vouloir ' + (status === 'active' ? 'activer' : 'désactiver') + ' les utilisateurs sélectionnés ?')) {
+
+      var form = document.getElementById('bulk-form');
+
+      form.action = "{% url 'admin_bulk_toggle_users_status' %}";
+
+      
+
+      // Add hidden fields
+
+      var input = document.createElement('input');
+
+      input.type = 'hidden';
+
+      input.name = 'user_ids';
+
+      input.value = selected.join(',');
+
+      form.appendChild(input);
+
+      
+
+      var statusInput = document.createElement('input');
+
+      statusInput.type = 'hidden';
+
+      statusInput.name = 'status';
+
+      statusInput.value = status;
+
+      form.appendChild(statusInput);
+
+      
+
+      form.submit();
+
+    }
+
+  }
+
+
+
+  // Function to delete selected users
+
+  function deleteSelected() {
+
+    var selected = getSelectedUsers();
+
+    if (selected.length === 0) {
+
+      alert('Veuillez sélectionner au moins un utilisateur.');
+
+      return;
+
+    }
+
+    
+
+    if (confirm('Êtes-vous sûr de vouloir supprimer les utilisateurs sélectionnés ? Cette action est irréversible.')) {
+
+      var form = document.getElementById('bulk-form');
+
+      form.action = "{% url 'admin_bulk_delete_users' %}";
+
+      
+
+      var input = document.createElement('input');
+
+      input.type = 'hidden';
+
+      input.name = 'user_ids';
+
+      input.value = selected.join(',');
+
+      form.appendChild(input);
+
+      
+
+      form.submit();
+
+    }
+
+  }
+
+
+
+  // Helper function to get selected users
+
+  function getSelectedUsers() {
+
+    var checkboxes = document.querySelectorAll('.user-checkbox:checked');
+
+    return Array.from(checkboxes).map(cb => cb.value);
+
+  }
+
+</script>
+
+{% endblock %}

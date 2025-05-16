@@ -77,10 +77,10 @@
             <!-- Actions -->
             <div class="d-flex justify-content-end mt-4">
               {% if demande.status == 'new' or demande.status == 'pending_info' %}
-                <a href="{% url 'requests:edit_request' demande.id %}" class="btn btn-outline-primary me-2">
+                <a href="{% url 'custom_requests:edit_request' demande.id %}" class="btn btn-outline-primary me-2">
                   <i class="bi bi-pencil me-1"></i>Modifier
                 </a>
-                <a href="{% url 'requests:cancel_request' demande.id %}" class="btn btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette demande ?');">
+                <a href="{% url 'custom_requests:cancel_request' demande.id %}" class="btn btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette demande ?');">
                   <i class="bi bi-x-circle me-1"></i>Annuler
                 </a>
               {% endif %}
@@ -116,7 +116,7 @@
                           <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
                             <i class="bi bi-eye"></i>
                           </a>
-                          <a href="{% url 'requests:delete_document' doc.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?');">
+                          <a href="{% url 'custom_requests:delete_document' doc.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?');">
                             <i class="bi bi-trash"></i>
                           </a>
                         </td>
@@ -231,7 +231,7 @@
           <h5 class="modal-title">Ajouter un document</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="{% url 'requests:upload_document' %}" method="post" enctype="multipart/form-data">
+        <form action="{% url 'custom_requests:upload_document' %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="modal-body">
             <input type="hidden" name="demande_id" value="{{ demande.id }}">
@@ -270,7 +270,7 @@
           <h5 class="modal-title">Planifier un rendez-vous</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="{% url 'requests:create_appointment' %}" method="post">
+        <form action="{% url 'custom_requests:create_appointment' %}" method="post">
           {% csrf_token %}
           <div class="modal-body">
             <input type="hidden" name="demande_id" value="{{ demande.id }}">

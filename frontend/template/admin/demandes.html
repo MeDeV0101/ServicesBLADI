@@ -1,313 +1,299 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends 'admin/base.html' %}
+{% load static %}
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Gestion des Demandes - MRE</title>
-  <meta name="description" content="Gestion des demandes pour l'administrateur MRE">
-  <meta name="keywords" content="MRE, demandes, admin, services">
+{% block title %}Gestion des Demandes | Administration{% endblock %}
 
-  <!-- Favicons -->
-  <link href="../../static/img/favicon.png" rel="icon">
-  <link href="../../static/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../../static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-
-  <!-- Main CSS File -->
-  <link href="../../static/css/main.css" rel="stylesheet">
-
-  <style>
-    :root {
-      --sidebar-width: 280px;
-      --header-height: 60px;
-      --primary-color: #1e3c72;
-      --secondary-color: #2a5298;
-    }
-
-    body {
-      background-color: #f8f9fa;
-    }
-
-    .dashboard-wrapper {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: var(--sidebar-width);
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-      color: white;
-      position: fixed;
-      height: 100vh;
-      left: 0;
-      top: 0;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-
-    .main-content {
-      margin-left: var(--sidebar-width);
-      flex: 1;
-      padding: 2rem;
-    }
-
-    .demande-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 1rem;
-      transition: transform 0.2s;
-    }
-
-    .demande-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .status-badge {
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-    }
-
-    .status-en-cours {
-      background-color: #e3fcef;
-      color: #00a854;
-    }
-
-    .status-en-attente {
-      background-color: #fff7e6;
-      color: #fa8c16;
-    }
-
-    .status-termine {
-      background-color: #f6ffed;
-      color: #52c41a;
-    }
-
-    .status-rejete {
-      background-color: #fff1f0;
-      color: #f5222d;
-    }
-
-    .priority-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 15px;
-      font-size: 0.8rem;
-    }
-
-    .priority-haute {
-      background-color: #fff1f0;
-      color: #f5222d;
-    }
-
-    .priority-moyenne {
-      background-color: #fff7e6;
-      color: #fa8c16;
-    }
-
-    .priority-basse {
-      background-color: #e3fcef;
-      color: #00a854;
-    }
-
-    @media (max-width: 992px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-      .main-content {
-        margin-left: 0;
-      }
-      .sidebar.active {
-        transform: translateX(0);
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="dashboard-wrapper">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header p-3">
-        <h3>MRE</h3>
-      </div>
-      <div class="sidebar-profile text-center p-3">
-        <img src="../../static/img/profile-placeholder.jpg" alt="Profile" class="rounded-circle" width="80">
-        <h5 class="mt-3 text-white">Admin</h5>
-        <p class="text-white-50">Administrateur</p>
-      </div>
-      <nav class="sidebar-menu">
-        <a href="../admin-dashboard.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
-        </a>
-        <a href="users.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-people me-2"></i>Utilisateurs
-        </a>
-        <a href="demandes.html" class="d-block p-3 text-white text-decoration-none active">
-          <i class="bi bi-file-text me-2"></i>Demandes
-        </a>
-        <a href="documents.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-folder me-2"></i>Documents
-        </a>
-        <a href="rendezvous.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-calendar me-2"></i>Rendez-vous
-        </a>
-        <a href="ressources.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-book me-2"></i>Ressources
-        </a>
-        <a href="../index.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
-        </a>
-      </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2>Gestion des Demandes</h2>
-          <div class="d-flex gap-2">
-            <button class="btn btn-outline-primary">
-              <i class="bi bi-filter me-2"></i>Filtres avancés
-            </button>
-          </div>
-        </div>
-
-        <!-- Filtres -->
-        <div class="card mb-4">
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-3">
-                <select class="form-select">
-                  <option value="">Tous les statuts</option>
-                  <option value="en-cours">En cours</option>
-                  <option value="en-attente">En attente</option>
-                  <option value="termine">Terminé</option>
-                  <option value="rejete">Rejeté</option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <select class="form-select">
-                  <option value="">Toutes les priorités</option>
-                  <option value="haute">Haute</option>
-                  <option value="moyenne">Moyenne</option>
-                  <option value="basse">Basse</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Rechercher une demande...">
-              </div>
-              <div class="col-md-2">
-                <button class="btn btn-outline-primary w-100">Filtrer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Liste des demandes -->
-        <div class="demande-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <h5 class="mb-0 me-3">Demande de certificat de résidence</h5>
-                <span class="priority-badge priority-haute">Haute priorité</span>
-              </div>
-              <p class="text-muted mb-0">Client: Mohammed Abd</p>
-              <p class="text-muted mb-0">Expert assigné: Ahmed Benali</p>
-              <p class="text-muted mb-0">Type: Administrative</p>
-            </div>
-            <div class="text-end">
-              <span class="status-badge status-en-cours">En cours</span>
-              <div class="mt-2">
-                <button class="btn btn-sm btn-outline-primary me-2">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-success me-2">
-                  <i class="bi bi-check-lg"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger">
-                  <i class="bi bi-x-lg"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="demande-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <h5 class="mb-0 me-3">Déclaration fiscale annuelle</h5>
-                <span class="priority-badge priority-moyenne">Moyenne priorité</span>
-              </div>
-              <p class="text-muted mb-0">Client: Fatima Zahra</p>
-              <p class="text-muted mb-0">Expert assigné: Karim Hassan</p>
-              <p class="text-muted mb-0">Type: Fiscale</p>
-            </div>
-            <div class="text-end">
-              <span class="status-badge status-en-attente">En attente</span>
-              <div class="mt-2">
-                <button class="btn btn-sm btn-outline-primary me-2">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-success me-2">
-                  <i class="bi bi-check-lg"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger">
-                  <i class="bi bi-x-lg"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="demande-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <div class="d-flex align-items-center mb-2">
-                <h5 class="mb-0 me-3">Achat immobilier</h5>
-                <span class="priority-badge priority-basse">Basse priorité</span>
-              </div>
-              <p class="text-muted mb-0">Client: Karim Hassan</p>
-              <p class="text-muted mb-0">Expert assigné: Ahmed Benali</p>
-              <p class="text-muted mb-0">Type: Immobilier</p>
-            </div>
-            <div class="text-end">
-              <span class="status-badge status-termine">Terminé</span>
-              <div class="mt-2">
-                <button class="btn btn-sm btn-outline-primary me-2">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-success me-2">
-                  <i class="bi bi-check-lg"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger">
-                  <i class="bi bi-x-lg"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+{% block admin_content %}
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Gestion des Demandes</h1>
   </div>
 
-  <!-- Vendor JS Files -->
-  <script src="../../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../../static/vendor/aos/aos.js"></script>
-  <script src="../../static/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../../static/vendor/swiper/swiper-bundle.min.js"></script>
+  <!-- Statistics Row -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-primary">
+          <i class="bi bi-clipboard-data"></i>
+        </div>
+        <div class="count">{{ stats.total }}</div>
+        <div class="title">Total Demandes</div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-warning">
+          <i class="bi bi-hourglass-split"></i>
+        </div>
+        <div class="count">{{ stats.pending }}</div>
+        <div class="title">En Attente</div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-info">
+          <i class="bi bi-gear-wide-connected"></i>
+        </div>
+        <div class="count">{{ stats.in_progress }}</div>
+        <div class="title">En Cours</div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-success">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <div class="count">{{ stats.completed }}</div>
+        <div class="title">Terminées</div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Main JS File -->
-  <script src="../../static/js/main.js"></script>
-</body>
+  <!-- Filter Section -->
+  <div class="filter-section mb-4">
+    <form method="get" class="row g-3">
+      <div class="col-md-2">
+        <label for="status" class="form-label">Statut</label>
+        <select id="status" name="status" class="form-select">
+          <option value="">Tous les statuts</option>
+          <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>En attente</option>
+          <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>En cours</option>
+          <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Terminée</option>
+          <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Annulée</option>
+        </select>
+      </div>
+      
+      <div class="col-md-3">
+        <label for="category" class="form-label">Catégorie</label>
+        <select id="category" name="category" class="form-select">
+          <option value="">Toutes les catégories</option>
+          {% for category in categories %}
+          <option value="{{ category.id }}" {% if category_filter == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div class="col-md-2">
+        <label for="period" class="form-label">Période</label>
+        <select id="period" name="period" class="form-select">
+          <option value="">Toutes les périodes</option>
+          <option value="today" {% if period_filter == 'today' %}selected{% endif %}>Aujourd'hui</option>
+          <option value="week" {% if period_filter == 'week' %}selected{% endif %}>7 derniers jours</option>
+          <option value="month" {% if period_filter == 'month' %}selected{% endif %}>30 derniers jours</option>
+        </select>
+      </div>
+      
+      <div class="col-md-3">
+        <label for="search" class="form-label">Recherche</label>
+        <input type="text" class="form-control" id="search" name="search" value="{{ search_query }}" placeholder="Client, Service, Description...">
+      </div>
+      
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-filter"></i> Filtrer
+        </button>
+      </div>
+    </form>
+  </div>
 
-</html> 
+  <!-- Requests Table -->
+  <div class="card">
+    <div class="card-header bg-white">
+      <h5 class="card-title mb-0">Liste des Demandes</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Client</th>
+              <th>Service</th>
+              <th>Date de création</th>
+              <th>Statut</th>
+              <th>Expert assigné</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for request in requests %}
+            <tr>
+              <td>{{ request.id }}</td>
+              <td>{{ request.client.user.first_name }} {{ request.client.user.name }}</td>
+              <td>{{ request.service.name }}</td>
+              <td>{{ request.created_at|date:"d/m/Y H:i" }}</td>
+              <td>
+                {% if request.status == 'pending' %}
+                <span class="badge bg-warning">En attente</span>
+                {% elif request.status == 'in_progress' %}
+                <span class="badge bg-info">En cours</span>
+                {% elif request.status == 'completed' %}
+                <span class="badge bg-success">Terminée</span>
+                {% elif request.status == 'cancelled' %}
+                <span class="badge bg-danger">Annulée</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if request.expert %}
+                {{ request.expert.user.first_name }} {{ request.expert.user.name }}
+                {% else %}
+                <span class="text-muted">Non assigné</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="btn-group">
+                  <a href="{% url 'admin_request_detail' request.id %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#assignModal{{ request.id }}">
+                    <i class="bi bi-person-check"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#statusModal{{ request.id }}">
+                    <i class="bi bi-arrow-clockwise"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center">Aucune demande trouvée</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      {% if requests.paginator.num_pages > 1 %}
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mt-4">
+          {% if requests.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="First">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ requests.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">&laquo;&laquo;</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">&laquo;</span>
+            </li>
+          {% endif %}
+          
+          {% for i in requests.paginator.page_range %}
+            {% if requests.number == i %}
+              <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+            {% elif i > requests.number|add:'-3' and i < requests.number|add:'3' %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ i }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ i }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+          
+          {% if requests.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ requests.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ requests.paginator.num_pages }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if period_filter %}&period={{ period_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Last">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">&raquo;</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">&raquo;&raquo;</span>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Assign Expert Modals -->
+{% for request in requests %}
+<div class="modal fade" id="assignModal{{ request.id }}" tabindex="-1" aria-labelledby="assignModalLabel{{ request.id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="assignModalLabel{{ request.id }}">Assigner un Expert</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'admin_assign_expert' request.id %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="expert" class="form-label">Expert:</label>
+            <select class="form-select" id="expert" name="expert_id" required>
+              <option value="">Sélectionner un expert</option>
+              <!-- TODO: Replace with actual experts from the view context -->
+              {% for expert in experts %}
+              <option value="{{ expert.id }}" {% if request.expert and request.expert.id == expert.id %}selected{% endif %}>{{ expert.user.first_name }} {{ expert.user.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="notes" class="form-label">Notes pour l'expert:</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-primary">Assigner</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Status Update Modals -->
+<div class="modal fade" id="statusModal{{ request.id }}" tabindex="-1" aria-labelledby="statusModalLabel{{ request.id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="statusModalLabel{{ request.id }}">Mettre à jour le statut</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'admin_update_request_status' request.id %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="status" class="form-label">Nouveau statut:</label>
+            <select class="form-select" id="status" name="status" required>
+              <option value="pending" {% if request.status == 'pending' %}selected{% endif %}>En attente</option>
+              <option value="in_progress" {% if request.status == 'in_progress' %}selected{% endif %}>En cours</option>
+              <option value="completed" {% if request.status == 'completed' %}selected{% endif %}>Terminée</option>
+              <option value="cancelled" {% if request.status == 'cancelled' %}selected{% endif %}>Annulée</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="comment" class="form-label">Commentaire:</label>
+            <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-primary">Mettre à jour</button>
+        </div>
+      </form>
+    </div>  </div>
+</div>
+{% endfor %}
+
+{% endblock admin_content %}

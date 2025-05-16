@@ -33,7 +33,7 @@
   <style>
     :root {
       --sidebar-width: 280px;
-      --header-height: 60px;
+      --header-height: 70px;
       --primary-color: #1e3c72;
       --secondary-color: #2a5298;
     }
@@ -209,55 +209,114 @@
     /* Sidebar Styles */
     .sidebar {
       width: var(--sidebar-width);
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
       color: white;
+      padding: 1.5rem 1rem;
       position: fixed;
       height: 100vh;
       left: 0;
       top: 0;
       z-index: 1000;
       transition: all 0.3s ease;
+      overflow-y: auto;
+      scrollbar-width: thin; /* Pour Firefox */
+      scrollbar-color: rgba(255,255,255,0.3) transparent; /* Pour Firefox */
+    }
+    
+    /* Style de la barre de défilement pour Webkit (Chrome, Safari) */
+    .sidebar::-webkit-scrollbar {
+      width: 5px;
+    }
+    
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: rgba(255,255,255,0.3);
+      border-radius: 10px;
     }
 
     .sidebar-header {
-      padding: 1.5rem;
+      padding: 0.5rem 1rem 1.5rem;
       text-align: center;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .sidebar-profile {
       text-align: center;
-      padding: 1.5rem 0;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .profile-image {
-      width: 80px;
-      height: 80px;
+    .profile-icon {
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      border: 3px solid white;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.15);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .profile-icon i {
+      font-size: 3rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .sidebar-profile h5 {
+      margin-top: 0.5rem;
+      margin-bottom: 0.3rem;
+    }
+    
+    .sidebar-profile p {
+      margin-bottom: 0;
     }
 
     .sidebar-menu {
-      padding: 1rem 0;
+      padding: 0.5rem 0;
     }
 
-    .menu-item {
-      padding: 0.8rem 1.5rem;
+    .sidebar-menu a {
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      transition: all 0.3s ease;
       display: flex;
       align-items: center;
+      padding: 0.75rem 1rem;
+      font-size: 1.1rem;
+      font-weight: 400;
       color: white;
-      text-decoration: none;
-      transition: all 0.3s ease;
+      text-decoration: none !important;
     }
 
-    .menu-item:hover, .menu-item.active {
-      background: rgba(255,255,255,0.1);
+    .sidebar-menu a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
     }
-
-    .menu-item i {
-      margin-right: 1rem;
-      font-size: 1.2rem;
+    
+    .sidebar-menu a.active {
+      background-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+    }
+    
+    .sidebar-menu a i {
+      font-size: 1.4rem;
+      margin-right: 0.75rem;
+      width: 28px;
+      text-align: center;
+      opacity: 0.9;
+    }
+    
+    .sidebar-menu a.active i {
+      opacity: 1;
     }
 
     /* Main Content Styles */
@@ -332,6 +391,94 @@
         transform: translateX(0);
       }
     }
+
+    /* Additional CSS for profile edit form */
+    .profile-edit-form {
+      background-color: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+    }
+    
+    /* Make sure sidebar always stays visible */
+    @media (min-width: 993px) {
+      .main-content {
+        margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+      }
+      
+      .profile-edit-form {
+        width: 100%;
+      }
+    }
+    
+    /* Success alert animation */
+    .alert.fade {
+      transition: opacity 0.15s linear;
+    }
+    
+    .alert.fade.show {
+      opacity: 1;
+    }
+    
+    /* Media query for responsiveness */
+    @media (max-width: 992px) {
+      .profile-edit-form {
+        width: 100% !important;
+        left: 0;
+      }
+    }
+    
+    /* Service card styles */
+    .service-card {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .service-card:active {
+      transform: scale(0.98);
+    }
+    
+    .service-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+    
+    .service-icon {
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    
+    .service-card h3 {
+      margin-bottom: 0.75rem;
+      color: #333;
+      font-size: 1.5rem;
+    }
+    
+    .service-card p {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
   </style>
 </head>
 
@@ -342,32 +489,45 @@
       <div class="sidebar-header">
         <h3>MRE</h3>
       </div>
-      <div class="sidebar-profile text-center p-3">
-        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}../../static/img/profile-placeholder.jpg{% endif %}" alt="Profile" class="rounded-circle" width="80">
-        <h5 class="mt-3 text-white">{{ user.name }} {{ user.first_name }}</h5>
+      <div class="sidebar-profile">
+        <div class="profile-icon">
+          <i class="bi bi-person-circle"></i>
+        </div>
+        <h5 class="text-white">{{ user.name }} {{ user.first_name }}</h5>
         <p class="text-white-50">Client</p>
       </div>
       <nav class="sidebar-menu">
-        <a href="{% url 'client_dashboard' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
-          <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
+        <a href="{% url 'client_dashboard' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
+          <i class="bi bi-speedometer2"></i>
+          <span>Tableau de bord</span>
         </a>
-        <a href="{% url 'client_demandes' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_demandes' %}active{% endif %}">
-          <i class="bi bi-file-text me-2"></i>Mes demandes
+        <a href="{% url 'client_demandes' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_demandes' %}active{% endif %}">
+          <i class="bi bi-file-text"></i>
+          <span>Mes demandes</span>
         </a>
-        <a href="{% url 'client_documents' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_documents' %}active{% endif %}">
-          <i class="bi bi-folder me-2"></i>Mes documents
+        <a href="{% url 'client_documents' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_documents' %}active{% endif %}">
+          <i class="bi bi-folder"></i>
+          <span>Mes documents</span>
         </a>
-        <a href="{% url 'client_rendezvous' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_rendezvous' %}active{% endif %}">
-          <i class="bi bi-calendar me-2"></i>Rendez-vous
+        <a href="{% url 'client_rendezvous' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_rendezvous' %}active{% endif %}">
+          <i class="bi bi-calendar"></i>
+          <span>Rendez-vous</span>
         </a>
-        <a href="{% url 'client_ressources' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_ressources' %}active{% endif %}">
-          <i class="bi bi-book me-2"></i>Ressources
+        <a href="{% url 'client_ressources' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_ressources' %}active{% endif %}">
+          <i class="bi bi-book"></i>
+          <span>Ressources</span>
         </a>
-        <a href="{% url 'client_messages' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'client_messages' %}active{% endif %}">
-          <i class="bi bi-envelope me-2"></i>Messages
+        <a href="{% url 'client_messages' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_messages' %}active{% endif %}">
+          <i class="bi bi-envelope"></i>
+          <span>Messages</span>
         </a>
-        <a href="{% url 'accounts:logout' %}" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
+        <a href="#" class="text-white text-decoration-none" id="editProfileBtn">
+          <i class="bi bi-person-gear"></i>
+          <span>Modifier Profil</span>
+        </a>
+        <a href="{% url 'accounts:logout' %}" class="text-white text-decoration-none">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Déconnexion</span>
         </a>
       </nav>
     </aside>
@@ -384,13 +544,13 @@
             </button>
             <ul class="dropdown-menu" aria-labelledby="newRequestDropdown">
               {% for service in available_services %}
-                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('service')">{{ service.title }}</a></li>
+                <li><a class="dropdown-item" href="#" data-service="{{ service.title }}">{{ service.title }}</a></li>
               {% empty %}
-                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('admin')">Services Administratifs</a></li>
-                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('tourisme')">Tourisme</a></li>
-                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('immobilier')">Immobilier</a></li>
-                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('fiscal')">Fiscalité</a></li>
-                <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('investissement')">Investissement</a></li>
+                <li><a class="dropdown-item" href="#" data-service="Service Administratif">Services Administratifs</a></li>
+                <li><a class="dropdown-item" href="#" data-service="Service Tourisme">Tourisme</a></li>
+                <li><a class="dropdown-item" href="#" data-service="Service Immobilier">Immobilier</a></li>
+                <li><a class="dropdown-item" href="#" data-service="Service Fiscal">Fiscalité</a></li>
+                <li><a class="dropdown-item" href="#" data-service="Service Investissement">Investissement</a></li>
               {% endfor %}
             </ul>
           </div>
@@ -519,7 +679,7 @@
         {% if available_services %}
           {% for service in available_services %}
           <div class="col-md-4 mb-4">
-            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('service')">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('{{ service.title }}')">
               <i class="bi bi-{{ service.icon }} service-icon"></i>
               <h3>{{ service.title }}</h3>
               <p>{{ service.description|truncatewords:10 }}</p>
@@ -528,35 +688,35 @@
           {% endfor %}
         {% else %}
           <div class="col-md-4 mb-4">
-            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('admin')">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('Service Administratif')">
               <i class="bi bi-file-earmark-text service-icon"></i>
               <h3>Services Administratifs</h3>
               <p>Gestion de vos démarches administratives</p>
             </div>
           </div>
           <div class="col-md-4 mb-4">
-            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('tourisme')">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('Service Tourisme')">
               <i class="bi bi-airplane service-icon"></i>
               <h3>Tourisme</h3>
               <p>Organisation de vos voyages au Maroc</p>
             </div>
           </div>
           <div class="col-md-4 mb-4">
-            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('immobilier')">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('Service Immobilier')">
               <i class="bi bi-house-door service-icon"></i>
               <h3>Immobilier</h3>
               <p>Gestion de vos biens immobiliers</p>
             </div>
           </div>
           <div class="col-md-4 mb-4">
-            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('fiscal')">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('Service Fiscal')">
               <i class="bi bi-calculator service-icon"></i>
               <h3>Fiscalité</h3>
               <p>Conseils et gestion fiscale</p>
             </div>
           </div>
           <div class="col-md-4 mb-4">
-            <div class="service-card p-4 text-center" onclick="redirectToCreateRequest('investissement')">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('Service Investissement')">
               <i class="bi bi-graph-up service-icon"></i>
               <h3>Investissement</h3>
               <p>Opportunités d'investissement au Maroc</p>
@@ -601,11 +761,11 @@
                       Créer une nouvelle demande
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="createRequestBtn">
-                      <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('admin')">Services Administratifs</a></li>
-                      <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('tourisme')">Tourisme</a></li>
-                      <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('immobilier')">Immobilier</a></li>
-                      <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('fiscal')">Fiscalité</a></li>
-                      <li><a class="dropdown-item" href="javascript:redirectToCreateRequest('investissement')">Investissement</a></li>
+                      <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Administratif')">Services Administratifs</a></li>
+                      <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Tourisme')">Tourisme</a></li>
+                      <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Immobilier')">Immobilier</a></li>
+                      <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Fiscal')">Fiscalité</a></li>
+                      <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Investissement')">Investissement</a></li>
                     </ul>
                   </div>
                 {% endif %}
@@ -634,7 +794,7 @@
                 <div class="text-center py-3">
                   <i class="bi bi-file-earmark-x text-muted" style="font-size: 2rem;"></i>
                   <p class="mt-2">Aucun document récent</p>
-                  <a href="{% url 'requests:upload_document' %}" class="btn btn-sm btn-primary">Ajouter un document</a>
+                  <a href="{% url 'custom_requests:upload_document' %}" class="btn btn-sm btn-primary">Ajouter un document</a>
                 </div>
               {% endif %}
             </div>
@@ -697,23 +857,676 @@
     </main>
   </div>
 
+  <!-- Profile Edit Form (Hidden by default) -->
+  <div class="profile-edit-form" id="profileEditForm" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; width: calc(100% - var(--sidebar-width)); background-color: #f8f9fa; z-index: 1050; padding: 1rem; overflow-y: auto; overflow-x: hidden; box-shadow: -5px 0 15px rgba(0,0,0,0.1);">
+    <div class="container-fluid py-2">
+      <div class="row justify-content-center">
+        <div class="col-lg-11 col-xl-10">
+          <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-white text-center py-4 border-bottom">
+              <i class="bi bi-person-gear text-primary fs-1 mb-3"></i>
+              <h3 class="card-title mb-1">Modifier votre profil</h3>
+            </div>
+            <div class="card-body p-4 p-xl-5">
+              <form id="userProfileForm" class="needs-validation" novalidate>
+                <!-- Informations personnelles -->
+                <h5 class="mb-3 border-bottom pb-2">Informations personnelles</h5>
+                
+                <div class="row g-3 mb-4">
+                  <!-- Nom -->
+                  <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Nom</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-person"></i></span>
+                      <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                    </div>
+                  </div>
+                  
+                  <!-- Prénom -->
+                  <div class="col-md-6 mb-3">
+                    <label for="first_name" class="form-label">Prénom</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-person-plus"></i></span>
+                      <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Coordonnées -->
+                <h5 class="mb-3 border-bottom pb-2">Coordonnées</h5>
+                
+                <div class="row g-3 mb-4">
+                  <!-- Email -->
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                      <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                  </div>
+                  
+                  <!-- Téléphone -->
+                  <div class="col-md-6 mb-3">
+                    <label for="phone" class="form-label">Numéro de téléphone</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                      <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone|default:'' }}">
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Localisation -->
+                <h5 class="mb-3 border-bottom pb-2">Localisation</h5>
+                
+                <div class="row g-3 mb-4">
+                  <!-- Pays de résidence -->
+                  <div class="col-md-8 col-lg-7 mb-3">
+                    <label for="residence_country" class="form-label">Pays de résidence</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                      <select class="form-select" id="residence_country" name="residence_country">
+                        {% for country_code, country_name in settings.COUNTRIES %}
+                          <option value="{{ country_code }}" {% if user.residence_country == country_code %}selected{% endif %}>{{ country_name }}</option>
+                        {% empty %}
+                          <option value="MA" {% if user.residence_country == 'MA' %}selected{% endif %}>Maroc</option>
+                          <option value="FR" {% if user.residence_country == 'FR' %}selected{% endif %}>France</option>
+                          <option value="ES" {% if user.residence_country == 'ES' %}selected{% endif %}>Espagne</option>
+                          <option value="BE" {% if user.residence_country == 'BE' %}selected{% endif %}>Belgique</option>
+                          <option value="CA" {% if user.residence_country == 'CA' %}selected{% endif %}>Canada</option>
+                          <option value="IT" {% if user.residence_country == 'IT' %}selected{% endif %}>Italie</option>
+                          <option value="DE" {% if user.residence_country == 'DE' %}selected{% endif %}>Allemagne</option>
+                          <option value="NL" {% if user.residence_country == 'NL' %}selected{% endif %}>Pays-Bas</option>
+                          <option value="GB" {% if user.residence_country == 'GB' %}selected{% endif %}>Royaume-Uni</option>
+                          <option value="US" {% if user.residence_country == 'US' %}selected{% endif %}>États-Unis</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Boutons d'action -->
+                <div class="row mt-5">
+                  <div class="col-md-8 col-lg-5 mx-auto">
+                    <div class="d-grid gap-2">
+                      <button type="submit" class="btn btn-primary btn-lg py-3"><i class="bi bi-check-circle me-2"></i>Enregistrer</button>
+                      <button type="button" id="closeProfileForm" class="btn btn-outline-secondary py-2"><i class="bi bi-x-circle me-2"></i>Annuler</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Alert (Hidden by default) -->
+  <div class="alert-container" style="display: none; position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 1060; width: 90%; max-width: 500px;">
+    <div class="alert alert-success alert-dismissible fade shadow" role="alert" id="successAlert">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-check-circle-fill fs-4 me-2"></i>
+        <div>
+          <strong>Demande soumise avec succès!</strong>
+          <p class="mb-0 small">Votre demande a été enregistrée. Nous la traiterons dans les plus brefs délais.</p>
+        </div>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Service Request Form (Hidden by default) -->
+  <div class="service-request-form" id="serviceRequestFullForm" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; width: calc(100% - var(--sidebar-width)); background-color: #f8f9fa; z-index: 1050; padding: 1rem; overflow-y: auto; overflow-x: hidden; box-shadow: -5px 0 15px rgba(0,0,0,0.1);">
+    <div class="container-fluid py-2">
+      <div class="row justify-content-center">
+        <div class="col-lg-11 col-xl-10">
+          <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-white text-center py-4 border-bottom">
+              <div class="d-flex flex-column align-items-center justify-content-center">
+                <i class="bi bi-file-earmark-text text-primary fs-1 mb-3"></i>
+                <h3 class="card-title mb-1" id="formServiceTitle">Nouvelle demande</h3>
+                <p class="text-muted small" id="formServiceDescription">Veuillez remplir le formulaire ci-dessous</p>
+              </div>
+            </div>
+            <div class="card-body p-4 p-xl-5">
+              <form id="serviceRequestForm">
+                {% csrf_token %}
+                <input type="hidden" id="serviceType" name="serviceType" value="">
+                
+                <!-- Common fields for all services -->
+                <div class="mb-4">
+                  <h5 class="mb-3 border-bottom pb-2">Informations générales</h5>
+                  <div class="mb-3">
+                    <label for="requestTitle" class="form-label">Titre de votre demande</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-type"></i></span>
+                      <input type="text" class="form-control" id="requestTitle" name="requestTitle" required>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Administrative -->
+                <div id="adminFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service administratif</h5>
+                  <div class="mb-3">
+                    <label for="adminDocumentType" class="form-label">Type de document</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-file-earmark"></i></span>
+                      <select class="form-select" id="adminDocumentType" name="adminDocumentType">
+                        <option value="">Sélectionner un type de document</option>
+                        <option value="passeport">Passeport</option>
+                        <option value="carte_nationale">Carte Nationale d'Identité</option>
+                        <option value="acte_naissance">Acte de Naissance</option>
+                        <option value="certificat_residence">Certificat de Résidence</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="adminUrgency" class="form-label">Niveau d'urgence</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-exclamation-triangle"></i></span>
+                      <select class="form-select" id="adminUrgency" name="adminUrgency">
+                        <option value="normale">Normale</option>
+                        <option value="urgente">Urgente</option>
+                        <option value="tres_urgente">Très urgente</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Tourism -->
+                <div id="tourismeFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service touristique</h5>
+                  <div class="mb-3">
+                    <label for="tourismType" class="form-label">Type de service touristique</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                      <select class="form-select" id="tourismType" name="tourismType">
+                        <option value="">Sélectionner un service</option>
+                        <option value="reservation_hotel">Réservation d'hôtel</option>
+                        <option value="circuit_touristique">Circuit touristique</option>
+                        <option value="location_voiture">Location de voitures</option>
+                        <option value="guide_touristique">Guide touristique</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="dateArrivee" class="form-label">Date d'arrivée</label>
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                          <input type="date" class="form-control" id="dateArrivee" name="dateArrivee">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="dateDepart" class="form-label">Date de départ</label>
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text"><i class="bi bi-calendar-x"></i></span>
+                          <input type="date" class="form-control" id="dateDepart" name="dateDepart">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Real Estate -->
+                <div id="immobilierFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service immobilier</h5>
+                  <div class="mb-3">
+                    <label for="immobilierType" class="form-label">Type de service immobilier</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-house"></i></span>
+                      <select class="form-select" id="immobilierType" name="immobilierType">
+                        <option value="">Sélectionner un service</option>
+                        <option value="achat">Achat de bien</option>
+                        <option value="vente">Vente de bien</option>
+                        <option value="location">Location</option>
+                        <option value="gestion_bien">Gestion de bien</option>
+                        <option value="conseil">Conseil immobilier</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="propertyType" class="form-label">Type de bien</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-building"></i></span>
+                      <select class="form-select" id="propertyType" name="propertyType">
+                        <option value="">Sélectionner un type de bien</option>
+                        <option value="appartement">Appartement</option>
+                        <option value="maison">Maison</option>
+                        <option value="villa">Villa</option>
+                        <option value="terrain">Terrain</option>
+                        <option value="commerce">Local commercial</option>
+                        <option value="bureau">Bureau</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="propertyLocation" class="form-label">Ville</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                      <select class="form-select" id="propertyLocation" name="propertyLocation">
+                        <option value="">Sélectionner une ville</option>
+                        <option value="casablanca">Casablanca</option>
+                        <option value="rabat">Rabat</option>
+                        <option value="marrakech">Marrakech</option>
+                        <option value="tanger">Tanger</option>
+                        <option value="agadir">Agadir</option>
+                        <option value="fes">Fès</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Fiscal -->
+                <div id="fiscalFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service fiscal</h5>
+                  <div class="mb-3">
+                    <label for="fiscalType" class="form-label">Type de service fiscal</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-cash-coin"></i></span>
+                      <select class="form-select" id="fiscalType" name="fiscalType">
+                        <option value="">Sélectionner un service</option>
+                        <option value="declaration_impots">Déclaration d'impôts</option>
+                        <option value="optimisation_fiscale">Optimisation fiscale</option>
+                        <option value="conseil_fiscal">Conseil fiscal</option>
+                        <option value="contentieux_fiscal">Contentieux fiscal</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="fiscalYear" class="form-label">Année fiscale concernée</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                      <select class="form-select" id="fiscalYear" name="fiscalYear">
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Investment -->
+                <div id="investissementFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service d'investissement</h5>
+                  <div class="mb-3">
+                    <label for="investType" class="form-label">Type d'investissement</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-graph-up"></i></span>
+                      <select class="form-select" id="investType" name="investType">
+                        <option value="">Sélectionner un type d'investissement</option>
+                        <option value="immobilier">Immobilier</option>
+                        <option value="commerce">Commerce</option>
+                        <option value="industrie">Industrie</option>
+                        <option value="agriculture">Agriculture</option>
+                        <option value="technologie">Technologie</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="investBudget" class="form-label">Budget approximatif (MAD)</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                      <select class="form-select" id="investBudget" name="investBudget">
+                        <option value="moins_500k">Moins de 500 000</option>
+                        <option value="500k_1m">500 000 - 1 000 000</option>
+                        <option value="1m_3m">1 000 000 - 3 000 000</option>
+                        <option value="3m_5m">3 000 000 - 5 000 000</option>
+                        <option value="plus_5m">Plus de 5 000 000</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Description field for all services -->
+                <div class="mb-4">
+                  <h5 class="mb-3 border-bottom pb-2">Description de votre demande</h5>
+                  <div class="mb-3">
+                    <label for="requestDescription" class="form-label">Description détaillée</label>
+                    <textarea class="form-control form-control-lg" id="requestDescription" name="requestDescription" rows="5" required></textarea>
+                    <div class="form-text">Décrivez votre besoin avec le plus de détails possible pour un traitement optimal.</div>
+                  </div>
+                </div>
+                
+                <!-- File upload field -->
+                <div class="mb-4">
+                  <h5 class="mb-3 border-bottom pb-2">Documents joints</h5>
+                  <div class="mb-3">
+                    <label for="requestFiles" class="form-label">Documents complémentaires (optionnel)</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-file-earmark-arrow-up"></i></span>
+                      <input class="form-control" type="file" id="requestFiles" name="requestFiles" multiple>
+                    </div>
+                    <div class="form-text">Vous pouvez joindre plusieurs documents (PDF, images, etc.)</div>
+                  </div>
+                </div>
+                
+                <!-- Boutons d'action -->
+                <div class="row mt-5">
+                  <div class="col-md-8 col-lg-5 mx-auto">
+                    <div class="d-grid gap-2">
+                      <button type="button" id="submitServiceRequest" class="btn btn-primary btn-lg py-3"><i class="bi bi-check-circle me-2"></i>Soumettre la demande</button>
+                      <button type="button" id="closeServiceForm" class="btn btn-outline-secondary py-2"><i class="bi bi-x-circle me-2"></i>Annuler</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Service Request Modal -->
+  <div class="modal fade" id="serviceRequestModal" tabindex="-1" aria-labelledby="serviceRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="serviceRequestModalLabel">Nouvelle demande</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="serviceRequestForm">
+            {% csrf_token %}
+            <input type="hidden" id="serviceType" name="serviceType" value="">
+            
+            <!-- Service title -->
+            <div class="mb-4">
+              <h4 id="serviceTitle" class="mb-3 text-primary"></h4>
+              <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <span id="serviceDescription"></span>
+              </div>
+            </div>
+            
+            <!-- Common fields for all services -->
+            <div class="mb-3">
+              <label for="requestTitle" class="form-label">Titre de votre demande</label>
+              <input type="text" class="form-control" id="requestTitle" name="requestTitle" required>
+            </div>
+            
+            <!-- Service-specific fields - Administrative -->
+            <div id="adminFields" class="service-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="adminDocumentType" class="form-label">Type de document</label>
+                <select class="form-select" id="adminDocumentType" name="adminDocumentType">
+                  <option value="">Sélectionner un type de document</option>
+                  <option value="passeport">Passeport</option>
+                  <option value="carte_nationale">Carte Nationale d'Identité</option>
+                  <option value="acte_naissance">Acte de Naissance</option>
+                  <option value="certificat_residence">Certificat de Résidence</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="adminUrgency" class="form-label">Niveau d'urgence</label>
+                <select class="form-select" id="adminUrgency" name="adminUrgency">
+                  <option value="normale">Normale</option>
+                  <option value="urgente">Urgente</option>
+                  <option value="tres_urgente">Très urgente</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Service-specific fields - Tourism -->
+            <div id="tourismeFields" class="service-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="tourismType" class="form-label">Type de service touristique</label>
+                <select class="form-select" id="tourismType" name="tourismType">
+                  <option value="">Sélectionner un service</option>
+                  <option value="reservation_hotel">Réservation d'hôtel</option>
+                  <option value="circuit_touristique">Circuit touristique</option>
+                  <option value="location_voiture">Location de voitures</option>
+                  <option value="guide_touristique">Guide touristique</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="dateArrivee" class="form-label">Date d'arrivée</label>
+                    <input type="date" class="form-control" id="dateArrivee" name="dateArrivee">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="dateDepart" class="form-label">Date de départ</label>
+                    <input type="date" class="form-control" id="dateDepart" name="dateDepart">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Service-specific fields - Real Estate -->
+            <div id="immobilierFields" class="service-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="immobilierType" class="form-label">Type de service immobilier</label>
+                <select class="form-select" id="immobilierType" name="immobilierType">
+                  <option value="">Sélectionner un service</option>
+                  <option value="achat">Achat de bien</option>
+                  <option value="vente">Vente de bien</option>
+                  <option value="location">Location</option>
+                  <option value="gestion_bien">Gestion de bien</option>
+                  <option value="conseil">Conseil immobilier</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="propertyType" class="form-label">Type de bien</label>
+                <select class="form-select" id="propertyType" name="propertyType">
+                  <option value="">Sélectionner un type de bien</option>
+                  <option value="appartement">Appartement</option>
+                  <option value="maison">Maison</option>
+                  <option value="villa">Villa</option>
+                  <option value="terrain">Terrain</option>
+                  <option value="commerce">Local commercial</option>
+                  <option value="bureau">Bureau</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="propertyLocation" class="form-label">Ville</label>
+                <select class="form-select" id="propertyLocation" name="propertyLocation">
+                  <option value="">Sélectionner une ville</option>
+                  <option value="casablanca">Casablanca</option>
+                  <option value="rabat">Rabat</option>
+                  <option value="marrakech">Marrakech</option>
+                  <option value="tanger">Tanger</option>
+                  <option value="agadir">Agadir</option>
+                  <option value="fes">Fès</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Service-specific fields - Fiscal -->
+            <div id="fiscalFields" class="service-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="fiscalType" class="form-label">Type de service fiscal</label>
+                <select class="form-select" id="fiscalType" name="fiscalType">
+                  <option value="">Sélectionner un service</option>
+                  <option value="declaration_impots">Déclaration d'impôts</option>
+                  <option value="optimisation_fiscale">Optimisation fiscale</option>
+                  <option value="conseil_fiscal">Conseil fiscal</option>
+                  <option value="contentieux_fiscal">Contentieux fiscal</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="fiscalYear" class="form-label">Année fiscale concernée</label>
+                <select class="form-select" id="fiscalYear" name="fiscalYear">
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Service-specific fields - Investment -->
+            <div id="investissementFields" class="service-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="investType" class="form-label">Type d'investissement</label>
+                <select class="form-select" id="investType" name="investType">
+                  <option value="">Sélectionner un type d'investissement</option>
+                  <option value="immobilier">Immobilier</option>
+                  <option value="commerce">Commerce</option>
+                  <option value="industrie">Industrie</option>
+                  <option value="agriculture">Agriculture</option>
+                  <option value="technologie">Technologie</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="investBudget" class="form-label">Budget approximatif (MAD)</label>
+                <select class="form-select" id="investBudget" name="investBudget">
+                  <option value="moins_500k">Moins de 500 000</option>
+                  <option value="500k_1m">500 000 - 1 000 000</option>
+                  <option value="1m_3m">1 000 000 - 3 000 000</option>
+                  <option value="3m_5m">3 000 000 - 5 000 000</option>
+                  <option value="plus_5m">Plus de 5 000 000</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Description field for all services -->
+            <div class="mb-3">
+              <label for="requestDescription" class="form-label">Description détaillée de votre demande</label>
+              <textarea class="form-control" id="requestDescription" name="requestDescription" rows="5" required></textarea>
+            </div>
+            
+            <!-- File upload field -->
+            <div class="mb-3">
+              <label for="requestFiles" class="form-label">Documents complémentaires (optionnel)</label>
+              <input class="form-control" type="file" id="requestFiles" name="requestFiles" multiple>
+              <div class="form-text">Vous pouvez joindre plusieurs documents (PDF, images, etc.)</div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-primary" id="submitServiceRequest">Soumettre la demande</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Vendor JS Files -->
   <script src="../../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="../../static/vendor/aos/aos.js"></script>
   <script src="../../static/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="../../static/vendor/swiper/swiper-bundle.min.js"></script>
+  
+  <!-- Calendar JS -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js"></script>
 
   <!-- Main JS File -->
   <script src="../../static/js/main.js"></script>
-  <script src="../../static/js/calendar-init.js"></script>
-
-  <!-- Calendar CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.css">
-
-  <!-- Dashboard specific JS -->
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js"></script>
+  
+  <!-- Custom Scripts -->
   <script>
+    // Function to show service request modal (ancien code maintenu pour compatibilité)
+    function showServiceRequestModal(serviceType) {
+      // Remplacer par la nouvelle fonction pour utiliser le formulaire pleine page
+      showServiceRequestForm(serviceType);
+    }
+    
+    // Fonction pour afficher le formulaire de demande de service à pleine page
+    function showServiceRequestForm(serviceType) {
+      console.log('Affichage du formulaire pour le service:', serviceType);
+      
+      const serviceRequestForm = document.getElementById('serviceRequestFullForm');
+      const mainContent = document.querySelector('.main-content');
+      
+      if (!serviceRequestForm) {
+        console.error('Formulaire de service non trouvé!');
+        return;
+      }
+      
+      // Réinitialiser le formulaire
+      document.getElementById('serviceRequestForm').reset();
+      
+      // Cacher tous les champs spécifiques
+      document.querySelectorAll('.service-fields').forEach(field => {
+        field.style.display = 'none';
+      });
+      
+      // Définir le type de service et mettre à jour le formulaire
+      document.getElementById('serviceType').value = serviceType;
+      document.getElementById('formServiceTitle').textContent = serviceType;
+      
+      // Afficher les champs spécifiques en fonction du type
+      let fieldsToShow = '';
+      let serviceDescription = '';
+      
+      switch(serviceType) {
+        case 'Service Administratif':
+        case 'Services Administratifs':
+          fieldsToShow = 'adminFields';
+          serviceDescription = 'Demandez des documents officiels, des attestations ou tout autre service administratif.';
+          break;
+        case 'Service Tourisme':
+        case 'Tourisme':
+          fieldsToShow = 'tourismeFields';
+          serviceDescription = 'Réservations d\'hôtels, circuits touristiques, location de voitures et autres services touristiques.';
+          break;
+        case 'Service Immobilier':
+        case 'Immobilier':
+          fieldsToShow = 'immobilierFields';
+          serviceDescription = 'Services d\'achat, vente, location ou gestion de biens immobiliers.';
+          break;
+        case 'Service Fiscal':
+        case 'Fiscalité':
+          fieldsToShow = 'fiscalFields';
+          serviceDescription = 'Déclarations fiscales, optimisation fiscale, conseils et assistance pour vos impôts.';
+          break;
+        case 'Service Investissement':
+        case 'Investissement':
+          fieldsToShow = 'investissementFields';
+          serviceDescription = 'Conseils et accompagnement pour vos projets d\'investissement au Maroc.';
+          break;
+        default:
+          serviceDescription = 'Veuillez spécifier les détails de votre demande dans la description.';
+      }
+      
+      // Afficher les champs pertinents
+      if (fieldsToShow) {
+        const fieldsElement = document.getElementById(fieldsToShow);
+        if (fieldsElement) {
+          fieldsElement.style.display = 'block';
+        } else {
+          console.error('Élément', fieldsToShow, 'non trouvé!');
+        }
+      }
+      
+      // Définir la description du service
+      document.getElementById('formServiceDescription').textContent = serviceDescription;
+      
+      // Cacher le contenu principal
+      if (mainContent) {
+        mainContent.style.visibility = 'hidden';
+      }
+      
+      // Afficher le formulaire avec animation
+      serviceRequestForm.style.display = 'block';
+      setTimeout(() => {
+        serviceRequestForm.classList.add('show');
+      }, 50);
+    }
+
     // Initialize AOS
     AOS.init({
       duration: 1000,
@@ -727,101 +1540,336 @@
       document.querySelector('.sidebar').classList.toggle('active');
     });
     
-    // Function to redirect to the appropriate service request page
-    function redirectToCreateRequest(serviceType) {
-      // Map service types to URLs with correct paths including the /requests/ prefix
-      const serviceUrls = {
-        'admin': '/requests/client/create/administrative/',
-        'administrative': '/requests/client/create/administrative/',
-        'tourisme': '/requests/client/create/tourism/',
-        'tourism': '/requests/client/create/tourism/',
-        'immobilier': '/requests/client/create/real_estate/',
-        'real_estate': '/requests/client/create/real_estate/',
-        'fiscal': '/requests/client/create/fiscal/',
-        'tax': '/requests/client/create/fiscal/',
-        'investissement': '/requests/client/create/investment/',
-        'investment': '/requests/client/create/investment/',
-        'service': '/requests/client/create/administrative/'
-      };
-      
-      // Use the mapped URL or default to the base URL
-      const redirectUrl = serviceUrls[serviceType] || '/requests/client/create/administrative/';
-      window.location.href = redirectUrl;
-    }
-    
     // Toggle notifications dropdown
     function toggleNotifications() {
-      const dropdown = document.getElementById('notificationDropdown');
-      dropdown.classList.toggle('show');
-      
-      // Mark notifications as read when dropdown is opened
-      if (dropdown.classList.contains('show')) {
-        // In a real implementation, this would use an AJAX call
-        const badge = document.querySelector('.notification-badge');
-        if (badge) {
-          badge.textContent = "0";
-        }
-      }
+      document.getElementById('notificationDropdown').classList.toggle('show');
     }
-    
-    // Initialize calendar with appointments
-    document.addEventListener('DOMContentLoaded', function() {
-      const calendarEl = document.getElementById('calendar');
-      if (calendarEl) {
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridMonth',
-          headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-          },
-          events: [
-            {% for appointment in upcoming_appointments %}
-            {
-              title: '{{ appointment.consultation_type|title }}',
-              start: '{{ appointment.date_time|date:"Y-m-d\TH:i:s" }}',
-              end: '{{ appointment.date_time|date:"Y-m-d\TH:i:s" }}',
-              url: '{% url "client_rendezvous" %}',
-              backgroundColor: '#1e3c72',
-              borderColor: '#1e3c72'
-            }{% if not forloop.last %},{% endif %}
-            {% endfor %}
-          ]
-        });
-        calendar.render();
-      }
-    });
     
     // Close notifications dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-      const dropdown = document.getElementById('notificationDropdown');
-      const bell = document.querySelector('.notification-bell');
-      if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
-        dropdown.classList.remove('show');
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('.notification-bell') && !e.target.closest('.notification-dropdown')) {
+        const dropdown = document.getElementById('notificationDropdown');
+        if (dropdown.classList.contains('show')) {
+          dropdown.classList.remove('show');
+        }
       }
     });
     
-    // Close notification function
-    function closeNotification(id) {
-      const notification = document.getElementById('notification-' + id);
-      notification.style.animation = 'slideOut 0.5s ease-out';
-      setTimeout(() => {
-          notification.remove();
-      }, 500);
+    // Function to redirect to create request page (keeping for compatibility)
+    function redirectToCreateRequest(serviceType) {
+      window.location.href = `/client/demandes/nouvelle/${serviceType}`;
     }
     
-    // Auto close notifications after 5 seconds
+    // Profile edit functionality
     document.addEventListener('DOMContentLoaded', function() {
-      const notifications = document.querySelectorAll('.notification');
-      notifications.forEach(notification => {
+      const editProfileBtn = document.getElementById('editProfileBtn');
+      const profileEditForm = document.getElementById('profileEditForm');
+      const closeProfileForm = document.getElementById('closeProfileForm');
+      const userProfileForm = document.getElementById('userProfileForm');
+      const successAlert = document.getElementById('successAlert');
+      const alertContainer = document.querySelector('.alert-container');
+      const mainContent = document.querySelector('.main-content');
+      
+      // Show profile edit form when clicking the button
+      if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Hide any potential overflow content from main content
+          if (mainContent) {
+            mainContent.style.visibility = 'hidden';
+          }
+          
+          // Show the form with animation
+          profileEditForm.style.display = 'block';
           setTimeout(() => {
-              notification.style.animation = 'slideOut 0.5s ease-out';
-              setTimeout(() => {
-                  notification.remove();
-              }, 500);
-          }, 5000);
+            profileEditForm.classList.add('show');
+          }, 50);
+        });
+      }
+      
+      // Close profile edit form
+      if (closeProfileForm) {
+        closeProfileForm.addEventListener('click', function() {
+          profileEditForm.classList.remove('show');
+          setTimeout(() => {
+            profileEditForm.style.display = 'none';
+            // Restore main content visibility
+            if (mainContent) {
+              mainContent.style.visibility = 'visible';
+            }
+          }, 300);
+        });
+      }
+      
+      // Form validation
+      if (userProfileForm) {
+        userProfileForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Check form validity
+          if (!this.checkValidity()) {
+            e.stopPropagation();
+            this.classList.add('was-validated');
+            return;
+          }
+          
+          // Get form data
+          const formData = new FormData(userProfileForm);
+          
+          // Show loading state on button
+          const submitButton = userProfileForm.querySelector('button[type="submit"]');
+          const originalButtonText = submitButton.innerHTML;
+          submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Enregistrement...';
+          submitButton.disabled = true;
+          
+          // Simulate an AJAX request with a timeout
+          setTimeout(function() {
+            // Return button to normal state
+            submitButton.innerHTML = originalButtonText;
+            submitButton.disabled = false;
+            
+            // Hide the form with animation
+            profileEditForm.classList.remove('show');
+            setTimeout(() => {
+              profileEditForm.style.display = 'none';
+              // Restore main content visibility
+              if (mainContent) {
+                mainContent.style.visibility = 'visible';
+              }
+            }, 300);
+            
+            // Update user information in the sidebar
+            const sidebarName = document.querySelector('.sidebar-profile h5');
+            if (sidebarName) {
+              sidebarName.textContent = formData.get('name') + ' ' + formData.get('first_name');
+            }
+            
+            // Show success message with animation
+            alertContainer.style.display = 'block';
+            successAlert.classList.add('show');
+            
+            // Hide success message after 5 seconds
+            setTimeout(function() {
+              successAlert.classList.remove('show');
+              setTimeout(function() {
+                alertContainer.style.display = 'none';
+              }, 300);
+            }, 5000);
+            
+          }, 1000);
+          
+          this.classList.remove('was-validated');
+        });
+      }
+
+      // Add event listeners to dropdown service items
+      const dropdownItems = document.querySelectorAll('.dropdown-item[data-service]');
+      dropdownItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          const serviceType = this.getAttribute('data-service');
+          showServiceRequestModal(serviceType);
+        });
       });
+      
+      // Form submission for service request
+      document.getElementById('submitServiceRequest').addEventListener('click', function() {
+        const form = document.getElementById('serviceRequestForm');
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        
+        // Collect form data
+        const formData = new FormData(form);
+        
+        // Add files if any
+        const fileInput = document.getElementById('requestFiles');
+        if (fileInput.files.length > 0) {
+          for (let i = 0; i < fileInput.files.length; i++) {
+            formData.append('files[]', fileInput.files[i]);
+          }
+        }
+        
+        // Show loading state
+        const submitButton = this;
+        const originalButtonText = submitButton.innerHTML;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Traitement...';
+        submitButton.disabled = true;
+        
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+        
+        // Send data to the server
+        fetch('/requests/ajax/create-request/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Si on utilise le formulaire pleine page
+          const serviceRequestFullForm = document.getElementById('serviceRequestFullForm');
+          if (serviceRequestFullForm && serviceRequestFullForm.style.display !== 'none') {
+            // Cacher le formulaire pleine page
+            serviceRequestFullForm.classList.remove('show');
+            setTimeout(() => {
+              serviceRequestFullForm.style.display = 'none';
+              // Restore main content visibility
+              const mainContent = document.querySelector('.main-content');
+              if (mainContent) {
+                mainContent.style.visibility = 'visible';
+              }
+            }, 300);
+          } else {
+            // Cacher le modal (ancien système)
+            const modal = bootstrap.Modal.getInstance(document.getElementById('serviceRequestModal'));
+            if (modal) modal.hide();
+          }
+          
+          if (data.success) {
+            // Show success alert
+            alertContainer.style.display = 'block';
+            successAlert.classList.add('show');
+            
+            // Hide success message after 5 seconds
+            setTimeout(function() {
+              successAlert.classList.remove('show');
+              setTimeout(function() {
+                alertContainer.style.display = 'none';
+              }, 300);
+            }, 5000);
+            
+            // Reload page after 2 seconds to show new request
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          } else {
+            // Show error message
+            alert('Erreur lors de la création de la demande: ' + (data.message || 'Erreur inconnue'));
+          }
+          
+          // Reset button
+          submitButton.innerHTML = originalButtonText;
+          submitButton.disabled = false;
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+          alert('Erreur lors de la communication avec le serveur. Veuillez réessayer.');
+          submitButton.innerHTML = originalButtonText;
+          submitButton.disabled = false;
+        });
+      });
+      
+      // Bouton de fermeture du formulaire pleine page
+      const closeServiceFormBtn = document.getElementById('closeServiceForm');
+      if (closeServiceFormBtn) {
+        closeServiceFormBtn.addEventListener('click', function() {
+          const serviceRequestForm = document.getElementById('serviceRequestFullForm');
+          const mainContent = document.querySelector('.main-content');
+          
+          serviceRequestForm.classList.remove('show');
+          
+          setTimeout(() => {
+            serviceRequestForm.style.display = 'none';
+            // Restaurer la visibilité du contenu principal
+            if (mainContent) {
+              mainContent.style.visibility = 'visible';
+            }
+          }, 300);
+        });
+      }
     });
   </script>
+  
+  <style>
+    /* Profile Edit Form Styles */
+    .profile-edit-form {
+      opacity: 0;
+      transition: all 0.3s ease;
+      transform: translateY(10px);
+      backdrop-filter: blur(5px);
+    }
+    
+    .profile-edit-form.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Overlay to hide main content when form is open */
+    .profile-edit-form::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(248, 249, 250, 0.97);
+      z-index: -1;
+    }
+    
+    /* Hide main content when profile form is shown */
+    .profile-edit-form.show + .main-content {
+      visibility: hidden;
+    }
+    
+    /* Style for form sections */
+    #userProfileForm h5 {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      margin-top: 1rem;
+    }
+    
+    /* Input styles */
+    #userProfileForm .input-group-text {
+      background-color: #f8f9fa;
+      color: var(--primary-color);
+    }
+    
+    #userProfileForm .form-control:focus,
+    #userProfileForm .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(30, 60, 114, 0.15);
+    }
+    
+    /* Success alert styles */
+    .alert-container .alert {
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      border-left: 4px solid #198754;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.3s ease;
+    }
+    
+    .alert-container .alert.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Media query for responsiveness */
+    @media (max-width: 992px) {
+      .profile-edit-form {
+        width: 100% !important;
+        left: 0;
+      }
+    }
+  </style>
 </body>
 </html>

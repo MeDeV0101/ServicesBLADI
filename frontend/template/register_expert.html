@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ServicesBladi - Inscription Expert{% endblock %}
+{% block meta_description %}Inscription Expert sur ServicesBladi - Services pour les Marocains résidant à l'étranger{% endblock %}
+{% block meta_keywords %}register, inscription, expert, services, compte, professionnel, marocains, étranger{% endblock %}
+
+{% block body_class %}register-page{% endblock %}
+
+{% block extra_css %}
+<style>
+  body.register-page {
+    background: url('{% static "img/background_login_image.png" %}') no-repeat center center fixed;
+    background-size: cover;
+  }
+
+  .register-section {
+    min-height: 100vh;
+    padding-top: 120px;
+    padding-bottom: 40px;
+  }
+
+  .register-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .register-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .register-header img {
+    max-height: 100px;
+    margin-bottom: 15px;
+  }
+
+  .form-label {
+    font-weight: 500;
+    color: #333;
+  }
+
+  .form-control {
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+  }
+
+  
+  .btn-register {
+    width: 100%;
+    padding: 12px;
+    background-color: #0ea2bd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-top: 20px;
+    transition: all 0.3s;
+  }
+
+  .btn-register:hover {
+    background-color: #0c8a9e;
+    transform: translateY(-2px);
+  }
+
+  .login-link {
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  .login-link a,
+  .client-register-link a {
+    color: #0ea2bd;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .login-link a:hover,
+  .client-register-link a:hover {
+    text-decoration: underline;
+  }
+
+  .client-register-link {
+    text-align: center;
+    margin-top: 15px;
+  }
+
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .register-container {
+      margin: 0 15px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <section class="register-section">
+    <div class="container">
+      <div class="register-container">
+        <div class="register-header">
+          <img src="{% static 'img/logo_principale.png' %}" alt="ServicesBladi Logo">
+          <h3 class="mt-3">Inscription Expert</h3>
+          <p class="text-muted">Créez votre compte expert pour proposer vos services</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="error-message">
+          {% for field in form %}
+            {% for error in field.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if messages %}
+        <div class="{% if messages.tags == 'error' %}error-message{% else %}alert alert-success{% endif %}">
+          {% for message in messages %}
+            {{ message }}
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form action="{% url 'accounts:register_expert' %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="user_type" id="user_type" value="expert">
+
+          <!-- Personal information -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="first_name" class="form-label">Prénom</label>
+              <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Votre prénom" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="last_name" class="form-label">Nom</label>
+              <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Votre nom" required>
+            </div>
+          </div>
+
+          <!-- Contact information -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Adresse email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="votre@email.com" required>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="password" class="form-label">Mot de passe</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="password_confirm" class="form-label">Confirmer le mot de passe</label>
+              <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="phone" class="form-label">Téléphone</label>
+            <input type="tel" class="form-control" id="phone" name="phone" required>
+          </div>
+
+          <!-- Expert specific fields -->
+          <div class="mb-3">
+            <label for="expertise" class="form-label">Domaine d'expertise</label>
+            <select class="form-select form-control" id="expertise" name="expertise" required>
+              <option value="" selected disabled>Sélectionnez votre domaine d'expertise</option>
+              <option value="fiscal">Fiscal</option>
+              <option value="immobilier">Immobilier</option>
+              <option value="investissement">Investissement</option>
+              <option value="administratif">Administratif</option>
+              <option value="tourisme">Tourisme</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="experience" class="form-label">Années d'expérience</label>
+            <input type="number" class="form-control" id="experience" name="experience" min="0" required>
+          </div>
+
+          
+
+          
+
+          
+
+          <button type="submit" class="btn btn-register">S'inscrire en tant qu'expert</button>
+
+          <div class="login-link">
+            Vous avez déjà un compte ? <a href="{% url 'accounts:login' %}">Connectez-vous</a>
+          </div>
+          <div class="client-register-link">
+            Vous êtes un client ? <a href="{% url 'accounts:register' %}">Inscrivez-vous en tant que client</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Initialize AOS animation
+  document.addEventListener('DOMContentLoaded', function() {
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true
+    });
+  });
+</script>
+{% endblock %}

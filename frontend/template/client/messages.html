@@ -98,7 +98,7 @@
             {% endfor %}
           </div>
           
-          <form class="chat-input" id="messageForm" action="{% url 'requests:client_send_message' active_contact.id %}" method="post">
+          <form class="chat-input" id="messageForm" action="{% url 'custom_requests:client_send_message' active_contact.id %}" method="post">
             {% csrf_token %}
             <input type="text" name="message" placeholder="Tapez votre message..." id="messageInput" required>
             <button type="submit">
@@ -453,7 +453,7 @@
       if (activeContact) {
         const contactId = activeContact.dataset.contactId;
         
-        fetch(`{% url 'requests:client_check_messages' %}?contact=${contactId}`, {
+        fetch(`{% url 'custom_requests:client_check_messages' %}?contact=${contactId}`, {
           headers: {
             'X-Requested-With': 'XMLHttpRequest'
           }

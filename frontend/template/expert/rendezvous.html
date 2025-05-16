@@ -152,7 +152,7 @@
               <i class="bi bi-x-lg me-1"></i>Annuler
             </button>
           {% endif %}
-          <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-sm btn-primary">
+          <a href="{% url 'custom_requests:appointment_detail' appointment.id %}" class="btn btn-sm btn-primary">
             <i class="bi bi-eye me-1"></i>Détails
           </a>
         </div>
@@ -174,7 +174,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form method="post" action="{% url 'requests:expert_add_appointment' %}">
+        <form method="post" action="{% url 'custom_requests:expert_add_appointment' %}">
           {% csrf_token %}
           <div class="mb-3">
             <label class="form-label">Titre</label>
@@ -239,7 +239,7 @@
             title: '{{ appointment.title }}',
             start: '{{ appointment.start_time|date:"Y-m-d H:i:s" }}',
             end: '{{ appointment.end_time|date:"Y-m-d H:i:s" }}',
-            url: '{% url "requests:appointment_detail" appointment.id %}',
+            url: '{% url "custom_requests:appointment_detail" appointment.id %}',
             backgroundColor: (function() {
               var status = '{{ appointment.status }}';
               if (status === 'confirmed') return '#00a854';

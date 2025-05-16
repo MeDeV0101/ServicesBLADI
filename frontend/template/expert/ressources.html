@@ -6,49 +6,49 @@
 {% block meta_keywords %}ressources, expert, documents, guides, procédures{% endblock %}
 
 {% block extra_styles %}
-<style>
-  .resource-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 1rem;
-    transition: transform 0.2s;
-  }
+  <style>
+    .resource-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+      transition: transform 0.2s;
+    }
 
-  .resource-card:hover {
-    transform: translateY(-2px);
-  }
+    .resource-card:hover {
+      transform: translateY(-2px);
+    }
 
-  .resource-icon {
-    font-size: 2rem;
-    color: var(--primary-color);
-  }
+    .resource-icon {
+      font-size: 2rem;
+      color: var(--primary-color);
+    }
 
   .resource-type {
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
     background-color: #e6f7ff;
     color: #1890ff;
-  }
-  
+    }
+
   .category-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
     margin-left: 0.5rem;
-  }
-  
+    }
+
   .category-guide {
-    background-color: #e3fcef;
-    color: #00a854;
-  }
-  
+      background-color: #e3fcef;
+      color: #00a854;
+    }
+
   .category-form {
-    background-color: #fff7e6;
-    color: #fa8c16;
-  }
-  
+      background-color: #fff7e6;
+      color: #fa8c16;
+    }
+
   .category-template {
     background-color: #f9f0ff;
     color: #722ed1;
@@ -57,39 +57,39 @@
   .category-procedure {
     background-color: #e6f7ff;
     color: #1890ff;
-  }
-</style>
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
 <!-- Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h2>Gestion des Ressources</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2>Gestion des Ressources</h2>
   <div class="d-flex">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addResourceModal">
       <i class="bi bi-plus-circle me-2"></i>Ajouter une ressource
-    </button>
-  </div>
-</div>
+            </button>
+          </div>
+        </div>
 
-<!-- Filtres -->
+        <!-- Filtres -->
 <div class="dashboard-card mb-4">
-  <div class="card-body">
-    <div class="row g-3">
-      <div class="col-md-3">
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-3">
         <label class="form-label">Catégorie</label>
         <select class="form-select" id="category-filter">
-          <option value="">Toutes les catégories</option>
+                  <option value="">Toutes les catégories</option>
           <option value="guide">Guides</option>
           <option value="form">Formulaires</option>
           <option value="template">Modèles de documents</option>
           <option value="procedure">Procédures</option>
-        </select>
-      </div>
-      <div class="col-md-4">
+                </select>
+              </div>
+              <div class="col-md-4">
         <label class="form-label">Recherche</label>
-        <input type="text" class="form-control" placeholder="Rechercher une ressource...">
-      </div>
+                <input type="text" class="form-control" placeholder="Rechercher une ressource...">
+              </div>
       <div class="col-md-3">
         <label class="form-label">Trier par</label>
         <select class="form-select">
@@ -98,13 +98,13 @@
           <option value="popular">Plus populaire</option>
         </select>
       </div>
-      <div class="col-md-2">
+              <div class="col-md-2">
         <label class="form-label">&nbsp;</label>
-        <button class="btn btn-outline-primary w-100">Filtrer</button>
-      </div>
-    </div>
-  </div>
-</div>
+                <button class="btn btn-outline-primary w-100">Filtrer</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
 <!-- Ressources populaires -->
 <h4 class="mb-3">Ressources Populaires</h4>
@@ -115,7 +115,7 @@
         <div class="resource-card p-3 h-100">
           <div class="d-flex align-items-center mb-3">
             <i class="bi bi-{% if resource.category == 'guide' %}book{% elif resource.category == 'form' %}file-earmark-text{% elif resource.category == 'template' %}file-earmark{% else %}diagram-3{% endif %} resource-icon me-3"></i>
-            <div>
+              <div>
               <h5 class="mb-1">{{ resource.title }}</h5>
               <div class="d-flex">
                 <span class="category-badge category-{{ resource.category }}">
@@ -127,7 +127,7 @@
                 </span>
               </div>
             </div>
-          </div>
+            </div>
           <p class="text-muted mb-3">{{ resource.description|truncatechars:100 }}</p>
           <div class="d-flex justify-content-between align-items-center">
             <small class="text-muted">Mis à jour: {{ resource.updated_at|date:"d/m/Y" }}</small>
@@ -145,7 +145,7 @@
       </div>
     </div>
   {% endif %}
-</div>
+        </div>
 
 <!-- Toutes les ressources -->
 <h4 class="mt-4 mb-3">Toutes les Ressources</h4>
@@ -156,7 +156,7 @@
         <div class="resource-card p-3 h-100">
           <div class="d-flex align-items-center mb-3">
             <i class="bi bi-{% if resource.category == 'guide' %}book{% elif resource.category == 'form' %}file-earmark-text{% elif resource.category == 'template' %}file-earmark{% else %}diagram-3{% endif %} resource-icon me-3"></i>
-            <div>
+              <div>
               <h5 class="mb-1">{{ resource.title }}</h5>
               <div class="d-flex">
                 <span class="category-badge category-{{ resource.category }}">

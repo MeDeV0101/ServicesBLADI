@@ -123,8 +123,15 @@
     text-decoration: none;
   }
 
-  .login-link a:hover {
+  .login-link a:hover,
+  .expert-register-link a:hover {
     text-decoration: underline;
+  }
+  
+  .expert-register-link a {
+    color: #0ea2bd;
+    text-decoration: none;
+    font-weight: 500;
   }
 
   .error-message {
@@ -176,15 +183,7 @@
         <form action="{% url 'accounts:register' %}" method="post">
           {% csrf_token %}
           
-          <!-- User type selection -->
-          <div class="mb-4">
-            <label class="form-label d-block">Type de compte</label>
-            <div class="user-type-selector">
-              <div class="user-type-option selected" data-type="client">Client</div>
-              <div class="user-type-option" data-type="expert">Expert</div>
-            </div>
-            <input type="hidden" name="user_type" id="user_type" value="client">
-          </div>
+          <input type="hidden" name="user_type" id="user_type" value="client">
 
           <!-- Personal information -->
           <div class="row">
@@ -246,34 +245,9 @@
             </select>
           </div>
 
-          <!-- Expert fields (conditional) -->
-          <div class="expert-fields">
-            <div class="mb-3">
-              <label for="expertise" class="form-label">Domaine d'expertise</label>
-              <select class="form-select form-control" id="expertise" name="expertise">
-                <option value="" selected disabled>Sélectionnez votre domaine d'expertise</option>
-                <option value="fiscal">Fiscal</option>
-                <option value="immobilier">Immobilier</option>
-                <option value="investissement">Investissement</option>
-                <option value="administratif">Administratif</option>
-                <option value="tourisme">Tourisme</option>
-                <option value="autre">Autre</option>
-              </select>
-            </div>
 
-            <div class="mb-3">
-              <label for="experience" class="form-label">Années d'expérience</label>
-              <input type="number" class="form-control" id="experience" name="experience" min="0" max="50">
-            </div>
-
-            <div class="mb-3">
-              <label for="bio" class="form-label">Biographie professionnelle</label>
-              <textarea class="form-control" id="bio" name="bio" rows="3"></textarea>
-            </div>
-          </div>
-
-          <!-- Client last visit to Morocco (conditional) -->
-          <div class="mb-3 client-fields">
+          <!-- Client last visit to Morocco -->
+          <div class="mb-3">
             <label for="last_visit" class="form-label">Date de dernière visite au Maroc</label>
             <input type="date" class="form-control" id="last_visit" name="last_visit">
           </div>
@@ -299,7 +273,10 @@
           </div>
 
           <div class="login-link">
-            <p>Vous avez déjà un compte? <a href="{% url 'accounts:login' %}" class="text-decoration-none">Se connecter</a></p>
+            Vous avez déjà un compte ? <a href="{% url 'accounts:login' %}">Connectez-vous</a>
+          </div>
+          <div class="expert-register-link text-center mt-3">
+            Vous êtes un expert ? <a href="{% url 'accounts:register_expert' %}">Inscrivez-vous en tant qu'expert</a>
           </div>
         </form>
       </div>
@@ -319,42 +296,10 @@
 
   // Toggle expert/client fields based on account type
   document.addEventListener('DOMContentLoaded', function() {
-    const userTypeOptions = document.querySelectorAll('.user-type-option');
-    const userTypeInput = document.getElementById('user_type');
-    const expertFields = document.querySelector('.expert-fields');
-    const clientFields = document.querySelector('.client-fields');
-    
-    // Show initial fields based on default selection
-    if (userTypeInput.value === 'expert') {
-      expertFields.style.display = 'block';
-      clientFields.style.display = 'none';
-    } else {
-      expertFields.style.display = 'none';
-      clientFields.style.display = 'block';
-    }
-    
-    // Handle user type change
-    userTypeOptions.forEach(option => {
-      option.addEventListener('click', function() {
-        // Remove selected class from all options
-        userTypeOptions.forEach(opt => opt.classList.remove('selected'));
-        
-        // Add selected class to clicked option
-        this.classList.add('selected');
-        
-        // Update hidden input value
-        const userType = this.dataset.type;
-        userTypeInput.value = userType;
-        
-        // Show/hide fields based on selection
-        if (userType === 'expert') {
-          expertFields.style.display = 'block';
-          clientFields.style.display = 'none';
-        } else {
-          expertFields.style.display = 'none';
-          clientFields.style.display = 'block';
-        }
-      });
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true
     });
   });
 </script>

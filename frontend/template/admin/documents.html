@@ -1,355 +1,253 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends 'admin/base.html' %}
+{% load static %}
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Gestion des Documents - MRE</title>
-  <meta name="description" content="Gestion des documents pour l'administrateur MRE">
-  <meta name="keywords" content="MRE, documents, admin, services">
+{% block title %}Gestion des Documents | Administration{% endblock %}
 
-  <!-- Favicons -->
-  <link href="../../static/img/favicon.png" rel="icon">
-  <link href="../../static/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../../static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-
-  <!-- Main CSS File -->
-  <link href="../../static/css/main.css" rel="stylesheet">
-
-  <style>
-    :root {
-      --sidebar-width: 280px;
-      --header-height: 60px;
-      --primary-color: #1e3c72;
-      --secondary-color: #2a5298;
-    }
-
-    body {
-      background-color: #f8f9fa;
-    }
-
-    .dashboard-wrapper {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: var(--sidebar-width);
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-      color: white;
-      position: fixed;
-      height: 100vh;
-      left: 0;
-      top: 0;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-
-    .main-content {
-      margin-left: var(--sidebar-width);
-      flex: 1;
-      padding: 2rem;
-    }
-
-    .document-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 1rem;
-      transition: transform 0.2s;
-    }
-
-    .document-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .document-type {
-      padding: 0.25rem 0.75rem;
-      border-radius: 15px;
-      font-size: 0.8rem;
-    }
-
-    .type-legal {
-      background-color: #e6f7ff;
-      color: #1890ff;
-    }
-
-    .type-financial {
-      background-color: #f6ffed;
-      color: #52c41a;
-    }
-
-    .type-personal {
-      background-color: #fff7e6;
-      color: #fa8c16;
-    }
-
-    .document-status {
-      padding: 0.25rem 0.75rem;
-      border-radius: 15px;
-      font-size: 0.8rem;
-    }
-
-    .status-verified {
-      background-color: #f6ffed;
-      color: #52c41a;
-    }
-
-    .status-pending {
-      background-color: #fff7e6;
-      color: #fa8c16;
-    }
-
-    .status-expired {
-      background-color: #fff1f0;
-      color: #f5222d;
-    }
-
-    @media (max-width: 992px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-      .main-content {
-        margin-left: 0;
-      }
-      .sidebar.active {
-        transform: translateX(0);
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="dashboard-wrapper">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header p-3">
-        <h3>MRE</h3>
-      </div>
-      <div class="sidebar-profile text-center p-3">
-        <img src="../../static/img/profile-placeholder.jpg" alt="Profile" class="rounded-circle" width="80">
-        <h5 class="mt-3 text-white">Admin</h5>
-        <p class="text-white-50">Administrateur</p>
-      </div>
-      <nav class="sidebar-menu">
-        <a href="../admin-dashboard.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
-        </a>
-        <a href="users.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-people me-2"></i>Utilisateurs
-        </a>
-        <a href="demandes.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-file-text me-2"></i>Demandes
-        </a>
-        <a href="documents.html" class="d-block p-3 text-white text-decoration-none active">
-          <i class="bi bi-folder me-2"></i>Documents
-        </a>
-        <a href="rendezvous.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-calendar me-2"></i>Rendez-vous
-        </a>
-        <a href="ressources.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-book me-2"></i>Ressources
-        </a>
-        <a href="../index.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
-        </a>
-      </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2>Gestion des Documents</h2>
-          <div class="d-flex gap-2">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
-              <i class="bi bi-upload me-2"></i>Uploader un document
-            </button>
-          </div>
-        </div>
-
-        <!-- Filtres -->
-        <div class="card mb-4">
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-3">
-                <select class="form-select">
-                  <option value="">Tous les types</option>
-                  <option value="legal">Documents légaux</option>
-                  <option value="financial">Documents financiers</option>
-                  <option value="personal">Documents personnels</option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <select class="form-select">
-                  <option value="">Tous les statuts</option>
-                  <option value="verified">Vérifié</option>
-                  <option value="pending">En attente</option>
-                  <option value="expired">Expiré</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Rechercher un document...">
-              </div>
-              <div class="col-md-2">
-                <button class="btn btn-outline-primary w-100">Filtrer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Liste des documents -->
-        <div class="document-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <i class="bi bi-file-earmark-text fs-1 me-3 text-primary"></i>
-              <div>
-                <h5 class="mb-1">Contrat de location</h5>
-                <div class="d-flex gap-2">
-                  <span class="document-type type-legal">Document légal</span>
-                  <span class="document-status status-verified">Vérifié</span>
-                </div>
-                <small class="text-muted">Client: Mohammed Abd</small>
-                <small class="text-muted d-block">Ajouté le: 15/03/2024</small>
-              </div>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-success">
-                <i class="bi bi-download"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="document-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <i class="bi bi-file-earmark-text fs-1 me-3 text-primary"></i>
-              <div>
-                <h5 class="mb-1">Relevé bancaire</h5>
-                <div class="d-flex gap-2">
-                  <span class="document-type type-financial">Document financier</span>
-                  <span class="document-status status-pending">En attente</span>
-                </div>
-                <small class="text-muted">Client: Fatima Zahra</small>
-                <small class="text-muted d-block">Ajouté le: 14/03/2024</small>
-              </div>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-success">
-                <i class="bi bi-download"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="document-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <i class="bi bi-file-earmark-text fs-1 me-3 text-primary"></i>
-              <div>
-                <h5 class="mb-1">Carte d'identité</h5>
-                <div class="d-flex gap-2">
-                  <span class="document-type type-personal">Document personnel</span>
-                  <span class="document-status status-expired">Expiré</span>
-                </div>
-                <small class="text-muted">Client: Karim Hassan</small>
-                <small class="text-muted d-block">Ajouté le: 10/03/2024</small>
-              </div>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-success">
-                <i class="bi bi-download"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+{% block admin_content %}
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Gestion des Documents</h1>
   </div>
 
-  <!-- Modal Upload Document -->
-  <div class="modal fade" id="uploadDocumentModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Uploader un document</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  <!-- Statistics Row -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-primary">
+          <i class="bi bi-file-earmark"></i>
         </div>
-        <div class="modal-body">
-          <form>
-            <div class="mb-3">
-              <label class="form-label">Titre du document</label>
-              <input type="text" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Type de document</label>
-              <select class="form-select">
-                <option value="legal">Document légal</option>
-                <option value="financial">Document financier</option>
-                <option value="personal">Document personnel</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Client associé</label>
-              <select class="form-select">
-                <option value="1">Mohammed Abd</option>
-                <option value="2">Fatima Zahra</option>
-                <option value="3">Karim Hassan</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Fichier</label>
-              <input type="file" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Description</label>
-              <textarea class="form-control" rows="3"></textarea>
-            </div>
-          </form>
+        <div class="count">{{ stats.total }}</div>
+        <div class="title">Total Documents</div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-success">
+          <i class="bi bi-file-earmark-check"></i>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="button" class="btn btn-primary">Uploader</button>
+        <div class="count">{{ stats.verified }}</div>
+        <div class="title">Documents Vérifiés</div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-warning">
+          <i class="bi bi-file-earmark-break"></i>
         </div>
+        <div class="count">{{ stats.pending }}</div>
+        <div class="title">En Attente</div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-danger">
+          <i class="bi bi-file-earmark-x"></i>
+        </div>
+        <div class="count">{{ stats.rejected }}</div>
+        <div class="title">Refusés</div>
       </div>
     </div>
   </div>
 
-  <!-- Vendor JS Files -->
-  <script src="../../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../../static/vendor/aos/aos.js"></script>
-  <script src="../../static/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../../static/vendor/swiper/swiper-bundle.min.js"></script>
+  <!-- Filter Section -->
+  <div class="filter-section mb-4">
+    <form method="get" class="row g-3">
+      <div class="col-md-3">
+        <label for="client" class="form-label">Client</label>
+        <select id="client" name="client" class="form-select">
+          <option value="">Tous les clients</option>
+          {% for client in clients %}
+          <option value="{{ client.id }}" {% if client_id|stringformat:"s" == client.id|stringformat:"s" %}selected{% endif %}>
+            {{ client.user.first_name }} {{ client.user.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div class="col-md-3">
+        <label for="document-type" class="form-label">Type de document</label>
+        <select id="document-type" name="type" class="form-select">
+          <option value="">Tous les types</option>
+          {% for type in document_types %}
+          <option value="{{ type }}" {% if document_type == type %}selected{% endif %}>{{ type }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div class="col-md-2">
+        <label for="status" class="form-label">Statut</label>
+        <select id="status" name="status" class="form-select">
+          <option value="">Tous</option>
+          <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>En attente</option>
+          <option value="verified" {% if status_filter == 'verified' %}selected{% endif %}>Vérifié</option>
+          <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Refusé</option>
+        </select>
+      </div>
+      
+      <div class="col-md-2">
+        <label for="search" class="form-label">Recherche</label>
+        <input type="text" class="form-control" id="search" name="search" value="{{ search_query }}">
+      </div>
+      
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-filter"></i> Filtrer
+        </button>
+      </div>
+    </form>
+  </div>
 
-  <!-- Main JS File -->
-  <script src="../../static/js/main.js"></script>
-</body>
+  <!-- Documents List -->
+  <div class="card">
+    <div class="card-header bg-white">
+      <h5 class="card-title mb-0">Liste des Documents</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Nom du document</th>
+              <th>Client</th>
+              <th>Demande</th>
+              <th>Type</th>
+              <th>Date d'ajout</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for doc in documents %}
+            <tr>
+              <td>{{ doc.name }}</td>
+              <td>{{ doc.user.first_name }} {{ doc.user.name }}</td>
+              <td>{% if doc.request %}{{ doc.request.service.name }}{% else %}N/A{% endif %}</td>
+              <td>{{ doc.document_type }}</td>
+              <td>{{ doc.uploaded_at|date:"d/m/Y H:i" }}</td>
+              <td>
+                {% if doc.status == 'verified' %}
+                <span class="badge bg-success">Vérifié</span>
+                {% elif doc.status == 'rejected' %}
+                <span class="badge bg-danger">Refusé</span>
+                {% else %}
+                <span class="badge bg-warning">En attente</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="btn-group">
+                  <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  <a href="{% url 'admin_verify_document' doc.id %}" class="btn btn-sm btn-outline-success">
+                    <i class="bi bi-check"></i>
+                  </a>
+                  <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#rejectModal{{ doc.id }}">
+                    <i class="bi bi-x"></i>
+                  </button>
+                  <a href="{% url 'admin_delete_document' doc.id %}" class="btn btn-sm btn-outline-danger" 
+                     onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce document?');">
+                    <i class="bi bi-trash"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center">Aucun document trouvé</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      {% if documents.paginator.num_pages > 1 %}
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mt-4">
+          {% if documents.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1{% if client_id %}&client={{ client_id }}{% endif %}{% if document_type %}&type={{ document_type }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="First">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ documents.previous_page_number }}{% if client_id %}&client={{ client_id }}{% endif %}{% if document_type %}&type={{ document_type }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">&laquo;&laquo;</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">&laquo;</span>
+            </li>
+          {% endif %}
+          
+          {% for i in documents.paginator.page_range %}
+            {% if documents.number == i %}
+              <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+            {% elif i > documents.number|add:'-3' and i < documents.number|add:'3' %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ i }}{% if client_id %}&client={{ client_id }}{% endif %}{% if document_type %}&type={{ document_type }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ i }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+          
+          {% if documents.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ documents.next_page_number }}{% if client_id %}&client={{ client_id }}{% endif %}{% if document_type %}&type={{ document_type }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ documents.paginator.num_pages }}{% if client_id %}&client={{ client_id }}{% endif %}{% if document_type %}&type={{ document_type }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Last">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">&raquo;</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">&raquo;&raquo;</span>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>
 
-</html> 
+<!-- Reject Document Modals -->
+{% for doc in documents %}
+<div class="modal fade" id="rejectModal{{ doc.id }}" tabindex="-1" aria-labelledby="rejectModalLabel{{ doc.id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rejectModalLabel{{ doc.id }}">Refuser le Document</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'admin_reject_document' doc.id %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <p>Vous êtes sur le point de refuser le document "<strong>{{ doc.name }}</strong>".</p>
+          <div class="mb-3">
+            <label for="rejection_reason" class="form-label">Raison du refus:</label>
+            <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-danger">Refuser le Document</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock admin_content %}

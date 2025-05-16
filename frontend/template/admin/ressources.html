@@ -1,56 +1,272 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends 'admin/base.html' %}
+{% load static %}
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Gestion des Ressources - MRE</title>
-  <meta name="description" content="Gestion des ressources pour l'administrateur MRE">
-  <meta name="keywords" content="MRE, ressources, admin, services">
+{% block title %}Gestion des Ressources | Administration{% endblock %}
 
-  <!-- Favicons -->
-  <link href="../../static/img/favicon.png" rel="icon">
-  <link href="../../static/img/apple-touch-icon.png" rel="apple-touch-icon">
+{% block admin_content %}
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Gestion des Ressources</h1>
+    <div class="d-flex">
+      <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addResourceModal">
+        <i class="bi bi-plus-circle me-2"></i>Ajouter une ressource
+      </a>
+    </div>
+  </div>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Statistics Row -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="stats-card">
+        <div class="icon text-primary">
+          <i class="bi bi-journal-text"></i>
+        </div>
+        <div class="count">{{ stats.total }}</div>
+        <div class="title">Total Ressources</div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="stats-card">
+        <div class="icon text-success">
+          <i class="bi bi-globe"></i>
+        </div>
+        <div class="count">{{ stats.public }}</div>
+        <div class="title">Ressources Publiques</div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="stats-card">
+        <div class="icon text-warning">
+          <i class="bi bi-lock"></i>
+        </div>
+        <div class="count">{{ stats.private }}</div>
+        <div class="title">Ressources Privées</div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Vendor CSS Files -->
-  <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../../static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <!-- Filter Section -->
+  <div class="filter-section mb-4">
+    <form method="get" class="row g-3">
+      <div class="col-md-4">
+        <label for="category" class="form-label">Catégorie</label>
+        <select id="category" name="category" class="form-select">
+          <option value="">Toutes les catégories</option>
+          {% for cat in categories %}
+          <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div class="col-md-3">
+        <label for="visibility" class="form-label">Visibilité</label>
+        <select id="visibility" name="visibility" class="form-select">
+          <option value="">Tous</option>
+          <option value="public" {% if visibility == 'public' %}selected{% endif %}>Publique</option>
+          <option value="private" {% if visibility == 'private' %}selected{% endif %}>Privée</option>
+        </select>
+      </div>
+      
+      <div class="col-md-3">
+        <label for="search" class="form-label">Recherche</label>
+        <input type="text" class="form-control" id="search" name="search" value="{{ search_query }}">
+      </div>
+      
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-filter"></i> Filtrer
+        </button>
+      </div>
+    </form>
+  </div>
 
-  <!-- Main CSS File -->
-  <link href="../../static/css/main.css" rel="stylesheet">
+  <!-- Resources List -->
+  <div class="row">
+    {% for resource in resources %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        {% if resource.image %}
+        <img src="{{ resource.image.url }}" class="card-img-top resource-image" alt="{{ resource.title }}">
+        {% else %}
+        <div class="resource-no-image d-flex justify-content-center align-items-center bg-light">
+          <i class="bi bi-file-earmark-text fs-1 text-muted"></i>
+        </div>
+        {% endif %}
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5 class="card-title mb-0">{{ resource.title }}</h5>
+            {% if resource.is_public %}
+            <span class="badge bg-success">Public</span>
+            {% else %}
+            <span class="badge bg-warning">Privé</span>
+            {% endif %}
+          </div>
+          <p class="card-text text-muted small mb-2">Catégorie: {{ resource.category }}</p>
+          <p class="card-text">{{ resource.description|truncatechars:100 }}</p>
+        </div>
+        <div class="card-footer bg-white border-top-0">
+          <div class="d-flex justify-content-between">
+            <small class="text-muted">{{ resource.created_at|date:"d/m/Y" }}</small>
+            <div class="btn-group">
+              <a href="{% url 'admin_edit_resource' resource.id %}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <a href="{% if resource.file %}{{ resource.file.url }}{% elif resource.url %}{{ resource.url }}{% else %}#{% endif %}" 
+                 class="btn btn-sm btn-outline-success" {% if resource.url %}target="_blank"{% endif %}>
+                <i class="bi bi-{% if resource.file %}download{% else %}link{% endif %}"></i>
+              </a>
+              <a href="{% url 'admin_toggle_resource_visibility' resource.id %}" class="btn btn-sm btn-outline-warning">
+                <i class="bi bi-{% if resource.is_public %}lock{% else %}unlock{% endif %}"></i>
+              </a>
+              <a href="{% url 'admin_delete_resource' resource.id %}" class="btn btn-sm btn-outline-danger"
+                 onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette ressource?');">
+                <i class="bi bi-trash"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle me-2"></i>
+        Aucune ressource trouvée
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  
+  <!-- Pagination -->
+  {% if resources.paginator.num_pages > 1 %}
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center mt-4">
+      {% if resources.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page=1{% if category %}&category={{ category }}{% endif %}{% if visibility %}&visibility={{ visibility }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="First">
+            <span aria-hidden="true">&laquo;&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ resources.previous_page_number }}{% if category %}&category={{ category }}{% endif %}{% if visibility %}&visibility={{ visibility }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">&laquo;&laquo;</span>
+        </li>
+        <li class="page-item disabled">
+          <span class="page-link">&laquo;</span>
+        </li>
+      {% endif %}
+      
+      {% for i in resources.paginator.page_range %}
+        {% if resources.number == i %}
+          <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+        {% elif i > resources.number|add:'-3' and i < resources.number|add:'3' %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ i }}{% if category %}&category={{ category }}{% endif %}{% if visibility %}&visibility={{ visibility }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ i }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+      
+      {% if resources.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ resources.next_page_number }}{% if category %}&category={{ category }}{% endif %}{% if visibility %}&visibility={{ visibility }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ resources.paginator.num_pages }}{% if category %}&category={{ category }}{% endif %}{% if visibility %}&visibility={{ visibility }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Last">
+            <span aria-hidden="true">&raquo;&raquo;</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">&raquo;</span>
+        </li>
+        <li class="page-item disabled">
+          <span class="page-link">&raquo;&raquo;</span>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
 
-  <style>
-    :root {
-      --sidebar-width: 280px;
-      --header-height: 60px;
-      --primary-color: #1e3c72;
-      --secondary-color: #2a5298;
-    }
-
-    body {
-      background-color: #f8f9fa;
-    }
-
-    .dashboard-wrapper {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: var(--sidebar-width);
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-      color: white;
-      position: fixed;
-      height: 100vh;
-      left: 0;
-      top: 0;
-      z-index: 1000;
-      transition: all 0.3s ease;
+<!-- Add Resource Modal -->
+<div class="modal fade" id="addResourceModal" tabindex="-1" aria-labelledby="addResourceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form action="{% url 'admin_add_resource' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="addResourceModalLabel">Ajouter une nouvelle ressource</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label for="title" class="form-label">Titre</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="category" class="form-label">Catégorie</label>
+                <input type="text" class="form-control" id="category" name="category" list="categoryOptions" required>
+                <datalist id="categoryOptions">
+                  {% for cat in categories %}
+                  <option value="{{ cat }}">
+                  {% endfor %}
+                </datalist>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+          </div>
+          
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="file" class="form-label">Fichier (optionnel)</label>
+                <input type="file" class="form-control" id="file" name="file">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="url" class="form-label">URL (optionnel)</label>
+                <input type="url" class="form-control" id="url" name="url">
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="image" class="form-label">Image (optionnel)</label>
+            <input type="file" class="form-control" id="image" name="image">
+          </div>
+          
+          <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="is_public" name="is_public" checked>
+            <label class="form-check-label" for="is_public">Ressource publique</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock admin_content %}
     }
 
     .main-content {

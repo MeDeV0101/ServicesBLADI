@@ -15,7 +15,7 @@
     </div>
 
     <!-- Filtres -->
-    <form method="get" action="{% url 'client_rendezvous' %}">
+    <form method="get" action="{% url 'custom_requests:client_appointments' %}">
       <div class="card mb-4">
         <div class="card-body">
           <div class="row g-3">
@@ -85,7 +85,7 @@
               {% endif %}
               
               <div class="mt-2">
-                <a href="{% url 'requests:appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary me-2">
+                <a href="{% url 'custom_requests:appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary me-2">
                   <i class="bi bi-eye"></i>
                 </a>
                 {% if appointment.status == 'scheduled' or appointment.status == 'confirmed' %}
@@ -106,7 +106,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non, garder</button>
-                          <a href="{% url 'requests:cancel_appointment' appointment.id %}" class="btn btn-danger">Oui, annuler</a>
+                          <a href="{% url 'custom_requests:cancel_appointment' appointment.id %}" class="btn btn-danger">Oui, annuler</a>
                         </div>
                       </div>
                     </div>
@@ -133,7 +133,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form method="post" action="{% url 'requests:create_appointment' %}">
+          <form method="post" action="{% url 'custom_requests:create_appointment' %}">
             {% csrf_token %}
             <div class="mb-3">
               <label class="form-label">Type de consultation</label>

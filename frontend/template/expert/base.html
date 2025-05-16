@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
@@ -9,8 +10,8 @@
   <meta name="keywords" content="{% block meta_keywords %}MRE, espace expert, services{% endblock %}">
 
   <!-- Favicons -->
-  <link href="../../static/img/favicon.png" rel="icon">
-  <link href="../../static/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="{% static 'img/favicon.png' %}" rel="icon">
+  <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -18,15 +19,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../../static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="../../static/vendor/aos/aos.css" rel="stylesheet">
-  <link href="../../static/vendor/animate.css/animate.min.css" rel="stylesheet">
-  <link href="../../static/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="../../static/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/animate.css/animate.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="../../static/css/main.css" rel="stylesheet">
+  <link href="{% static 'css/main.css' %}" rel="stylesheet">
 
   <style>
     :root {
@@ -49,18 +50,34 @@
 
     .sidebar {
       width: var(--sidebar-width);
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
       color: white;
-      padding: 2rem;
+      padding: 1.5rem 1rem;
       position: fixed;
       height: 100vh;
       overflow-y: auto;
+      scrollbar-width: thin; /* Pour Firefox */
+      scrollbar-color: rgba(255,255,255,0.3) transparent; /* Pour Firefox */
+    }
+    
+    /* Style de la barre de défilement pour Webkit (Chrome, Safari) */
+    .sidebar::-webkit-scrollbar {
+      width: 5px;
+    }
+    
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: rgba(255,255,255,0.3);
+      border-radius: 10px;
     }
 
     .sidebar-profile {
       text-align: center;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
@@ -74,13 +91,45 @@
     }
 
     .sidebar-menu a {
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      padding: 1rem 1rem;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: white;
+      text-decoration: none !important;
+      line-height: 1.2;
     }
 
-    .sidebar-menu a:hover, .sidebar-menu a.active {
-      background-color: rgba(255, 255, 255, 0.2);
+    .sidebar-menu a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-menu a.active {
+      background-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+    }
+    
+    .sidebar-menu a span {
+      display: inline-block;
+      padding-top: 0.25rem;
+      line-height: 1.2;
+    }
+    
+    .sidebar-menu a i {
+      font-size: 1.75rem;
+      margin-right: 0.75rem;
+      width: 32px;
+      text-align: center;
+      opacity: 0.9;
+    }
+    
+    .sidebar-menu a.active i {
+      opacity: 1;
     }
 
     .client-item {
@@ -195,34 +244,45 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-profile">
-        <img src="../../static/img/expert-placeholder.jpg" alt="Expert Profile" class="profile-image">
+        <img src="{% static 'img/expert-placeholder.jpg' %}" alt="Expert Profile" class="profile-image">
         <h5 id="expertName">{{ user.name }} {{ user.first_name }}</h5>
         <p class="text-muted">Expert {{ expert.specialty }}</p>
       </div>
       <nav class="sidebar-menu">
-        <a href="{% url 'expert_dashboard' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_dashboard' %}active{% endif %}">
-          <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
+        <a href="{% url 'expert_dashboard' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_dashboard' %}active{% endif %}">
+          <i class="bi bi-speedometer2"></i>
+          <span>Tableau de<br>bord</span>
         </a>
-        <a href="{% url 'expert_demandes' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_demandes' %}active{% endif %}">
-          <i class="bi bi-file-text me-2"></i>Demandes assignées
+        <a href="{% url 'expert_demandes' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_demandes' %}active{% endif %}">
+          <i class="bi bi-file-text"></i>
+          <span>Demandes<br>assignées</span>
         </a>
-        <a href="{% url 'expert_documents' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_documents' %}active{% endif %}">
-          <i class="bi bi-folder me-2"></i>Gestion des documents
+        <a href="{% url 'expert_documents' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_documents' %}active{% endif %}">
+          <i class="bi bi-folder"></i>
+          <span>Gestion des<br>documents</span>
         </a>
-        <a href="{% url 'expert_rendezvous' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_rendezvous' %}active{% endif %}">
-          <i class="bi bi-calendar me-2"></i>Rendez-vous
+        <a href="{% url 'expert_rendezvous' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_rendezvous' %}active{% endif %}">
+          <i class="bi bi-calendar"></i>
+          <span>Rendez-vous</span>
         </a>
-        <a href="{% url 'expert_messages' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_messages' %}active{% endif %}">
-          <i class="bi bi-chat-dots me-2"></i>Messages
+        <a href="{% url 'expert_messages' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_messages' %}active{% endif %}">
+          <i class="bi bi-chat-dots"></i>
+          <span>Messages</span>
           {% if unread_messages_count > 0 %}
             <span class="badge bg-danger ms-2">{{ unread_messages_count }}</span>
           {% endif %}
         </a>
-        <a href="{% url 'expert_ressources' %}" class="d-block p-3 text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_ressources' %}active{% endif %}">
-          <i class="bi bi-book me-2"></i>Gestion des ressources
+        <a href="{% url 'expert_ressources' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'expert_ressources' %}active{% endif %}">
+          <i class="bi bi-book"></i>
+          <span>Gestion des<br>ressources</span>
         </a>
-        <a href="{% url 'accounts:logout' %}" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
+        <a href="{% url 'accounts:edit_profile' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'edit_profile' and request.resolver_match.app_name == 'accounts' %}active{% endif %}">
+          <i class="bi bi-pencil-square"></i>
+          <span>Modifier mon<br>profil</span>
+        </a>
+        <a href="{% url 'accounts:logout' %}" class="text-white text-decoration-none">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Déconnexion</span>
         </a>
       </nav>
     </aside>
@@ -234,10 +294,10 @@
   </div>
 
   <!-- Vendor JS Files -->
-  <script src="../../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../../static/vendor/aos/aos.js"></script>
-  <script src="../../static/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../../static/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
   
   {% block extra_scripts %}{% endblock %}
   

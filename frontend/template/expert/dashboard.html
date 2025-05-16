@@ -6,210 +6,210 @@
 {% block meta_keywords %}MRE, espace expert, tableau de bord, demandes, documents, rendez-vous{% endblock %}
 
 {% block extra_styles %}
-<style>
+  <style>
   /* Additional dashboard-specific styles */
   .dashboard-stats .card {
-    transition: transform 0.3s ease;
-  }
-  
+      transition: transform 0.3s ease;
+    }
+
   .dashboard-stats .card:hover {
-    transform: translateY(-5px);
-  }
-  
+      transform: translateY(-5px);
+    }
+
   .dashboard-stats .card i {
     font-size: 2.5rem;
     opacity: 0.8;
-  }
-</style>
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
-<!-- Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h2>Tableau de bord Expert</h2>
-  <div>
-    <a href="{% url 'expert_rendezvous' %}" class="btn btn-primary me-2">
-      <i class="bi bi-plus-circle"></i> Nouveau Rendez-vous
-    </a>
-    <button class="btn btn-outline-primary">
-      <i class="bi bi-bell"></i>
-      <span class="badge bg-danger">{{ unread_notifications_count }}</span>
-    </button>
-  </div>
-</div>
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Tableau de bord Expert</h2>
+        <div>
+          <a href="{% url 'expert_rendezvous' %}" class="btn btn-primary me-2">
+            <i class="bi bi-plus-circle"></i> Nouveau Rendez-vous
+          </a>
+          <button class="btn btn-outline-primary">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-danger">{{ unread_notifications_count }}</span>
+          </button>
+        </div>
+      </div>
 
-<!-- Stats Cards -->
+      <!-- Stats Cards -->
 <div class="row dashboard-stats">
-  <div class="col-md-4">
-    <div class="dashboard-card">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <h6 class="text-muted">Demandes Actives</h6>
-            <h3>{{ active_requests }}</h3>
+        <div class="col-md-4">
+          <div class="dashboard-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted">Demandes Actives</h6>
+                  <h3>{{ active_requests }}</h3>
+                </div>
+                <i class="bi bi-people-fill text-success" style="font-size: 2rem;"></i>
+              </div>
+            </div>
           </div>
-          <i class="bi bi-people-fill text-success" style="font-size: 2rem;"></i>
+        </div>
+        <div class="col-md-4">
+          <div class="dashboard-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted">Rendez-vous Prévus</h6>
+                  <h3>{{ upcoming_appointments|length }}</h3>
+                </div>
+                <i class="bi bi-calendar-check-fill text-warning" style="font-size: 2rem;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="dashboard-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted">Dossiers Complétés</h6>
+                  <h3>{{ completed_requests }}</h3>
+                </div>
+                <i class="bi bi-folder-fill text-primary" style="font-size: 2rem;"></i>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="dashboard-card">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <h6 class="text-muted">Rendez-vous Prévus</h6>
-            <h3>{{ upcoming_appointments|length }}</h3>
-          </div>
-          <i class="bi bi-calendar-check-fill text-warning" style="font-size: 2rem;"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="dashboard-card">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <h6 class="text-muted">Dossiers Complétés</h6>
-            <h3>{{ completed_requests }}</h3>
-          </div>
-          <i class="bi bi-folder-fill text-primary" style="font-size: 2rem;"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- Upcoming Appointments -->
-<div class="row">
-  <div class="col-md-8">
-    <div class="dashboard-card">
-      <div class="card-header">
-        <h5 class="mb-0">Prochains Rendez-vous</h5>
-        <a href="{% url 'expert_rendezvous' %}" class="btn btn-sm btn-primary">Voir tout</a>
-      </div>
-      <div class="card-body">
-        <div class="list-group">
-          {% if upcoming_appointments %}
-            {% for appointment in upcoming_appointments %}
-              <div class="list-group-item">
-                <div class="d-flex w-100 justify-content-between">
-                  <h6 class="mb-1">{{ appointment.service.title }} - {{ appointment.client.name }} {{ appointment.client.first_name }}</h6>
+      <!-- Upcoming Appointments -->
+      <div class="row">
+        <div class="col-md-8">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h5 class="mb-0">Prochains Rendez-vous</h5>
+              <a href="{% url 'expert_rendezvous' %}" class="btn btn-sm btn-primary">Voir tout</a>
+            </div>
+            <div class="card-body">
+              <div class="list-group">
+                {% if upcoming_appointments %}
+                  {% for appointment in upcoming_appointments %}
+                    <div class="list-group-item">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">{{ appointment.service.title }} - {{ appointment.client.name }} {{ appointment.client.first_name }}</h6>
                   <small class="text-muted">{{ appointment.date_time|date:"d M Y" }} - {{ appointment.date_time|time:"H:i" }}</small>
-                </div>
-                <p class="mb-1">{{ appointment.consultation_type }}</p>
+                      </div>
+                      <p class="mb-1">{{ appointment.consultation_type }}</p>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="list-group-item">
+                    <p class="mb-1 text-center">Pas de rendez-vous prévus</p>
+                  </div>
+                {% endif %}
               </div>
-            {% endfor %}
-          {% else %}
-            <div class="list-group-item">
-              <p class="mb-1 text-center">Pas de rendez-vous prévus</p>
             </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="dashboard-card">
-      <div class="card-header">
-        <h5 class="mb-0">Notifications <span class="badge bg-danger">{{ unread_notifications_count }}</span></h5>
-      </div>
-      <div class="card-body">
-        <div class="list-group">
-          {% if notifications %}
-            {% for notification in notifications %}
-              <div class="list-group-item {% if not notification.is_read %}bg-light{% endif %}">
-                <div class="d-flex w-100 justify-content-between">
-                  <h6 class="mb-1">{{ notification.title }}</h6>
-                  <span class="status-badge {% if not notification.is_read %}status-urgent{% else %}status-active{% endif %}">
-                    {{ notification.created_at|timesince }}
-                  </span>
-                </div>
-                <p class="mb-1">{{ notification.content|truncatechars:60 }}</p>
-              </div>
-            {% endfor %}
-          {% else %}
-            <div class="list-group-item">
-              <p class="mb-1 text-center">Pas de notifications récentes</p>
-            </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Recent Requests and Documents -->
-<div class="row">
-  <div class="col-md-6">
-    <div class="dashboard-card">
-      <div class="card-header">
-        <h5 class="mb-0">Demandes Récentes</h5>
-        <a href="{% url 'expert_demandes' %}" class="btn btn-sm btn-primary">Voir tout</a>
-      </div>
-      <div class="card-body">
-        {% if recent_requests %}
-          {% for request in recent_requests %}
-            <div class="client-item">
-              <div class="client-avatar text-center">
-                <i class="bi bi-file-earmark-text text-primary" style="font-size: 24px;"></i>
-              </div>
-              <div class="flex-grow-1">
-                <h6 class="mb-1">{{ request.client.name }} {{ request.client.first_name }}</h6>
-                <small class="text-muted">{{ request.service.title }}</small>
-              </div>
-              <span class="status-badge 
-                {% if request.status == 'new' %}status-urgent{% elif request.status == 'in_progress' %}status-active{% else %}status-pending{% endif %}">
-                {{ request.status }}
-              </span>
-            </div>
-          {% endfor %}
-        {% else %}
-          <div class="text-center py-3">
-            <p>Pas de demandes récentes</p>
           </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="dashboard-card">
-      <div class="card-header">
-        <h5 class="mb-0">Documents Récents</h5>
-        <a href="{% url 'expert_documents' %}" class="btn btn-sm btn-primary">Voir tout</a>
-      </div>
-      <div class="card-body">
-        <div class="list-group">
-          {% if recent_documents %}
-            {% for document in recent_documents %}
-              <div class="list-group-item">
-                <div class="d-flex w-100 justify-content-between">
-                  <h6 class="mb-1">{{ document.name }}</h6>
-                  <small class="text-muted">{{ document.upload_date|timesince }}</small>
-                </div>
-                <p class="mb-1">
-                  {{ document.uploaded_by.name }} {% if document.is_official %}<span class="badge bg-success">Officiel</span>{% endif %}
-                </p>
-              </div>
-            {% endfor %}
-          {% else %}
-            <div class="list-group-item">
-              <p class="mb-1 text-center">Pas de documents récents</p>
+        </div>
+        <div class="col-md-4">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h5 class="mb-0">Notifications <span class="badge bg-danger">{{ unread_notifications_count }}</span></h5>
             </div>
-          {% endif %}
+            <div class="card-body">
+              <div class="list-group">
+                {% if notifications %}
+                  {% for notification in notifications %}
+                    <div class="list-group-item {% if not notification.is_read %}bg-light{% endif %}">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">{{ notification.title }}</h6>
+                        <span class="status-badge {% if not notification.is_read %}status-urgent{% else %}status-active{% endif %}">
+                          {{ notification.created_at|timesince }}
+                        </span>
+                      </div>
+                      <p class="mb-1">{{ notification.content|truncatechars:60 }}</p>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="list-group-item">
+                    <p class="mb-1 text-center">Pas de notifications récentes</p>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+
+      <!-- Recent Requests and Documents -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h5 class="mb-0">Demandes Récentes</h5>
+              <a href="{% url 'expert_demandes' %}" class="btn btn-sm btn-primary">Voir tout</a>
+            </div>
+            <div class="card-body">
+              {% if recent_requests %}
+                {% for request in recent_requests %}
+                  <div class="client-item">
+                    <div class="client-avatar text-center">
+                      <i class="bi bi-file-earmark-text text-primary" style="font-size: 24px;"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1">{{ request.client.name }} {{ request.client.first_name }}</h6>
+                      <small class="text-muted">{{ request.service.title }}</small>
+                    </div>
+                    <span class="status-badge 
+                      {% if request.status == 'new' %}status-urgent{% elif request.status == 'in_progress' %}status-active{% else %}status-pending{% endif %}">
+                      {{ request.status }}
+                    </span>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="text-center py-3">
+                  <p>Pas de demandes récentes</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h5 class="mb-0">Documents Récents</h5>
+              <a href="{% url 'expert_documents' %}" class="btn btn-sm btn-primary">Voir tout</a>
+            </div>
+            <div class="card-body">
+              <div class="list-group">
+                {% if recent_documents %}
+                  {% for document in recent_documents %}
+                    <div class="list-group-item">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">{{ document.name }}</h6>
+                        <small class="text-muted">{{ document.upload_date|timesince }}</small>
+                      </div>
+                      <p class="mb-1">
+                        {{ document.uploaded_by.name }} {% if document.is_official %}<span class="badge bg-success">Officiel</span>{% endif %}
+                      </p>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="list-group-item">
+                    <p class="mb-1 text-center">Pas de documents récents</p>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
-  // Initialize AOS
+  <script>
+    // Initialize AOS
   document.addEventListener('DOMContentLoaded', function() {
     // Any dashboard-specific JavaScript
   });
-</script>
+  </script>
 {% endblock %} 
