@@ -1,0 +1,269 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Modifier mon Profil" %} - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Styles pour la page de modification de profil admin */
+  .profile-page-container {
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Styles des cartes */
+  .profile-card {
+    margin-bottom: 2rem;
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    background-color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  
+  .profile-card .card-header {
+    background: linear-gradient(135deg, #0ea2bd 0%, #0bc9ee 100%);
+    color: white;
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+    position: relative;
+  }
+
+  .profile-card .card-header h5 {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-card .card-header h5 i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .profile-card .card-body {
+    padding: 2rem;
+  }
+
+  /* Styles des formulaires */
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-size: 0.95rem;
+  }
+  
+  .form-control, .form-select {
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+  
+  .form-control:focus, .form-select:focus {
+    border-color: #0ea2bd;
+    background-color: #fff;
+    box-shadow: 0 0 0 0.25rem rgba(14, 162, 189, 0.25);
+  }
+  
+  .form-control::placeholder {
+    color: #adb5bd;
+    opacity: 0.7;
+  }
+
+  /* Styles des boutons */
+  .btn {
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #0ea2bd 0%, #0bc9ee 100%);
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #0c8da3 0%, #09a7c6 100%);
+    transform: translateY(-2px);
+  }
+  
+  .btn-primary i {
+    margin-right: 8px;
+  }
+
+  .btn-outline-primary {
+    border: 2px solid #0ea2bd;
+    color: #0ea2bd;
+    background: transparent;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #0ea2bd;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .dashboard-card {
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-bottom: 25px;
+  }
+
+  .dashboard-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0ea2bd;
+    color: white;
+    padding: 15px 20px;
+    border-bottom: none;
+  }
+
+  .dashboard-card .card-body {
+    padding: 25px;
+  }
+
+  .form-floating > .form-control,
+  .form-floating > .form-select {
+    height: calc(3.5rem + 2px);
+    padding: 1rem 0.75rem;
+  }
+
+  .form-floating > label {
+    padding: 1rem 0.75rem;
+  }
+
+  .section-divider {
+    margin: 2rem 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(14, 162, 189, 0.5), transparent);
+  }
+
+  .form-section-title {
+    color: #0ea2bd;
+    font-weight: 500;
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .form-section-title i {
+    margin-right: 8px;
+  }
+
+  .textarea-large {
+    height: 120px !important;
+  }
+  
+  /* Animation pour les boutons */
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(14, 162, 189, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(14, 162, 189, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(14, 162, 189, 0); }
+  }
+  
+  .btn-pulse {
+    animation: pulse 2s infinite;
+  }
+</style>
+{% endblock %}
+
+{% block admin_content %}
+<!-- En-tête de page avec titre -->
+<div class="dashboard-card mb-4">
+    <div class="card-header">
+        <h4 class="m-0"><i class="bi bi-person-circle me-2"></i>{% trans "Modifier mon Profil Administrateur" %}</h4>
+        <a href="{% url 'admin_profile' %}" class="btn btn-outline-light"><i class="bi bi-arrow-left me-2"></i>{% trans "Retour à Mon Profil" %}</a>
+    </div>
+</div>
+
+<!-- Affichage des messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <i class="bi {% if message.tags == 'success' %}bi-check-circle{% elif message.tags == 'error' %}bi-exclamation-triangle{% elif message.tags == 'warning' %}bi-exclamation-circle{% else %}bi-info-circle{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Carte pour les informations personnelles -->
+<div class="dashboard-card mb-4">
+    <div class="card-header">
+        <h5 class="m-0"><i class="bi bi-person-fill me-2"></i>{% trans "Informations Personnelles" %}</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="admin_profile">
+
+            <!-- Informations de base -->
+            <div class="form-section-title">
+                <i class="bi bi-person-fill"></i>{% trans "Informations de base" %}
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{ user_form.first_name }}
+                        <label for="{{ user_form.first_name.id_for_label }}">{{ user_form.first_name.label }}</label>
+                        {% if user_form.first_name.errors %}
+                            <div class="invalid-feedback d-block">
+                                <i class="bi bi-exclamation-circle me-1"></i>{{ user_form.first_name.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{ user_form.last_name }}
+                        <label for="{{ user_form.last_name.id_for_label }}">{{ user_form.last_name.label }}</label>
+                        {% if user_form.last_name.errors %}
+                            <div class="invalid-feedback d-block">
+                                <i class="bi bi-exclamation-circle me-1"></i>{{ user_form.last_name.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section-title">
+                <i class="bi bi-envelope-fill"></i>{% trans "Contact" %}
+            </div>
+              <div class="form-floating mb-4">
+                {{ user_form.email }}
+                <label for="{{ user_form.email.id_for_label }}">{{ user_form.email.label }}</label>
+                {% if user_form.email.errors %}
+                    <div class="invalid-feedback d-block">
+                        <i class="bi bi-exclamation-circle me-1"></i>{{ user_form.email.errors|join:", " }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <button type="submit" class="btn btn-primary btn-pulse">
+                    <i class="bi bi-check-circle-fill me-2"></i>{% trans "Sauvegarder les modifications" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

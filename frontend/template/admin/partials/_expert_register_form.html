@@ -1,0 +1,159 @@
+<div class="expert-register-form" id="expertRegisterForm" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; left: 250px; background: white; z-index: 90; overflow-y: auto;">
+  <div class="card h-100 border-0 shadow-none rounded-0">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-0">
+      <h4 class="mb-0">Inscription d'un nouvel expert</h4>
+      <button type="button" class="btn-close btn-close-white" id="closeExpertForm"></button>
+    </div>
+    <div class="card-body p-4">
+      {% if expert_form.errors %}
+      <div class="alert alert-danger">
+        {% for field in expert_form %}
+          {% for error in field.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        {% endfor %}
+        {% for error in expert_form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form id="expertRegisterFormElement" action="{% url 'accounts:register_expert' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="user_type" value="expert">
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="first_name" class="form-label">Prénom</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="last_name" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" required>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Adresse email</label>
+          <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="password" class="form-label">Mot de passe</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="password_confirm" class="form-label">Confirmer le mot de passe</label>
+            <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="phone" class="form-label">Téléphone</label>
+          <input type="tel" class="form-control" id="phone" name="phone" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="expertise" class="form-label">Domaine d'expertise</label>
+          <select class="form-select form-control" id="expertise" name="expertise" required>
+            <option value="" selected disabled>Sélectionnez un domaine</option>
+            <option value="fiscal">Fiscal</option>
+            <option value="immobilier">Immobilier</option>
+            <option value="investissement">Investissement</option>
+            <option value="administratif">Administratif</option>
+            <option value="tourisme">Tourisme</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="experience" class="form-label">Années d'expérience</label>
+          <input type="number" class="form-control" id="experience" name="experience" min="0" required>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-secondary" id="cancelExpertRegister">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer l'expert</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" id="expertFormBackdrop" style="display: none;"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const expertRegisterBtn = document.getElementById('expertRegisterBtn');
+  const expertRegisterForm = document.getElementById('expertRegisterForm');
+  const cancelExpertRegister = document.getElementById('cancelExpertRegister');
+  
+  if (expertRegisterBtn) {
+    expertRegisterBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      expertRegisterForm.style.display = 'block';
+      document.getElementById('expertFormBackdrop').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    });
+  }
+  
+  // Handle close button and backdrop click
+  const closeForm = function() {
+    expertRegisterForm.style.display = 'none';
+    document.getElementById('expertFormBackdrop').style.display = 'none';
+  };
+
+  if (cancelExpertRegister) {
+    cancelExpertRegister.addEventListener('click', closeForm);
+  }
+
+  const closeButton = document.getElementById('closeExpertForm');
+  if (closeButton) {
+    closeButton.addEventListener('click', closeForm);
+  }
+
+  const backdrop = document.getElementById('expertFormBackdrop');
+  if (backdrop) {
+    backdrop.addEventListener('click', closeForm);
+  }
+  
+  // Handle form submission with AJAX
+  const form = document.getElementById('expertRegisterFormElement');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(form);
+      
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Show success message and reset form
+          alert('Expert enregistré avec succès!');
+          form.reset();
+          expertRegisterForm.style.display = 'none';
+          document.getElementById('expertFormBackdrop').style.display = 'none';
+          document.body.style.overflow = '';
+          // Optionally refresh the page or update the experts list
+          window.location.reload();
+        } else {
+          // Show error messages
+          alert('Erreur: ' + (data.message || 'Une erreur est survenue'));
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Une erreur est survenue lors de l\'enregistrement');
+      });
+    });
+  }
+});
+</script>

@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ resource.title }} - ServicesBLADI{% endblock %}
+{% block meta_description %}{{ resource.description|truncatewords:20 }}{% endblock %}
+{% block meta_keywords %}ressource, document, {{ resource.category }}, ServicesBLADI{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Accueil</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'resources:resource_list' %}">Ressources</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ resource.title }}</li>
+    </ol>
+  </nav>
+
+  <div class="card shadow-sm rounded mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">{{ resource.title }}</h1>
+        {% if user.account_type == 'admin' or user.account_type == 'expert' or resource.created_by == user %}
+        <div>
+          <a href="{% url 'resources:edit_resource' resource.id %}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-1"></i> Modifier
+          </a>
+          <a href="{% url 'resources:delete_resource' resource.id %}" class="btn btn-outline-danger ms-2">
+            <i class="bi bi-trash me-1"></i> Supprimer
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      
+      <div class="mb-4">
+        <span class="badge bg-primary">{{ resource.get_category_display }}</span>
+        {% if resource.available_languages %}
+          {% for lang in resource.available_languages.split %}
+            <span class="badge bg-secondary">{{ lang }}</span>
+          {% endfor %}
+        {% endif %}
+        <span class="badge bg-info text-dark">
+          <i class="bi bi-eye me-1"></i> {{ resource.view_count }} vues
+        </span>
+        <span class="badge bg-info text-dark">
+          <i class="bi bi-download me-1"></i> {{ resource.download_count }} téléchargements
+        </span>
+      </div>
+      
+      <div class="mb-4">
+        {{ resource.description|linebreaks }}
+      </div>
+      
+      <!-- Fichiers -->
+      {% if files %}
+      <div class="mb-4">
+        <h4 class="mb-3">Fichiers</h4>
+        <div class="list-group">
+          {% for file in files %}
+          <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <div>
+              <i class="bi bi-file-earmark me-2"></i>
+              <strong>{{ file.name }}</strong>
+              {% if file.language %}
+              <span class="badge bg-secondary ms-2">{{ file.language }}</span>
+              {% endif %}
+              <small class="text-muted">({{ file.file_size|filesizeformat }})</small>
+            </div>
+            <a href="{% url 'resources:download_resource' file.id %}" class="btn btn-sm btn-primary">
+              <i class="bi bi-download me-1"></i> Télécharger
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Liens -->
+      {% if links %}
+      <div class="mb-3">
+        <h4 class="mb-3">Liens</h4>
+        <div class="list-group">
+          {% for link in links %}
+          <a href="{{ link.url }}" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <div>
+              <i class="bi bi-link-45deg me-2"></i>
+              <strong>{{ link.title|default:link.url }}</strong>
+              {% if link.language %}
+              <span class="badge bg-secondary ms-2">{{ link.language }}</span>
+              {% endif %}
+            </div>
+            <i class="bi bi-box-arrow-up-right text-muted"></i>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      
+      <div class="text-muted mt-4">
+        <small>Ajouté le {{ resource.created_at|date:"d/m/Y" }} 
+          {% if resource.created_by %}
+          par {{ resource.created_by.name }} {{ resource.created_by.first_name }}
+          {% endif %}
+        </small>
+      </div>
+    </div>
+  </div>
+  
+  <div class="d-flex justify-content-between">
+    <a href="{% url 'resources:resource_list' %}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1"></i> Retour aux ressources
+    </a>
+    
+    {% if request.META.HTTP_REFERER and 'expert' in request.META.HTTP_REFERER %}
+    <a href="{% url 'expert_ressources' %}" class="btn btn-outline-primary">
+      <i class="bi bi-arrow-left me-1"></i> Retour à l'espace expert
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %} 

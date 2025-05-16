@@ -1,0 +1,347 @@
+{% extends 'client/base.html' %}
+
+{% block title %}Détail de la demande - MRE{% endblock %}
+{% block meta_description %}Détail de la demande de service{% endblock %}
+{% block meta_keywords %}MRE, demande, service, détail{% endblock %}
+
+{% block content %}
+  <!-- Main Content -->
+  <div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Détail de la demande</h2>
+      <div>
+        <a href="{% url 'client_demandes' %}" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left me-2"></i>Retour aux demandes
+        </a>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Detail Card -->
+      <div class="col-lg-7">
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ demande.title }}</h5>
+            <div>
+              {% if demande.status == 'new' %}
+                <span class="badge bg-info">Nouvelle</span>
+              {% elif demande.status == 'pending_info' %}
+                <span class="badge bg-warning">En attente d'information</span>
+              {% elif demande.status == 'in_progress' %}
+                <span class="badge bg-primary">En cours</span>
+              {% elif demande.status == 'completed' %}
+                <span class="badge bg-success">Terminée</span>
+              {% elif demande.status == 'cancelled' %}
+                <span class="badge bg-secondary">Annulée</span>
+              {% elif demande.status == 'rejected' %}
+                <span class="badge bg-danger">Rejetée</span>
+              {% endif %}
+              
+              {% if demande.priority == 'urgent' %}
+                <span class="badge bg-danger ms-1">Urgent</span>
+              {% elif demande.priority == 'high' %}
+                <span class="badge bg-warning ms-1">Haute</span>
+              {% elif demande.priority == 'medium' %}
+                <span class="badge bg-info ms-1">Moyenne</span>
+              {% elif demande.priority == 'low' %}
+                <span class="badge bg-success ms-1">Basse</span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="mb-4">
+              <strong>Service:</strong> {{ demande.service.title }}
+            </div>
+            <div class="mb-4">
+              <strong>Description:</strong>
+              <p class="mt-2">{{ demande.description|linebreaks }}</p>
+            </div>
+            <div class="mb-3 d-flex">
+              <div class="me-4">
+                <strong>Date de création:</strong>
+                <p>{{ demande.created_at|date:"d/m/Y H:i" }}</p>
+              </div>
+              <div>
+                <strong>Dernière mise à jour:</strong>
+                <p>{{ demande.updated_at|date:"d/m/Y H:i" }}</p>
+              </div>
+            </div>
+            
+            {% if demande.assigned_expert %}
+            <div class="mb-4">
+              <strong>Expert assigné:</strong>
+              <p>{{ demande.assigned_expert.user.name }} {{ demande.assigned_expert.user.first_name }}</p>
+            </div>
+            {% endif %}
+            
+            <!-- Actions -->
+            <div class="d-flex justify-content-end mt-4">
+              {% if demande.status == 'new' or demande.status == 'pending_info' %}
+                <a href="{% url 'custom_requests:edit_request' demande.id %}" class="btn btn-outline-primary me-2">
+                  <i class="bi bi-pencil me-1"></i>Modifier
+                </a>
+                <a href="{% url 'custom_requests:cancel_request' demande.id %}" class="btn btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette demande ?');">
+                  <i class="bi bi-x-circle me-1"></i>Annuler
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents section -->
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Documents</h5>
+            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
+              <i class="bi bi-upload me-1"></i>Ajouter
+            </button>
+          </div>
+          <div class="card-body">
+            {% if documents %}
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Date d'ajout</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for doc in documents %}
+                      <tr>
+                        <td>{{ doc.name }}</td>
+                        <td>{{ doc.upload_date|date:"d/m/Y" }}</td>
+                        <td>
+                          <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          <a href="{% url 'custom_requests:delete_document' doc.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?');">
+                            <i class="bi bi-trash"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p class="text-muted">Aucun document n'a été ajouté à cette demande.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Messaging system -->
+      <div class="col-lg-5">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">Messages</h5>
+          </div>
+          <div class="card-body">
+            <div class="messages-container" style="height: 400px; overflow-y: auto;">
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="message-bubble {% if message.sender == request.user %}message-out{% else %}message-in{% endif %} mb-3">
+                    <div class="message-header d-flex justify-content-between align-items-center mb-1">
+                      <span class="sender-name">{{ message.sender.name }} {{ message.sender.first_name }}</span>
+                      <small class="text-muted">{{ message.sent_at|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    <div class="message-content">
+                      {{ message.content|linebreaks }}
+                    </div>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="text-center text-muted py-5">Aucun message pour le moment.</p>
+              {% endif %}
+            </div>
+            
+            <!-- Message form -->
+            <form method="post" class="mt-3">
+              {% csrf_token %}
+              <div class="form-group">
+                <textarea class="form-control" name="message" rows="3" placeholder="Écrire un message..." required></textarea>
+              </div>
+              <div class="d-flex justify-content-end mt-2">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-send me-1"></i>Envoyer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <!-- Appointments section -->
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Rendez-vous</h5>
+            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createAppointmentModal">
+              <i class="bi bi-calendar-plus me-1"></i>Planifier
+            </button>
+          </div>
+          <div class="card-body">
+            {% if appointments %}
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Statut</th>
+                      <th>Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for rdv in appointments %}
+                      <tr>
+                        <td>{{ rdv.date_time|date:"d/m/Y H:i" }}</td>
+                        <td>
+                          {% if rdv.status == 'scheduled' %}
+                            <span class="badge bg-info">Planifié</span>
+                          {% elif rdv.status == 'confirmed' %}
+                            <span class="badge bg-success">Confirmé</span>
+                          {% elif rdv.status == 'cancelled' %}
+                            <span class="badge bg-secondary">Annulé</span>
+                          {% elif rdv.status == 'completed' %}
+                            <span class="badge bg-primary">Terminé</span>
+                          {% elif rdv.status == 'missed' %}
+                            <span class="badge bg-danger">Manqué</span>
+                          {% endif %}
+                        </td>
+                        <td>{{ rdv.get_consultation_type_display }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p class="text-muted">Aucun rendez-vous planifié pour cette demande.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Upload Document Modal -->
+  <div class="modal fade" id="uploadDocumentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter un document</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{% url 'custom_requests:upload_document' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            <input type="hidden" name="demande_id" value="{{ demande.id }}">
+            
+            <div class="mb-3">
+              <label for="documentFile" class="form-label">Fichier</label>
+              <input type="file" class="form-control" id="documentFile" name="document" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="documentType" class="form-label">Type de document</label>
+              <select class="form-select" id="documentType" name="document_type">
+                <option value="identity">Pièce d'identité</option>
+                <option value="proof">Justificatif de domicile</option>
+                <option value="contract">Contrat</option>
+                <option value="invoice">Facture</option>
+                <option value="report">Rapport</option>
+                <option value="other" selected>Autre</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary">Télécharger</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Create Appointment Modal -->
+  <div class="modal fade" id="createAppointmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Planifier un rendez-vous</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{% url 'custom_requests:create_appointment' %}" method="post">
+          {% csrf_token %}
+          <div class="modal-body">
+            <input type="hidden" name="demande_id" value="{{ demande.id }}">
+            
+            <div class="mb-3">
+              <label for="appointmentDate" class="form-label">Date</label>
+              <input type="date" class="form-control" id="appointmentDate" name="date" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="appointmentTime" class="form-label">Heure</label>
+              <input type="time" class="form-control" id="appointmentTime" name="time" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="consultationType" class="form-label">Type de consultation</label>
+              <select class="form-select" id="consultationType" name="consultation_type" required>
+                <option value="in_person">En personne</option>
+                <option value="video">Vidéo</option>
+                <option value="phone">Téléphone</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="expertId" class="form-label">Expert</label>
+              <select class="form-select" id="expertId" name="expert_id" required>
+                {% if demande.assigned_expert %}
+                  <option value="{{ demande.assigned_expert.user.id }}" selected>{{ demande.assigned_expert.user.name }} {{ demande.assigned_expert.user.first_name }}</option>
+                {% endif %}
+              </select>
+            </div>
+            
+            <input type="hidden" name="service_id" value="{{ demande.service.id }}">
+            
+            <div class="mb-3">
+              <label for="appointmentNotes" class="form-label">Notes (optionnel)</label>
+              <textarea class="form-control" id="appointmentNotes" name="notes" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary">Planifier</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_style %}
+<style>
+  .message-bubble {
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 80%;
+  }
+  
+  .message-in {
+    background-color: #f1f0f0;
+    margin-right: auto;
+  }
+  
+  .message-out {
+    background-color: #e1f5fe;
+    margin-left: auto;
+  }
+  
+  .sender-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+</style>
+{% endblock %}

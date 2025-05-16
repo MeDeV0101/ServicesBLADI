@@ -13,9 +13,7 @@
   <link href="../../static/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -24,6 +22,9 @@
   <link href="../../static/vendor/animate.css/animate.min.css" rel="stylesheet">
   <link href="../../static/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="../../static/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  
+  <!-- Calendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.css" rel="stylesheet">
 
   <!-- Main CSS File -->
   <link href="../../static/css/main.css" rel="stylesheet">
@@ -32,13 +33,172 @@
   <style>
     :root {
       --sidebar-width: 280px;
-      --header-height: 60px;
+      --header-height: 70px;
       --primary-color: #1e3c72;
       --secondary-color: #2a5298;
     }
 
     body {
       background-color: #f8f9fa;
+    }
+    
+    /* Notification Styles */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 350px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin-bottom: 10px;
+      animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    .notification-header {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      background: #f8f9fa;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    
+    .notification-header h6 {
+      margin: 0;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    .notification-list {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+    
+    .notification-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      transition: background 0.3s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .notification-item:hover {
+      background: #f8f9fa;
+    }
+    
+    .notification-item.unread {
+      background: #f8f9fa;
+      border-left: 4px solid #007bff;
+    }
+    
+    .notification-item .service {
+      font-weight: 600;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .notification-item .message {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    
+    .notification-item .time {
+      color: #999;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .notification-item .time i {
+      font-size: 0.9rem;
+    }
+    
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-en_attente, .status-new, .status-pending_info { background: #fff3cd; color: #856404; }
+    .status-en_cours, .status-in_progress { background: #cce5ff; color: #004085; }
+    .status-termine, .status-completed { background: #d4edda; color: #155724; }
+    .status-annule, .status-cancelled, .status-rejected { background: #f8d7da; color: #721c24; }
+    
+    .notification-empty {
+      padding: 20px;
+      text-align: center;
+      color: #666;
+    }
+    
+    .notification-empty i {
+      font-size: 2rem;
+      color: #ddd;
+      margin-bottom: 10px;
+    }
+    
+    .notification-bell {
+      position: relative;
+      margin-right: 20px;
+      cursor: pointer;
+    }
+    
+    .notification-bell i {
+      font-size: 1.5rem;
+      color: #666;
+    }
+    
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #dc3545;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .notification-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      width: 400px;
+      max-height: 500px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      margin-top: 10px;
+    }
+    
+    .notification-dropdown.show {
+      display: block;
     }
 
     .dashboard-wrapper {
@@ -49,55 +209,114 @@
     /* Sidebar Styles */
     .sidebar {
       width: var(--sidebar-width);
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
       color: white;
+      padding: 1.5rem 1rem;
       position: fixed;
       height: 100vh;
       left: 0;
       top: 0;
       z-index: 1000;
       transition: all 0.3s ease;
+      overflow-y: auto;
+      scrollbar-width: thin; /* Pour Firefox */
+      scrollbar-color: rgba(255,255,255,0.3) transparent; /* Pour Firefox */
+    }
+    
+    /* Style de la barre de défilement pour Webkit (Chrome, Safari) */
+    .sidebar::-webkit-scrollbar {
+      width: 5px;
+    }
+    
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: rgba(255,255,255,0.3);
+      border-radius: 10px;
     }
 
     .sidebar-header {
-      padding: 1.5rem;
+      padding: 0.5rem 1rem 1.5rem;
       text-align: center;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .sidebar-profile {
       text-align: center;
-      padding: 1.5rem 0;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .profile-image {
-      width: 80px;
-      height: 80px;
+    .profile-icon {
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      border: 3px solid white;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.15);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .profile-icon i {
+      font-size: 3rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .sidebar-profile h5 {
+      margin-top: 0.5rem;
+      margin-bottom: 0.3rem;
+    }
+    
+    .sidebar-profile p {
+      margin-bottom: 0;
     }
 
     .sidebar-menu {
-      padding: 1rem 0;
+      padding: 0.5rem 0;
     }
 
-    .menu-item {
-      padding: 0.8rem 1.5rem;
+    .sidebar-menu a {
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      transition: all 0.3s ease;
       display: flex;
       align-items: center;
+      padding: 0.75rem 1rem;
+      font-size: 1.1rem;
+      font-weight: 400;
       color: white;
-      text-decoration: none;
-      transition: all 0.3s ease;
+      text-decoration: none !important;
     }
 
-    .menu-item:hover, .menu-item.active {
-      background: rgba(255,255,255,0.1);
+    .sidebar-menu a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
     }
-
-    .menu-item i {
-      margin-right: 1rem;
-      font-size: 1.2rem;
+    
+    .sidebar-menu a.active {
+      background-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+    }
+    
+    .sidebar-menu a i {
+      font-size: 1.4rem;
+      margin-right: 0.75rem;
+      width: 28px;
+      text-align: center;
+      opacity: 0.9;
+    }
+    
+    .sidebar-menu a.active i {
+      opacity: 1;
     }
 
     /* Main Content Styles */
@@ -172,6 +391,94 @@
         transform: translateX(0);
       }
     }
+
+    /* Additional CSS for profile edit form */
+    .profile-edit-form {
+      background-color: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+    }
+    
+    /* Make sure sidebar always stays visible */
+    @media (min-width: 993px) {
+      .main-content {
+        margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+      }
+      
+      .profile-edit-form {
+        width: 100%;
+      }
+    }
+    
+    /* Success alert animation */
+    .alert.fade {
+      transition: opacity 0.15s linear;
+    }
+    
+    .alert.fade.show {
+      opacity: 1;
+    }
+    
+    /* Media query for responsiveness */
+    @media (max-width: 992px) {
+      .profile-edit-form {
+        width: 100% !important;
+        left: 0;
+      }
+    }
+    
+    /* Service card styles */
+    .service-card {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .service-card:active {
+      transform: scale(0.98);
+    }
+    
+    .service-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+    
+    .service-icon {
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    
+    .service-card h3 {
+      margin-bottom: 0.75rem;
+      color: #333;
+      font-size: 1.5rem;
+    }
+    
+    .service-card p {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
   </style>
 </head>
 
@@ -183,28 +490,44 @@
         <h3>MRE</h3>
       </div>
       <div class="sidebar-profile">
-        <img src="../../static/img/profile-placeholder.jpg" alt="Profile" class="profile-image">
-        <h5 id="clientName">Mohammed Abd</h5>
-        <p class="text-muted">Client depuis: Mars 2024</p>
+        <div class="profile-icon">
+          <i class="bi bi-person-circle"></i>
+        </div>
+        <h5 class="text-white">{{ user.name }} {{ user.first_name }}</h5>
+        <p class="text-white-50">Client</p>
       </div>
       <nav class="sidebar-menu">
-        <a href="dashboard.html" class="d-block p-3 text-white text-decoration-none active">
-          <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
+        <a href="{% url 'client_dashboard' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
+          <i class="bi bi-speedometer2"></i>
+          <span>Tableau de bord</span>
         </a>
-        <a href="demandes.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-file-text me-2"></i>Mes demandes
+        <a href="{% url 'client_demandes' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_demandes' %}active{% endif %}">
+          <i class="bi bi-file-text"></i>
+          <span>Mes demandes</span>
         </a>
-        <a href="documents.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-folder me-2"></i>Mes documents
+        <a href="{% url 'client_documents' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_documents' %}active{% endif %}">
+          <i class="bi bi-folder"></i>
+          <span>Mes documents</span>
         </a>
-        <a href="rendezvous.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-calendar me-2"></i>Rendez-vous
+        <a href="{% url 'client_rendezvous' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_rendezvous' %}active{% endif %}">
+          <i class="bi bi-calendar"></i>
+          <span>Rendez-vous</span>
         </a>
-        <a href="ressources.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-book me-2"></i>Ressources
+        <a href="{% url 'client_ressources' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_ressources' %}active{% endif %}">
+          <i class="bi bi-book"></i>
+          <span>Ressources</span>
         </a>
-        <a href="../index.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
+        <a href="{% url 'client_messages' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_messages' %}active{% endif %}">
+          <i class="bi bi-envelope"></i>
+          <span>Messages</span>
+        </a>
+        <a href="#" class="text-white text-decoration-none" id="editProfileBtn">
+          <i class="bi bi-person-gear"></i>
+          <span>Modifier Profil</span>
+        </a>
+        <a href="{% url 'accounts:logout' %}" class="text-white text-decoration-none">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Déconnexion</span>
         </a>
       </nav>
     </aside>
@@ -215,13 +538,80 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Tableau de bord</h2>
         <div>
-          <button class="btn btn-primary me-2">
-            <i class="bi bi-plus-circle"></i> Nouvelle demande
-          </button>
-          <button class="btn btn-outline-primary">
+          <div class="dropdown d-inline-block">
+            <button class="btn btn-primary me-2 dropdown-toggle" type="button" id="newRequestDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-plus-circle"></i> Nouvelle demande
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="newRequestDropdown">
+              {% for service in available_services %}
+                <li><a class="dropdown-item" href="#" data-service="{{ service.title }}">{{ service.title }}</a></li>
+              {% empty %}
+                <li><a class="dropdown-item" href="#" data-service="Service Administratif">Services Administratifs</a></li>
+                <li><a class="dropdown-item" href="#" data-service="Service Tourisme">Tourisme</a></li>
+                <li><a class="dropdown-item" href="#" data-service="Service Immobilier">Immobilier</a></li>
+                <li><a class="dropdown-item" href="#" data-service="Service Fiscal">Fiscalité</a></li>
+                <li><a class="dropdown-item" href="#" data-service="Service Investissement">Investissement</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+          <button class="btn btn-outline-primary notification-bell" onclick="toggleNotifications()">
             <i class="bi bi-bell"></i>
-            <span class="badge bg-danger">3</span>
+            <span class="badge bg-danger notification-badge">{{ unread_notifications_count|default:"3" }}</span>
           </button>
+          <div class="notification-dropdown" id="notificationDropdown">
+            <div class="notification-header">
+              <div class="d-flex justify-content-between align-items-center">
+                <h6>Notifications</h6>
+                <span class="badge bg-primary">{{ unread_notifications_count|default:"3" }} non lue(s)</span>
+              </div>
+            </div>
+            <ul class="notification-list">
+              {% if notifications %}
+                {% for notification in notifications %}
+                  <li class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                    <div class="service">
+                      <span>{{ notification.title }}</span>
+                      <span class="status-badge status-{{ notification.type }}">
+                        {{ notification.get_type_display }}
+                      </span>
+                    </div>
+                    <div class="message">{{ notification.content }}</div>
+                    <div class="time">
+                      <i class="bi bi-clock"></i>
+                      {{ notification.created_at|date:"d/m/Y H:i" }}
+                    </div>
+                  </li>
+                {% endfor %}
+              {% else %}
+                <li class="notification-item unread">
+                  <div class="service">
+                    <span>Services Administratifs</span>
+                    <span class="status-badge status-en_cours">
+                      En cours
+                    </span>
+                  </div>
+                  <div class="message">Votre dossier est en cours de traitement</div>
+                  <div class="time">
+                    <i class="bi bi-clock"></i>
+                    07/05/2025 10:30
+                  </div>
+                </li>
+                <li class="notification-item">
+                  <div class="service">
+                    <span>Immobilier</span>
+                    <span class="status-badge status-termine">
+                      Terminé
+                    </span>
+                  </div>
+                  <div class="message">Votre rendez-vous a été confirmé</div>
+                  <div class="time">
+                    <i class="bi bi-clock"></i>
+                    06/05/2025 15:45
+                  </div>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -232,8 +622,8 @@
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 class="text-muted">Services Actifs</h6>
-                  <h3>3</h3>
+                  <h6 class="text-muted">Services Terminés</h6>
+                  <h3>{{ completed_requests }}</h3>
                 </div>
                 <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
               </div>
@@ -246,7 +636,7 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <h6 class="text-muted">Demandes en cours</h6>
-                  <h3>2</h3>
+                  <h3>{{ active_requests }}</h3>
                 </div>
                 <i class="bi bi-clock-fill text-warning" style="font-size: 2rem;"></i>
               </div>
@@ -259,7 +649,7 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <h6 class="text-muted">Documents</h6>
-                  <h3>5</h3>
+                  <h3>{{ documents_count }}</h3>
                 </div>
                 <i class="bi bi-file-earmark-text-fill text-primary" style="font-size: 2rem;"></i>
               </div>
@@ -272,13 +662,67 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <h6 class="text-muted">Ressources</h6>
-                  <h3>8</h3>
+                  <h3>{{ resources_count }}</h3>
                 </div>
                 <i class="bi bi-book-fill text-info" style="font-size: 2rem;"></i>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      
+      <!-- Service Cards -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h4 class="mb-3">Nos Services</h4>
+        </div>
+        {% if available_services %}
+          {% for service in available_services %}
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('{{ service.title }}')">
+              <i class="bi bi-{{ service.icon }} service-icon"></i>
+              <h3>{{ service.title }}</h3>
+              <p>{{ service.description|truncatewords:10 }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('Service Administratif')">
+              <i class="bi bi-file-earmark-text service-icon"></i>
+              <h3>Services Administratifs</h3>
+              <p>Gestion de vos démarches administratives</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('Service Tourisme')">
+              <i class="bi bi-airplane service-icon"></i>
+              <h3>Tourisme</h3>
+              <p>Organisation de vos voyages au Maroc</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('Service Immobilier')">
+              <i class="bi bi-house-door service-icon"></i>
+              <h3>Immobilier</h3>
+              <p>Gestion de vos biens immobiliers</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('Service Fiscal')">
+              <i class="bi bi-calculator service-icon"></i>
+              <h3>Fiscalité</h3>
+              <p>Conseils et gestion fiscale</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="service-card p-4 text-center" onclick="showServiceRequestForm('Service Investissement')">
+              <i class="bi bi-graph-up service-icon"></i>
+              <h3>Investissement</h3>
+              <p>Opportunités d'investissement au Maroc</p>
+            </div>
+          </div>
+        {% endif %}
       </div>
 
       <!-- Services and Documents -->
@@ -287,31 +731,44 @@
           <div class="dashboard-card">
             <div class="card-header">
               <h5 class="mb-0">Services Actifs</h5>
-              <a href="#" class="btn btn-sm btn-primary">Voir tout</a>
+              <a href="{% url 'client_demandes' %}" class="btn btn-sm btn-primary">Voir tout</a>
             </div>
             <div class="card-body">
               <div class="list-group">
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Consultation Fiscale</h6>
-                    <small class="text-muted">Dernière mise à jour: 15/03/2024</small>
+                {% if recent_requests %}
+                  {% for request in recent_requests %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <h6 class="mb-1">{{ request.title }}</h6>
+                        <small class="text-muted">Dernière mise à jour: {{ request.updated_at|date:"d/m/Y" }}</small>
+                      </div>
+                      <span class="status-badge status-{{ request.status }}">
+                        {% if request.status == 'new' %}Nouveau
+                        {% elif request.status == 'in_progress' %}En Cours
+                        {% elif request.status == 'pending_info' %}En Attente
+                        {% elif request.status == 'completed' %}Terminé
+                        {% elif request.status == 'cancelled' %}Annulé
+                        {% elif request.status == 'rejected' %}Rejeté
+                        {% else %}{{ request.get_status_display }}
+                        {% endif %}
+                      </span>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="list-group-item text-center">
+                    <p class="mb-0">Aucune demande de service active.</p>
+                    <button class="btn btn-sm btn-primary mt-2" type="button" id="createRequestBtn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-reference="#newRequestDropdown">
+                      Créer une nouvelle demande
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="createRequestBtn">
+                      <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Administratif')">Services Administratifs</a></li>
+                      <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Tourisme')">Tourisme</a></li>
+                      <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Immobilier')">Immobilier</a></li>
+                      <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Fiscal')">Fiscalité</a></li>
+                      <li><a class="dropdown-item" href="javascript:showServiceRequestForm('Service Investissement')">Investissement</a></li>
+                    </ul>
                   </div>
-                  <span class="status-badge status-active">Actif</span>
-                </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Suivi Immobilier</h6>
-                    <small class="text-muted">Dernière mise à jour: 14/03/2024</small>
-                  </div>
-                  <span class="status-badge status-active">Actif</span>
-                </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="mb-1">Assistance Administrative</h6>
-                    <small class="text-muted">Dernière mise à jour: 13/03/2024</small>
-                  </div>
-                  <span class="status-badge status-active">Actif</span>
-                </div>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -320,36 +777,32 @@
           <div class="dashboard-card">
             <div class="card-header">
               <h5 class="mb-0">Documents Récents</h5>
-              <a href="#" class="btn btn-sm btn-primary">Voir tout</a>
+              <a href="{% url 'client_documents' %}" class="btn btn-sm btn-primary">Voir tout</a>
             </div>
             <div class="card-body">
-              <div class="document-item">
-                <i class="bi bi-file-pdf document-icon"></i>
-                <div>
-                  <h6 class="mb-1">Passeport</h6>
-                  <small class="text-muted">15/03/2024</small>
+              {% if recent_documents %}
+                {% for doc in recent_documents %}
+                  <div class="document-item">
+                    <i class="bi bi-file-{% if doc.mime_type == 'application/pdf' %}pdf{% elif doc.mime_type and 'image' in doc.mime_type %}image{% else %}earmark-text{% endif %} document-icon"></i>
+                    <div>
+                      <h6 class="mb-1">{{ doc.name }}</h6>
+                      <small class="text-muted">{{ doc.upload_date|date:"d/m/Y" }}</small>
+                    </div>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="text-center py-3">
+                  <i class="bi bi-file-earmark-x text-muted" style="font-size: 2rem;"></i>
+                  <p class="mt-2">Aucun document récent</p>
+                  <a href="{% url 'custom_requests:upload_document' %}" class="btn btn-sm btn-primary">Ajouter un document</a>
                 </div>
-              </div>
-              <div class="document-item">
-                <i class="bi bi-file-pdf document-icon"></i>
-                <div>
-                  <h6 class="mb-1">Contrat Immobilier</h6>
-                  <small class="text-muted">10/03/2024</small>
-                </div>
-              </div>
-              <div class="document-item">
-                <i class="bi bi-file-pdf document-icon"></i>
-                <div>
-                  <h6 class="mb-1">Déclaration Fiscale</h6>
-                  <small class="text-muted">05/03/2024</small>
-                </div>
-              </div>
+              {% endif %}
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Calendar and Resources -->
+      <!-- Calendar and Appointments -->
       <div class="row">
         <div class="col-md-8">
           <div class="dashboard-card">
@@ -364,31 +817,38 @@
         <div class="col-md-4">
           <div class="dashboard-card">
             <div class="card-header">
-              <h5 class="mb-0">Prochaines Échéances</h5>
+              <h5 class="mb-0">Prochains Rendez-vous</h5>
+              <a href="{% url 'client_rendezvous' %}" class="btn btn-sm btn-primary">Voir tout</a>
             </div>
             <div class="card-body">
               <div class="list-group">
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Rendez-vous Fiscal</h6>
-                    <small class="text-muted">Dans 2 jours</small>
+                {% if upcoming_appointments %}
+                  {% for appointment in upcoming_appointments %}
+                    <div class="list-group-item">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">{{ appointment.consultation_type|title }}</h6>
+                        <small class="text-muted">{{ appointment.date_time|date:"d/m/Y H:i" }}</small>
+                      </div>
+                      <p class="mb-1">
+                        {% if appointment.service_request %}
+                          {{ appointment.service_request.title }}
+                        {% endif %}
+                        avec 
+                        {% if appointment.expert %}
+                          {{ appointment.expert.name }} {{ appointment.expert.first_name }}
+                        {% else %}
+                          un expert
+                        {% endif %}
+                      </p>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="text-center py-3">
+                    <i class="bi bi-calendar-x text-muted" style="font-size: 2rem;"></i>
+                    <p class="mt-2">Aucun rendez-vous à venir</p>
+                    <a href="{% url 'client_rendezvous' %}" class="btn btn-sm btn-primary">Planifier un rendez-vous</a>
                   </div>
-                  <p class="mb-1">Consultation avec M. Ahmed</p>
-                </div>
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Renouvellement Visa</h6>
-                    <small class="text-muted">Dans 5 jours</small>
-                  </div>
-                  <p class="mb-1">Documents à préparer</p>
-                </div>
-                <div class="list-group-item">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Paiement Taxe</h6>
-                    <small class="text-muted">Dans 7 jours</small>
-                  </div>
-                  <p class="mb-1">Échéance fiscale</p>
-                </div>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -397,17 +857,676 @@
     </main>
   </div>
 
+  <!-- Profile Edit Form (Hidden by default) -->
+  <div class="profile-edit-form" id="profileEditForm" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; width: calc(100% - var(--sidebar-width)); background-color: #f8f9fa; z-index: 1050; padding: 1rem; overflow-y: auto; overflow-x: hidden; box-shadow: -5px 0 15px rgba(0,0,0,0.1);">
+    <div class="container-fluid py-2">
+      <div class="row justify-content-center">
+        <div class="col-lg-11 col-xl-10">
+          <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-white text-center py-4 border-bottom">
+              <i class="bi bi-person-gear text-primary fs-1 mb-3"></i>
+              <h3 class="card-title mb-1">Modifier votre profil</h3>
+            </div>
+            <div class="card-body p-4 p-xl-5">
+              <form id="userProfileForm" class="needs-validation" novalidate>
+                <!-- Informations personnelles -->
+                <h5 class="mb-3 border-bottom pb-2">Informations personnelles</h5>
+                
+                <div class="row g-3 mb-4">
+                  <!-- Nom -->
+                  <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Nom</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-person"></i></span>
+                      <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                    </div>
+                  </div>
+                  
+                  <!-- Prénom -->
+                  <div class="col-md-6 mb-3">
+                    <label for="first_name" class="form-label">Prénom</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-person-plus"></i></span>
+                      <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Coordonnées -->
+                <h5 class="mb-3 border-bottom pb-2">Coordonnées</h5>
+                
+                <div class="row g-3 mb-4">
+                  <!-- Email -->
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                      <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                  </div>
+                  
+                  <!-- Téléphone -->
+                  <div class="col-md-6 mb-3">
+                    <label for="phone" class="form-label">Numéro de téléphone</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                      <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone|default:'' }}">
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Localisation -->
+                <h5 class="mb-3 border-bottom pb-2">Localisation</h5>
+                
+                <div class="row g-3 mb-4">
+                  <!-- Pays de résidence -->
+                  <div class="col-md-8 col-lg-7 mb-3">
+                    <label for="residence_country" class="form-label">Pays de résidence</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                      <select class="form-select" id="residence_country" name="residence_country">
+                        {% for country_code, country_name in settings.COUNTRIES %}
+                          <option value="{{ country_code }}" {% if user.residence_country == country_code %}selected{% endif %}>{{ country_name }}</option>
+                        {% empty %}
+                          <option value="MA" {% if user.residence_country == 'MA' %}selected{% endif %}>Maroc</option>
+                          <option value="FR" {% if user.residence_country == 'FR' %}selected{% endif %}>France</option>
+                          <option value="ES" {% if user.residence_country == 'ES' %}selected{% endif %}>Espagne</option>
+                          <option value="BE" {% if user.residence_country == 'BE' %}selected{% endif %}>Belgique</option>
+                          <option value="CA" {% if user.residence_country == 'CA' %}selected{% endif %}>Canada</option>
+                          <option value="IT" {% if user.residence_country == 'IT' %}selected{% endif %}>Italie</option>
+                          <option value="DE" {% if user.residence_country == 'DE' %}selected{% endif %}>Allemagne</option>
+                          <option value="NL" {% if user.residence_country == 'NL' %}selected{% endif %}>Pays-Bas</option>
+                          <option value="GB" {% if user.residence_country == 'GB' %}selected{% endif %}>Royaume-Uni</option>
+                          <option value="US" {% if user.residence_country == 'US' %}selected{% endif %}>États-Unis</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Boutons d'action -->
+                <div class="row mt-5">
+                  <div class="col-md-8 col-lg-5 mx-auto">
+                    <div class="d-grid gap-2">
+                      <button type="submit" class="btn btn-primary btn-lg py-3"><i class="bi bi-check-circle me-2"></i>Enregistrer</button>
+                      <button type="button" id="closeProfileForm" class="btn btn-outline-secondary py-2"><i class="bi bi-x-circle me-2"></i>Annuler</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Alert (Hidden by default) -->
+  <div class="alert-container" style="display: none; position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 1060; width: 90%; max-width: 500px;">
+    <div class="alert alert-success alert-dismissible fade shadow" role="alert" id="successAlert">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-check-circle-fill fs-4 me-2"></i>
+        <div>
+          <strong>Demande soumise avec succès!</strong>
+          <p class="mb-0 small">Votre demande a été enregistrée. Nous la traiterons dans les plus brefs délais.</p>
+        </div>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Service Request Form (Hidden by default) -->
+  <div class="service-request-form" id="serviceRequestFullForm" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; width: calc(100% - var(--sidebar-width)); background-color: #f8f9fa; z-index: 1050; padding: 1rem; overflow-y: auto; overflow-x: hidden; box-shadow: -5px 0 15px rgba(0,0,0,0.1);">
+    <div class="container-fluid py-2">
+      <div class="row justify-content-center">
+        <div class="col-lg-11 col-xl-10">
+          <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-white text-center py-4 border-bottom">
+              <div class="d-flex flex-column align-items-center justify-content-center">
+                <i class="bi bi-file-earmark-text text-primary fs-1 mb-3"></i>
+                <h3 class="card-title mb-1" id="formServiceTitle">Nouvelle demande</h3>
+                <p class="text-muted small" id="formServiceDescription">Veuillez remplir le formulaire ci-dessous</p>
+              </div>
+            </div>
+            <div class="card-body p-4 p-xl-5">
+              <form id="serviceRequestForm">
+                {% csrf_token %}
+                <input type="hidden" id="serviceType" name="serviceType" value="">
+                
+                <!-- Common fields for all services -->
+                <div class="mb-4">
+                  <h5 class="mb-3 border-bottom pb-2">Informations générales</h5>
+                  <div class="mb-3">
+                    <label for="requestTitle" class="form-label">Titre de votre demande</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-type"></i></span>
+                      <input type="text" class="form-control" id="requestTitle" name="requestTitle" required>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Administrative -->
+                <div id="adminFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service administratif</h5>
+                  <div class="mb-3">
+                    <label for="adminDocumentType" class="form-label">Type de document</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-file-earmark"></i></span>
+                      <select class="form-select" id="adminDocumentType" name="adminDocumentType">
+                        <option value="">Sélectionner un type de document</option>
+                        <option value="passeport">Passeport</option>
+                        <option value="carte_nationale">Carte Nationale d'Identité</option>
+                        <option value="acte_naissance">Acte de Naissance</option>
+                        <option value="certificat_residence">Certificat de Résidence</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="adminUrgency" class="form-label">Niveau d'urgence</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-exclamation-triangle"></i></span>
+                      <select class="form-select" id="adminUrgency" name="adminUrgency">
+                        <option value="normale">Normale</option>
+                        <option value="urgente">Urgente</option>
+                        <option value="tres_urgente">Très urgente</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Tourism -->
+                <div id="tourismeFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service touristique</h5>
+                  <div class="mb-3">
+                    <label for="tourismType" class="form-label">Type de service touristique</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                      <select class="form-select" id="tourismType" name="tourismType">
+                        <option value="">Sélectionner un service</option>
+                        <option value="reservation_hotel">Réservation d'hôtel</option>
+                        <option value="circuit_touristique">Circuit touristique</option>
+                        <option value="location_voiture">Location de voitures</option>
+                        <option value="guide_touristique">Guide touristique</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="dateArrivee" class="form-label">Date d'arrivée</label>
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                          <input type="date" class="form-control" id="dateArrivee" name="dateArrivee">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="dateDepart" class="form-label">Date de départ</label>
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text"><i class="bi bi-calendar-x"></i></span>
+                          <input type="date" class="form-control" id="dateDepart" name="dateDepart">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Real Estate -->
+                <div id="immobilierFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service immobilier</h5>
+                  <div class="mb-3">
+                    <label for="immobilierType" class="form-label">Type de service immobilier</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-house"></i></span>
+                      <select class="form-select" id="immobilierType" name="immobilierType">
+                        <option value="">Sélectionner un service</option>
+                        <option value="achat">Achat de bien</option>
+                        <option value="vente">Vente de bien</option>
+                        <option value="location">Location</option>
+                        <option value="gestion_bien">Gestion de bien</option>
+                        <option value="conseil">Conseil immobilier</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="propertyType" class="form-label">Type de bien</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-building"></i></span>
+                      <select class="form-select" id="propertyType" name="propertyType">
+                        <option value="">Sélectionner un type de bien</option>
+                        <option value="appartement">Appartement</option>
+                        <option value="maison">Maison</option>
+                        <option value="villa">Villa</option>
+                        <option value="terrain">Terrain</option>
+                        <option value="commerce">Local commercial</option>
+                        <option value="bureau">Bureau</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="propertyLocation" class="form-label">Ville</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                      <select class="form-select" id="propertyLocation" name="propertyLocation">
+                        <option value="">Sélectionner une ville</option>
+                        <option value="casablanca">Casablanca</option>
+                        <option value="rabat">Rabat</option>
+                        <option value="marrakech">Marrakech</option>
+                        <option value="tanger">Tanger</option>
+                        <option value="agadir">Agadir</option>
+                        <option value="fes">Fès</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Fiscal -->
+                <div id="fiscalFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service fiscal</h5>
+                  <div class="mb-3">
+                    <label for="fiscalType" class="form-label">Type de service fiscal</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-cash-coin"></i></span>
+                      <select class="form-select" id="fiscalType" name="fiscalType">
+                        <option value="">Sélectionner un service</option>
+                        <option value="declaration_impots">Déclaration d'impôts</option>
+                        <option value="optimisation_fiscale">Optimisation fiscale</option>
+                        <option value="conseil_fiscal">Conseil fiscal</option>
+                        <option value="contentieux_fiscal">Contentieux fiscal</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="fiscalYear" class="form-label">Année fiscale concernée</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                      <select class="form-select" id="fiscalYear" name="fiscalYear">
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Investment -->
+                <div id="investissementFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service d'investissement</h5>
+                  <div class="mb-3">
+                    <label for="investType" class="form-label">Type d'investissement</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-graph-up"></i></span>
+                      <select class="form-select" id="investType" name="investType">
+                        <option value="">Sélectionner un type d'investissement</option>
+                        <option value="immobilier">Immobilier</option>
+                        <option value="commerce">Commerce</option>
+                        <option value="industrie">Industrie</option>
+                        <option value="agriculture">Agriculture</option>
+                        <option value="technologie">Technologie</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="investBudget" class="form-label">Budget approximatif (MAD)</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                      <select class="form-select" id="investBudget" name="investBudget">
+                        <option value="moins_500k">Moins de 500 000</option>
+                        <option value="500k_1m">500 000 - 1 000 000</option>
+                        <option value="1m_3m">1 000 000 - 3 000 000</option>
+                        <option value="3m_5m">3 000 000 - 5 000 000</option>
+                        <option value="plus_5m">Plus de 5 000 000</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Description field for all services -->
+                <div class="mb-4">
+                  <h5 class="mb-3 border-bottom pb-2">Description de votre demande</h5>
+                  <div class="mb-3">
+                    <label for="requestDescription" class="form-label">Description détaillée</label>
+                    <textarea class="form-control form-control-lg" id="requestDescription" name="requestDescription" rows="5" required></textarea>
+                    <div class="form-text">Décrivez votre besoin avec le plus de détails possible pour un traitement optimal.</div>
+                  </div>
+                </div>
+                
+                <!-- File upload field -->
+                <div class="mb-4">
+                  <h5 class="mb-3 border-bottom pb-2">Documents joints</h5>
+                  <div class="mb-3">
+                    <label for="requestFiles" class="form-label">Documents complémentaires (optionnel)</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-file-earmark-arrow-up"></i></span>
+                      <input class="form-control" type="file" id="requestFiles" name="requestFiles" multiple>
+                    </div>
+                    <div class="form-text">Vous pouvez joindre plusieurs documents (PDF, images, etc.)</div>
+                  </div>
+                </div>
+                
+                <!-- Boutons d'action -->
+                <div class="row mt-5">
+                  <div class="col-md-8 col-lg-5 mx-auto">
+                    <div class="d-grid gap-2">
+                      <button type="button" id="submitServiceRequest" class="btn btn-primary btn-lg py-3"><i class="bi bi-check-circle me-2"></i>Soumettre la demande</button>
+                      <button type="button" id="closeServiceForm" class="btn btn-outline-secondary py-2"><i class="bi bi-x-circle me-2"></i>Annuler</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Service Request Modal -->
+  <div class="modal fade" id="serviceRequestModal" tabindex="-1" aria-labelledby="serviceRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="serviceRequestModalLabel">Nouvelle demande</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="serviceRequestForm">
+            {% csrf_token %}
+            <input type="hidden" id="serviceType" name="serviceType" value="">
+            
+            <!-- Service title -->
+            <div class="mb-4">
+              <h4 id="serviceTitle" class="mb-3 text-primary"></h4>
+              <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <span id="serviceDescription"></span>
+              </div>
+            </div>
+            
+            <!-- Common fields for all services -->
+            <div class="mb-3">
+              <label for="requestTitle" class="form-label">Titre de votre demande</label>
+              <input type="text" class="form-control" id="requestTitle" name="requestTitle" required>
+            </div>
+            
+            <!-- Service-specific fields - Administrative -->
+            <div id="adminFields" class="service-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="adminDocumentType" class="form-label">Type de document</label>
+                <select class="form-select" id="adminDocumentType" name="adminDocumentType">
+                  <option value="">Sélectionner un type de document</option>
+                  <option value="passeport">Passeport</option>
+                  <option value="carte_nationale">Carte Nationale d'Identité</option>
+                  <option value="acte_naissance">Acte de Naissance</option>
+                  <option value="certificat_residence">Certificat de Résidence</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="adminUrgency" class="form-label">Niveau d'urgence</label>
+                <select class="form-select" id="adminUrgency" name="adminUrgency">
+                  <option value="normale">Normale</option>
+                  <option value="urgente">Urgente</option>
+                  <option value="tres_urgente">Très urgente</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Service-specific fields - Tourism -->
+            <div id="tourismeFields" class="service-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="tourismType" class="form-label">Type de service touristique</label>
+                <select class="form-select" id="tourismType" name="tourismType">
+                  <option value="">Sélectionner un service</option>
+                  <option value="reservation_hotel">Réservation d'hôtel</option>
+                  <option value="circuit_touristique">Circuit touristique</option>
+                  <option value="location_voiture">Location de voitures</option>
+                  <option value="guide_touristique">Guide touristique</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="dateArrivee" class="form-label">Date d'arrivée</label>
+                    <input type="date" class="form-control" id="dateArrivee" name="dateArrivee">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="dateDepart" class="form-label">Date de départ</label>
+                    <input type="date" class="form-control" id="dateDepart" name="dateDepart">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Service-specific fields - Real Estate -->
+            <div id="immobilierFields" class="service-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="immobilierType" class="form-label">Type de service immobilier</label>
+                <select class="form-select" id="immobilierType" name="immobilierType">
+                  <option value="">Sélectionner un service</option>
+                  <option value="achat">Achat de bien</option>
+                  <option value="vente">Vente de bien</option>
+                  <option value="location">Location</option>
+                  <option value="gestion_bien">Gestion de bien</option>
+                  <option value="conseil">Conseil immobilier</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="propertyType" class="form-label">Type de bien</label>
+                <select class="form-select" id="propertyType" name="propertyType">
+                  <option value="">Sélectionner un type de bien</option>
+                  <option value="appartement">Appartement</option>
+                  <option value="maison">Maison</option>
+                  <option value="villa">Villa</option>
+                  <option value="terrain">Terrain</option>
+                  <option value="commerce">Local commercial</option>
+                  <option value="bureau">Bureau</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="propertyLocation" class="form-label">Ville</label>
+                <select class="form-select" id="propertyLocation" name="propertyLocation">
+                  <option value="">Sélectionner une ville</option>
+                  <option value="casablanca">Casablanca</option>
+                  <option value="rabat">Rabat</option>
+                  <option value="marrakech">Marrakech</option>
+                  <option value="tanger">Tanger</option>
+                  <option value="agadir">Agadir</option>
+                  <option value="fes">Fès</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Service-specific fields - Fiscal -->
+            <div id="fiscalFields" class="service-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="fiscalType" class="form-label">Type de service fiscal</label>
+                <select class="form-select" id="fiscalType" name="fiscalType">
+                  <option value="">Sélectionner un service</option>
+                  <option value="declaration_impots">Déclaration d'impôts</option>
+                  <option value="optimisation_fiscale">Optimisation fiscale</option>
+                  <option value="conseil_fiscal">Conseil fiscal</option>
+                  <option value="contentieux_fiscal">Contentieux fiscal</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="fiscalYear" class="form-label">Année fiscale concernée</label>
+                <select class="form-select" id="fiscalYear" name="fiscalYear">
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Service-specific fields - Investment -->
+            <div id="investissementFields" class="service-fields" style="display: none;">
+              <div class="mb-3">
+                <label for="investType" class="form-label">Type d'investissement</label>
+                <select class="form-select" id="investType" name="investType">
+                  <option value="">Sélectionner un type d'investissement</option>
+                  <option value="immobilier">Immobilier</option>
+                  <option value="commerce">Commerce</option>
+                  <option value="industrie">Industrie</option>
+                  <option value="agriculture">Agriculture</option>
+                  <option value="technologie">Technologie</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="investBudget" class="form-label">Budget approximatif (MAD)</label>
+                <select class="form-select" id="investBudget" name="investBudget">
+                  <option value="moins_500k">Moins de 500 000</option>
+                  <option value="500k_1m">500 000 - 1 000 000</option>
+                  <option value="1m_3m">1 000 000 - 3 000 000</option>
+                  <option value="3m_5m">3 000 000 - 5 000 000</option>
+                  <option value="plus_5m">Plus de 5 000 000</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Description field for all services -->
+            <div class="mb-3">
+              <label for="requestDescription" class="form-label">Description détaillée de votre demande</label>
+              <textarea class="form-control" id="requestDescription" name="requestDescription" rows="5" required></textarea>
+            </div>
+            
+            <!-- File upload field -->
+            <div class="mb-3">
+              <label for="requestFiles" class="form-label">Documents complémentaires (optionnel)</label>
+              <input class="form-control" type="file" id="requestFiles" name="requestFiles" multiple>
+              <div class="form-text">Vous pouvez joindre plusieurs documents (PDF, images, etc.)</div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-primary" id="submitServiceRequest">Soumettre la demande</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Vendor JS Files -->
   <script src="../../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="../../static/vendor/aos/aos.js"></script>
   <script src="../../static/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="../../static/vendor/swiper/swiper-bundle.min.js"></script>
+  
+  <!-- Calendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js"></script>
 
   <!-- Main JS File -->
   <script src="../../static/js/main.js"></script>
-
-  <!-- Dashboard specific JS -->
+  
+  <!-- Custom Scripts -->
   <script>
+    // Function to show service request modal (ancien code maintenu pour compatibilité)
+    function showServiceRequestModal(serviceType) {
+      // Remplacer par la nouvelle fonction pour utiliser le formulaire pleine page
+      showServiceRequestForm(serviceType);
+    }
+    
+    // Fonction pour afficher le formulaire de demande de service à pleine page
+    function showServiceRequestForm(serviceType) {
+      console.log('Affichage du formulaire pour le service:', serviceType);
+      
+      const serviceRequestForm = document.getElementById('serviceRequestFullForm');
+      const mainContent = document.querySelector('.main-content');
+      
+      if (!serviceRequestForm) {
+        console.error('Formulaire de service non trouvé!');
+        return;
+      }
+      
+      // Réinitialiser le formulaire
+      document.getElementById('serviceRequestForm').reset();
+      
+      // Cacher tous les champs spécifiques
+      document.querySelectorAll('.service-fields').forEach(field => {
+        field.style.display = 'none';
+      });
+      
+      // Définir le type de service et mettre à jour le formulaire
+      document.getElementById('serviceType').value = serviceType;
+      document.getElementById('formServiceTitle').textContent = serviceType;
+      
+      // Afficher les champs spécifiques en fonction du type
+      let fieldsToShow = '';
+      let serviceDescription = '';
+      
+      switch(serviceType) {
+        case 'Service Administratif':
+        case 'Services Administratifs':
+          fieldsToShow = 'adminFields';
+          serviceDescription = 'Demandez des documents officiels, des attestations ou tout autre service administratif.';
+          break;
+        case 'Service Tourisme':
+        case 'Tourisme':
+          fieldsToShow = 'tourismeFields';
+          serviceDescription = 'Réservations d\'hôtels, circuits touristiques, location de voitures et autres services touristiques.';
+          break;
+        case 'Service Immobilier':
+        case 'Immobilier':
+          fieldsToShow = 'immobilierFields';
+          serviceDescription = 'Services d\'achat, vente, location ou gestion de biens immobiliers.';
+          break;
+        case 'Service Fiscal':
+        case 'Fiscalité':
+          fieldsToShow = 'fiscalFields';
+          serviceDescription = 'Déclarations fiscales, optimisation fiscale, conseils et assistance pour vos impôts.';
+          break;
+        case 'Service Investissement':
+        case 'Investissement':
+          fieldsToShow = 'investissementFields';
+          serviceDescription = 'Conseils et accompagnement pour vos projets d\'investissement au Maroc.';
+          break;
+        default:
+          serviceDescription = 'Veuillez spécifier les détails de votre demande dans la description.';
+      }
+      
+      // Afficher les champs pertinents
+      if (fieldsToShow) {
+        const fieldsElement = document.getElementById(fieldsToShow);
+        if (fieldsElement) {
+          fieldsElement.style.display = 'block';
+        } else {
+          console.error('Élément', fieldsToShow, 'non trouvé!');
+        }
+      }
+      
+      // Définir la description du service
+      document.getElementById('formServiceDescription').textContent = serviceDescription;
+      
+      // Cacher le contenu principal
+      if (mainContent) {
+        mainContent.style.visibility = 'hidden';
+      }
+      
+      // Afficher le formulaire avec animation
+      serviceRequestForm.style.display = 'block';
+      setTimeout(() => {
+        serviceRequestForm.classList.add('show');
+      }, 50);
+    }
+
     // Initialize AOS
     AOS.init({
       duration: 1000,
@@ -420,9 +1539,337 @@
     document.querySelector('.btn-outline-primary').addEventListener('click', function() {
       document.querySelector('.sidebar').classList.toggle('active');
     });
+    
+    // Toggle notifications dropdown
+    function toggleNotifications() {
+      document.getElementById('notificationDropdown').classList.toggle('show');
+    }
+    
+    // Close notifications dropdown when clicking outside
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('.notification-bell') && !e.target.closest('.notification-dropdown')) {
+        const dropdown = document.getElementById('notificationDropdown');
+        if (dropdown.classList.contains('show')) {
+          dropdown.classList.remove('show');
+        }
+      }
+    });
+    
+    // Function to redirect to create request page (keeping for compatibility)
+    function redirectToCreateRequest(serviceType) {
+      window.location.href = `/client/demandes/nouvelle/${serviceType}`;
+    }
+    
+    // Profile edit functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const editProfileBtn = document.getElementById('editProfileBtn');
+      const profileEditForm = document.getElementById('profileEditForm');
+      const closeProfileForm = document.getElementById('closeProfileForm');
+      const userProfileForm = document.getElementById('userProfileForm');
+      const successAlert = document.getElementById('successAlert');
+      const alertContainer = document.querySelector('.alert-container');
+      const mainContent = document.querySelector('.main-content');
+      
+      // Show profile edit form when clicking the button
+      if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Hide any potential overflow content from main content
+          if (mainContent) {
+            mainContent.style.visibility = 'hidden';
+          }
+          
+          // Show the form with animation
+          profileEditForm.style.display = 'block';
+          setTimeout(() => {
+            profileEditForm.classList.add('show');
+          }, 50);
+        });
+      }
+      
+      // Close profile edit form
+      if (closeProfileForm) {
+        closeProfileForm.addEventListener('click', function() {
+          profileEditForm.classList.remove('show');
+          setTimeout(() => {
+            profileEditForm.style.display = 'none';
+            // Restore main content visibility
+            if (mainContent) {
+              mainContent.style.visibility = 'visible';
+            }
+          }, 300);
+        });
+      }
+      
+      // Form validation
+      if (userProfileForm) {
+        userProfileForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Check form validity
+          if (!this.checkValidity()) {
+            e.stopPropagation();
+            this.classList.add('was-validated');
+            return;
+          }
+          
+          // Get form data
+          const formData = new FormData(userProfileForm);
+          
+          // Show loading state on button
+          const submitButton = userProfileForm.querySelector('button[type="submit"]');
+          const originalButtonText = submitButton.innerHTML;
+          submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Enregistrement...';
+          submitButton.disabled = true;
+          
+          // Simulate an AJAX request with a timeout
+          setTimeout(function() {
+            // Return button to normal state
+            submitButton.innerHTML = originalButtonText;
+            submitButton.disabled = false;
+            
+            // Hide the form with animation
+            profileEditForm.classList.remove('show');
+            setTimeout(() => {
+              profileEditForm.style.display = 'none';
+              // Restore main content visibility
+              if (mainContent) {
+                mainContent.style.visibility = 'visible';
+              }
+            }, 300);
+            
+            // Update user information in the sidebar
+            const sidebarName = document.querySelector('.sidebar-profile h5');
+            if (sidebarName) {
+              sidebarName.textContent = formData.get('name') + ' ' + formData.get('first_name');
+            }
+            
+            // Show success message with animation
+            alertContainer.style.display = 'block';
+            successAlert.classList.add('show');
+            
+            // Hide success message after 5 seconds
+            setTimeout(function() {
+              successAlert.classList.remove('show');
+              setTimeout(function() {
+                alertContainer.style.display = 'none';
+              }, 300);
+            }, 5000);
+            
+          }, 1000);
+          
+          this.classList.remove('was-validated');
+        });
+      }
 
-    // Update client name
-    document.getElementById('clientName').textContent = 'Mohammed Abd';
+      // Add event listeners to dropdown service items
+      const dropdownItems = document.querySelectorAll('.dropdown-item[data-service]');
+      dropdownItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          const serviceType = this.getAttribute('data-service');
+          showServiceRequestModal(serviceType);
+        });
+      });
+      
+      // Form submission for service request
+      document.getElementById('submitServiceRequest').addEventListener('click', function() {
+        const form = document.getElementById('serviceRequestForm');
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        
+        // Collect form data
+        const formData = new FormData(form);
+        
+        // Add files if any
+        const fileInput = document.getElementById('requestFiles');
+        if (fileInput.files.length > 0) {
+          for (let i = 0; i < fileInput.files.length; i++) {
+            formData.append('files[]', fileInput.files[i]);
+          }
+        }
+        
+        // Show loading state
+        const submitButton = this;
+        const originalButtonText = submitButton.innerHTML;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Traitement...';
+        submitButton.disabled = true;
+        
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+        
+        // Send data to the server
+        fetch('/requests/ajax/create-request/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Si on utilise le formulaire pleine page
+          const serviceRequestFullForm = document.getElementById('serviceRequestFullForm');
+          if (serviceRequestFullForm && serviceRequestFullForm.style.display !== 'none') {
+            // Cacher le formulaire pleine page
+            serviceRequestFullForm.classList.remove('show');
+            setTimeout(() => {
+              serviceRequestFullForm.style.display = 'none';
+              // Restore main content visibility
+              const mainContent = document.querySelector('.main-content');
+              if (mainContent) {
+                mainContent.style.visibility = 'visible';
+              }
+            }, 300);
+          } else {
+            // Cacher le modal (ancien système)
+            const modal = bootstrap.Modal.getInstance(document.getElementById('serviceRequestModal'));
+            if (modal) modal.hide();
+          }
+          
+          if (data.success) {
+            // Show success alert
+            alertContainer.style.display = 'block';
+            successAlert.classList.add('show');
+            
+            // Hide success message after 5 seconds
+            setTimeout(function() {
+              successAlert.classList.remove('show');
+              setTimeout(function() {
+                alertContainer.style.display = 'none';
+              }, 300);
+            }, 5000);
+            
+            // Reload page after 2 seconds to show new request
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          } else {
+            // Show error message
+            alert('Erreur lors de la création de la demande: ' + (data.message || 'Erreur inconnue'));
+          }
+          
+          // Reset button
+          submitButton.innerHTML = originalButtonText;
+          submitButton.disabled = false;
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+          alert('Erreur lors de la communication avec le serveur. Veuillez réessayer.');
+          submitButton.innerHTML = originalButtonText;
+          submitButton.disabled = false;
+        });
+      });
+      
+      // Bouton de fermeture du formulaire pleine page
+      const closeServiceFormBtn = document.getElementById('closeServiceForm');
+      if (closeServiceFormBtn) {
+        closeServiceFormBtn.addEventListener('click', function() {
+          const serviceRequestForm = document.getElementById('serviceRequestFullForm');
+          const mainContent = document.querySelector('.main-content');
+          
+          serviceRequestForm.classList.remove('show');
+          
+          setTimeout(() => {
+            serviceRequestForm.style.display = 'none';
+            // Restaurer la visibilité du contenu principal
+            if (mainContent) {
+              mainContent.style.visibility = 'visible';
+            }
+          }, 300);
+        });
+      }
+    });
   </script>
+  
+  <style>
+    /* Profile Edit Form Styles */
+    .profile-edit-form {
+      opacity: 0;
+      transition: all 0.3s ease;
+      transform: translateY(10px);
+      backdrop-filter: blur(5px);
+    }
+    
+    .profile-edit-form.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Overlay to hide main content when form is open */
+    .profile-edit-form::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(248, 249, 250, 0.97);
+      z-index: -1;
+    }
+    
+    /* Hide main content when profile form is shown */
+    .profile-edit-form.show + .main-content {
+      visibility: hidden;
+    }
+    
+    /* Style for form sections */
+    #userProfileForm h5 {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      margin-top: 1rem;
+    }
+    
+    /* Input styles */
+    #userProfileForm .input-group-text {
+      background-color: #f8f9fa;
+      color: var(--primary-color);
+    }
+    
+    #userProfileForm .form-control:focus,
+    #userProfileForm .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(30, 60, 114, 0.15);
+    }
+    
+    /* Success alert styles */
+    .alert-container .alert {
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      border-left: 4px solid #198754;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.3s ease;
+    }
+    
+    .alert-container .alert.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Media query for responsiveness */
+    @media (max-width: 992px) {
+      .profile-edit-form {
+        width: 100% !important;
+        left: 0;
+      }
+    }
+  </style>
 </body>
-</html> 
+</html>

@@ -1,59 +1,272 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends 'admin/base.html' %}
+{% load static %}
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Gestion des Rendez-vous - MRE</title>
-  <meta name="description" content="Gestion des rendez-vous pour l'administrateur MRE">
-  <meta name="keywords" content="MRE, rendez-vous, admin, services">
+{% block title %}Gestion des Rendez-vous | Administration{% endblock %}
 
-  <!-- Favicons -->
-  <link href="../../static/img/favicon.png" rel="icon">
-  <link href="../../static/img/apple-touch-icon.png" rel="apple-touch-icon">
+{% block admin_content %}
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Gestion des Rendez-vous</h1>
+  </div>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Statistics Row -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-primary">
+          <i class="bi bi-calendar-date"></i>
+        </div>
+        <div class="count">{{ stats.total }}</div>
+        <div class="title">Total Rendez-vous</div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-warning">
+          <i class="bi bi-calendar-week"></i>
+        </div>
+        <div class="count">{{ stats.upcoming }}</div>
+        <div class="title">À venir</div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-success">
+          <i class="bi bi-calendar-check"></i>
+        </div>
+        <div class="count">{{ stats.completed }}</div>
+        <div class="title">Terminés</div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="stats-card">
+        <div class="icon text-danger">
+          <i class="bi bi-calendar-x"></i>
+        </div>
+        <div class="count">{{ stats.cancelled }}</div>
+        <div class="title">Annulés</div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Vendor CSS Files -->
-  <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../../static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <!-- Filter Section -->
+  <div class="filter-section mb-4">
+    <form method="get" class="row g-3">
+      <div class="col-md-2">
+        <label for="date" class="form-label">Date</label>
+        <select id="date" name="date" class="form-select">
+          <option value="">Toutes les dates</option>
+          <option value="today" {% if date_filter == 'today' %}selected{% endif %}>Aujourd'hui</option>
+          <option value="tomorrow" {% if date_filter == 'tomorrow' %}selected{% endif %}>Demain</option>
+          <option value="week" {% if date_filter == 'week' %}selected{% endif %}>Cette semaine</option>
+        </select>
+      </div>
+      
+      <div class="col-md-2">
+        <label for="status" class="form-label">Statut</label>
+        <select id="status" name="status" class="form-select">
+          <option value="">Tous les statuts</option>
+          <option value="scheduled" {% if status_filter == 'scheduled' %}selected{% endif %}>Planifié</option>
+          <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Terminé</option>
+          <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Annulé</option>
+        </select>
+      </div>
+      
+      <div class="col-md-2">
+        <label for="client" class="form-label">Client</label>
+        <select id="client" name="client" class="form-select">
+          <option value="">Tous les clients</option>
+          {% for client in clients %}
+          <option value="{{ client.id }}" {% if client_id|stringformat:"s" == client.id|stringformat:"s" %}selected{% endif %}>
+            {{ client.user.first_name }} {{ client.user.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div class="col-md-2">
+        <label for="expert" class="form-label">Expert</label>
+        <select id="expert" name="expert" class="form-select">
+          <option value="">Tous les experts</option>
+          {% for expert in experts %}
+          <option value="{{ expert.id }}" {% if expert_id|stringformat:"s" == expert.id|stringformat:"s" %}selected{% endif %}>
+            {{ expert.user.first_name }} {{ expert.user.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div class="col-md-2">
+        <label for="search" class="form-label">Recherche</label>
+        <input type="text" class="form-control" id="search" name="search" value="{{ search_query }}">
+      </div>
+      
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-filter"></i> Filtrer
+        </button>
+      </div>
+    </form>
+  </div>
 
-  <!-- Main CSS File -->
-  <link href="../../static/css/main.css" rel="stylesheet">
+  <!-- Appointments List -->
+  <div class="card">
+    <div class="card-header bg-white">
+      <h5 class="card-title mb-0">Liste des Rendez-vous</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Expert</th>
+              <th>Service</th>
+              <th>Date</th>
+              <th>Heure</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for appointment in appointments %}
+            <tr>
+              <td>{{ appointment.client.user.first_name }} {{ appointment.client.user.name }}</td>
+              <td>{{ appointment.expert.user.first_name }} {{ appointment.expert.user.name }}</td>
+              <td>{% if appointment.request %}{{ appointment.request.service.name }}{% else %}Consultation{% endif %}</td>
+              <td>{{ appointment.date|date:"d/m/Y" }}</td>
+              <td>{{ appointment.time|time:"H:i" }}</td>
+              <td>
+                {% if appointment.status == 'completed' %}
+                <span class="badge bg-success">Terminé</span>
+                {% elif appointment.status == 'cancelled' %}
+                <span class="badge bg-danger">Annulé</span>
+                {% else %}
+                <span class="badge bg-warning">Planifié</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="btn-group">
+                  <a href="{% url 'admin_complete_appointment' appointment.id %}" class="btn btn-sm btn-outline-success" onclick="return confirm('Marquer ce rendez-vous comme terminé?');">
+                    <i class="bi bi-check-circle"></i>
+                  </a>
+                  <a href="{% url 'admin_cancel_appointment' appointment.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous?');">
+                    <i class="bi bi-x-circle"></i>
+                  </a>
+                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#rescheduleModal{{ appointment.id }}">
+                    <i class="bi bi-calendar-plus"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center">Aucun rendez-vous trouvé</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      {% if appointments.paginator.num_pages > 1 %}
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mt-4">
+          {% if appointments.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1{% if date_filter %}&date={{ date_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if client_id %}&client={{ client_id }}{% endif %}{% if expert_id %}&expert={{ expert_id }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="First">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ appointments.previous_page_number }}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if client_id %}&client={{ client_id }}{% endif %}{% if expert_id %}&expert={{ expert_id }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">&laquo;&laquo;</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">&laquo;</span>
+            </li>
+          {% endif %}
+          
+          {% for i in appointments.paginator.page_range %}
+            {% if appointments.number == i %}
+              <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+            {% elif i > appointments.number|add:'-3' and i < appointments.number|add:'3' %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ i }}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if client_id %}&client={{ client_id }}{% endif %}{% if expert_id %}&expert={{ expert_id }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ i }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+          
+          {% if appointments.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ appointments.next_page_number }}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if client_id %}&client={{ client_id }}{% endif %}{% if expert_id %}&expert={{ expert_id }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ appointments.paginator.num_pages }}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if client_id %}&client={{ client_id }}{% endif %}{% if expert_id %}&expert={{ expert_id }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="Last">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link">&raquo;</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">&raquo;&raquo;</span>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>
 
-  <style>
-    :root {
-      --sidebar-width: 280px;
-      --header-height: 60px;
-      --primary-color: #1e3c72;
-      --secondary-color: #2a5298;
-    }
-
-    body {
-      background-color: #f8f9fa;
-    }
-
-    .dashboard-wrapper {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: var(--sidebar-width);
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-      color: white;
-      position: fixed;
-      height: 100vh;
-      left: 0;
-      top: 0;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-
-    .main-content {
+<!-- Reschedule Appointment Modals -->
+{% for appointment in appointments %}
+<div class="modal fade" id="rescheduleModal{{ appointment.id }}" tabindex="-1" aria-labelledby="rescheduleModalLabel{{ appointment.id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rescheduleModalLabel{{ appointment.id }}">Replanifier le Rendez-vous</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'admin_reschedule_appointment' appointment.id %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <p>Replanifier le rendez-vous avec <strong>{{ appointment.client.user.first_name }} {{ appointment.client.user.name }}</strong></p>
+          <div class="mb-3">
+            <label for="new_date" class="form-label">Nouvelle date:</label>
+            <input type="date" class="form-control" id="new_date" name="new_date" required>
+          </div>
+          <div class="mb-3">
+            <label for="new_time" class="form-label">Nouvelle heure:</label>
+            <input type="time" class="form-control" id="new_time" name="new_time" required>
+          </div>
+          <div class="mb-3">
+            <label for="reschedule_reason" class="form-label">Raison du changement:</label>
+            <textarea class="form-control" id="reschedule_reason" name="reschedule_reason" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-primary">Replanifier</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock admin_content %}
       margin-left: var(--sidebar-width);
       flex: 1;
       padding: 2rem;

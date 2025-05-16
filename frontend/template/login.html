@@ -1,116 +1,191 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion - ServicesBladi</title>
-  <link rel="icon" type="image/png" href="../static/img/logo.png">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-  <style>
-    body {
-      background-image: url('../static/img/background_login_image.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-    }
-    .register-container {
-      background-color: rgba(255, 255, 255, 0.3);
-      -webkit-backdrop-filter: blur(5px);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-    }
-    .form-control {
-      background-color: rgba(255, 255, 255, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      color: #333;
-    }
-    .form-control::placeholder {
-      color: rgba(51, 51, 51, 0.7);
-    }
-    .form-control:focus {
-      background-color: rgba(255, 255, 255, 0.6);
-      border-color: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
-    }
-    .btn-primary {
-      background-color: rgba(210, 180, 140, 0.8);
-      border-color: rgba(210, 180, 140, 0.9);
-      color: #333;
-      transition: all 0.3s ease;
-    }
-    .btn-primary:hover {
-      background-color: rgba(184, 134, 11, 0.9);
-      border-color: rgba(184, 134, 11, 1);
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    .form-label {
-      color: #333;
-      font-weight: 500;
-    }
-    .btn-back {
-      background-color: rgba(210, 180, 140, 0.8);
-      border-color: rgba(210, 180, 140, 0.9);
-      color: #333;
-      transition: all 0.3s ease;
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      padding: 8px 16px;
-      border-radius: 20px;
-      text-decoration: none;
-      z-index: 1000;
-    }
-    
+{% extends 'base.html' %}
+{% load static %}
 
-    .btn-back:hover {
-      background-color: rgba(184, 134, 11, 0.9);
-      border-color: rgba(184, 134, 11, 1);
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-  </style>
-</head>
-<body>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
-  
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <a href="index.html" class="btn btn-back">
-      <i class="fas fa-arrow-left"></i> Retour
-    </a>
-    <div class="register-container" style="width: 12cm; padding: 30px; border-radius: 15px;">
-      <div class="text-center mb-4">
-        <img src="../static/img/logo_bw.png" alt="Logo" style="height: 2.5cm; width: auto;">
-      </div>
-      <h2 class="mb-4 text-center fw-bold">Connexion</h2>
+{% block title %}ServicesBladi - Connexion{% endblock %}
+{% block meta_description %}Connectez-vous à votre compte ServicesBladi pour accéder aux services pour les Marocains résidant à l'étranger{% endblock %}
+{% block meta_keywords %}login, connexion, MRE, services, compte{% endblock %}
 
-<form>
-  
-      <div class="mb-3">
-        <label for="email" class="form-label fw-bold">Adresse e-mail</label>
-        <input type="email" class="form-control form-control-lg rounded-pill shadow-sm" id="email" placeholder="Entrez votre e-mail">
+{% block body_class %}login-page{% endblock %}
+
+{% block extra_css %}
+<style>
+  body.login-page {
+    background: url('{% static "img/background_login_image.png" %}') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+  }
+
+  .login-section {
+    min-height: 100vh;
+    padding-top: 120px;
+    padding-bottom: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .login-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .login-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .login-header img {
+    max-height: 100px;
+    margin-bottom: 15px;
+  }
+
+  .form-label {
+    font-weight: 500;
+    color: #333;
+  }
+
+  .form-control {
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: #0ea2bd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-top: 10px;
+    transition: all 0.3s;
+  }
+
+  .btn-login:hover {
+    background-color: #0c8a9e;
+    transform: translateY(-2px);
+  }
+
+  .forgot-password {
+    text-align: right;
+    margin-bottom: 20px;
+  }
+
+  .forgot-password a {
+    color: #0ea2bd;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .forgot-password a:hover {
+    text-decoration: underline;
+  }
+
+  .social-login {
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .social-btn {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+
+  .social-btn:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+  }
+
+  .register-link {
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  .register-link a {
+    color: #0ea2bd;
+    text-decoration: none;
+  }
+
+  .register-link a:hover {
+    text-decoration: underline;
+  }
+
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .login-container {
+      margin: 0 15px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <section class="login-section">
+    <div class="container">
+      <div class="login-container">
+        <div class="login-header">
+          <img src="{% static 'img/logo_principale.png' %}" alt="ServicesBladi Logo">
+          <h3 class="mt-3">Connexion à votre compte</h3>
+        </div>
+
+        {% if messages %}
+        <div class="{% if messages.tags == 'error' %}error-message{% else %}alert alert-success{% endif %}">
+          {% for message in messages %}
+            {{ message }}
+            {% if not forloop.last %}<br>{% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form action="{% url 'accounts:login' %}" method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Votre email" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Mot de passe</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Votre mot de passe" required>
+          </div>
+
+          <div class="forgot-password">
+            <a href="{% url 'accounts:password_reset' %}" class="text-decoration-none">Mot de passe oublié?</a>
+          </div>
+
+          <button type="submit" class="btn-login">Se connecter</button>
+
+          <input type="hidden" name="next" value="{{ next }}">
+        </form>
+
+        <div class="social-login">
+          <p class="text-muted mb-3">Ou connectez-vous avec</p>
+          <div class="d-flex justify-content-center">
+            <button class="social-btn me-2"><i class="bi bi-google"></i> Google</button>
+            <button class="social-btn"><i class="bi bi-facebook"></i> Facebook</button>
+          </div>
+        </div>
+
+        <div class="register-link">
+          <p>Vous n'avez pas de compte? <a href="{% url 'accounts:register' %}" class="text-decoration-none">S'inscrire</a></p>
+        </div>
       </div>
-      <div class="mb-3">
-        <label for="password" class="form-label fw-bold">Mot de passe</label>
-        <input type="password" class="form-control form-control-lg rounded-pill shadow-sm" id="password" placeholder="Entrez votre mot de passe">
-      </div>
-      <div class="d-grid">
-        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow">Se connecter</button>
-      </div>
-    </form>
-      <p class="mt-3 text-center text-muted">
-        Pas encore inscrit ? 
-        <a href="register.html" class="text-decoration-none fw-bold">Créer un compte</a>
-      </p>
     </div>
-  </div>
-
-</body>
-</html>
+  </section>
+{% endblock %}

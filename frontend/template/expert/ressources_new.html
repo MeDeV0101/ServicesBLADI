@@ -1,0 +1,246 @@
+{% extends 'expert/base.html' %}
+{% load document_filters %}
+
+{% block title %}Ressources - MRE{% endblock %}
+
+{% block content %}
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Ressources et Documentation</h2>
+    <div class="d-flex">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadResourceModal">
+        <i class="bi bi-upload me-2"></i>Ajouter une ressource
+      </button>
+    </div>
+  </div>
+
+  <!-- Resources Categories Nav -->
+  <div class="dashboard-card mb-4">
+    <div class="card-body">
+      <ul class="nav nav-pills" id="resourceTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="all-resources-tab" data-bs-toggle="pill" 
+                  data-bs-target="#all-resources" type="button" role="tab">
+            Toutes les ressources
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="administrative-tab" data-bs-toggle="pill" 
+                  data-bs-target="#administrative" type="button" role="tab">
+            Administratif
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="fiscal-tab" data-bs-toggle="pill" 
+                  data-bs-target="#fiscal" type="button" role="tab">
+            Fiscal
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="real-estate-tab" data-bs-toggle="pill" 
+                  data-bs-target="#real-estate" type="button" role="tab">
+            Immobilier
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tourism-tab" data-bs-toggle="pill" 
+                  data-bs-target="#tourism" type="button" role="tab">
+            Tourisme
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="investment-tab" data-bs-toggle="pill" 
+                  data-bs-target="#investment" type="button" role="tab">
+            Investissement
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="dashboard-card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Rechercher</label>
+          <input type="text" class="form-control" placeholder="Rechercher une ressource...">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Type</label>
+          <select class="form-select">
+            <option value="">Tous les types</option>
+            <option value="document">Document</option>
+            <option value="video">Vidéo</option>
+            <option value="link">Lien</option>
+            <option value="presentation">Présentation</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">&nbsp;</label>
+          <button class="btn btn-outline-primary w-100">Filtrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resources Tab Content -->
+  <div class="tab-content" id="resourceTabContent">
+    <!-- All Resources Tab -->
+    <div class="tab-pane fade show active" id="all-resources" role="tabpanel">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% if resources %}
+          {% for resource in resources %}
+            <div class="col">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="d-flex align-items-center mb-3">
+                    {% if resource.type == 'document' %}
+                      <i class="bi bi-file-earmark-text text-primary me-2 fs-4"></i>
+                    {% elif resource.type == 'video' %}
+                      <i class="bi bi-play-circle text-danger me-2 fs-4"></i>
+                    {% elif resource.type == 'link' %}
+                      <i class="bi bi-link text-success me-2 fs-4"></i>
+                    {% elif resource.type == 'presentation' %}
+                      <i class="bi bi-easel text-warning me-2 fs-4"></i>
+                    {% endif %}
+                    <h5 class="card-title mb-0">{{ resource.title }}</h5>
+                  </div>
+                  <h6 class="card-subtitle mb-2 text-muted">{{ resource.get_category_display }}</h6>
+                  <p class="card-text">{{ resource.description|truncatechars:100 }}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <a href="{{ resource.file.url }}" class="btn btn-sm btn-primary" target="_blank">
+                        <i class="bi bi-eye"></i> Voir
+                      </a>
+                      <a href="{{ resource.file.url }}" class="btn btn-sm btn-success" download>
+                        <i class="bi bi-download"></i> Télécharger
+                      </a>
+                    </div>
+                    <small class="text-muted">{{ resource.created_at|date:"d/m/Y" }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-12 text-center py-5">
+            <p class="text-muted">Aucune ressource disponible</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    {% for category, category_display in resource_categories %}
+      <div class="tab-pane fade" id="{{ category }}" role="tabpanel">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+          {% with category_resources=resources|filter_by_category:category %}
+            {% if category_resources %}
+              {% for resource in category_resources %}
+                <div class="col">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center mb-3">
+                        {% if resource.type == 'document' %}
+                          <i class="bi bi-file-earmark-text text-primary me-2 fs-4"></i>
+                        {% elif resource.type == 'video' %}
+                          <i class="bi bi-play-circle text-danger me-2 fs-4"></i>
+                        {% elif resource.type == 'link' %}
+                          <i class="bi bi-link text-success me-2 fs-4"></i>
+                        {% elif resource.type == 'presentation' %}
+                          <i class="bi bi-easel text-warning me-2 fs-4"></i>
+                        {% endif %}
+                        <h5 class="card-title mb-0">{{ resource.title }}</h5>
+                      </div>
+                      <h6 class="card-subtitle mb-2 text-muted">{{ resource.get_category_display }}</h6>
+                      <p class="card-text">{{ resource.description|truncatechars:100 }}</p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                          <a href="{{ resource.file.url }}" class="btn btn-sm btn-primary" target="_blank">
+                            <i class="bi bi-eye"></i> Voir
+                          </a>
+                          <a href="{{ resource.file.url }}" class="btn btn-sm btn-success" download>
+                            <i class="bi bi-download"></i> Télécharger
+                          </a>
+                        </div>
+                        <small class="text-muted">{{ resource.created_at|date:"d/m/Y" }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="col-12 text-center py-5">
+                <p class="text-muted">Aucune ressource disponible dans cette catégorie</p>
+              </div>
+            {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Upload Resource Modal -->
+  <div class="modal fade" id="uploadResourceModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter une ressource</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="uploadResourceForm" method="post" action="{% url 'resources:expert_add_resource' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="resourceTitle" class="form-label">Titre</label>
+              <input type="text" class="form-control" id="resourceTitle" name="title" required>
+            </div>
+            <div class="mb-3">
+              <label for="resourceCategory" class="form-label">Catégorie</label>
+              <select class="form-select" id="resourceCategory" name="category" required>
+                <option value="">Sélectionner une catégorie</option>
+                {% for category, category_display in resource_categories %}
+                  <option value="{{ category }}">{{ category_display }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="resourceType" class="form-label">Type</label>
+              <select class="form-select" id="resourceType" name="type" required>
+                <option value="">Sélectionner un type</option>
+                <option value="document">Document</option>
+                <option value="video">Vidéo</option>
+                <option value="link">Lien</option>
+                <option value="presentation">Présentation</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="resourceDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="resourceDescription" name="description" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="resourceFile" class="form-label">Fichier ou URL</label>
+              <input type="file" class="form-control" id="resourceFile" name="file">
+            </div>
+            <div class="mb-3">
+              <label for="resourceLink" class="form-label">Ou lien externe</label>
+              <input type="url" class="form-control" id="resourceLink" name="link" placeholder="https://">
+              <div class="form-text">Laissez vide si vous avez téléchargé un fichier.</div>
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="isPublic" name="is_public">
+              <label class="form-check-label" for="isPublic">
+                Disponible pour les clients
+              </label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" form="uploadResourceForm" class="btn btn-primary">Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

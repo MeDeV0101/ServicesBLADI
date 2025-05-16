@@ -1,0 +1,291 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Messages | Administration{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Gestion des Messages</h1>
+  </div>
+
+  <!-- Alert Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Error Display -->
+  {% if error %}
+    <div class="alert alert-danger">
+      <p>Une erreur est survenue: {{ error }}</p>
+    </div>
+  {% endif %}
+
+  <!-- Statistics Cards -->
+  <div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total des Messages</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total }}</div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-envelope-fill fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Messages Lus</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.read }}</div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-envelope-check fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Messages Non Lus</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.unread }}</div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-envelope-exclamation fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-info shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Nouveaux (24h)</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.recent }}</div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-clock-history fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Filters -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary">Filtres</h6>
+    </div>
+    <div class="card-body">
+      <form method="get" action="{% url 'admin_messages' %}">
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <label for="status">Statut</label>
+            <select class="form-select" id="status" name="status">
+              <option value="" {% if not status_filter %}selected{% endif %}>Tous les statuts</option>
+              <option value="read" {% if status_filter == 'read' %}selected{% endif %}>Lus</option>
+              <option value="unread" {% if status_filter == 'unread' %}selected{% endif %}>Non lus</option>
+            </select>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="period">Période</label>
+            <select class="form-select" id="period" name="period">
+              <option value="" {% if not period_filter %}selected{% endif %}>Toutes les périodes</option>
+              <option value="today" {% if period_filter == 'today' %}selected{% endif %}>Aujourd'hui</option>
+              <option value="week" {% if period_filter == 'week' %}selected{% endif %}>Cette semaine</option>
+              <option value="month" {% if period_filter == 'month' %}selected{% endif %}>Ce mois</option>
+            </select>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="search">Recherche</label>
+            <input type="text" class="form-control" id="search" name="search" value="{{ search_query }}" placeholder="Rechercher...">
+          </div>
+          <div class="col-md-2 mb-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Messages List -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Messages</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Expéditeur</th>
+              <th>Destinataire</th>
+              <th>Contenu</th>
+              <th>Demande</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if messages_list %}
+              {% for msg in messages_list %}
+              <tr class="{% if not msg.is_read %}table-warning{% endif %}">
+                <td>{{ msg.sent_at|date:"d/m/Y H:i" }}</td>
+                <td>{{ msg.sender.first_name }} {{ msg.sender.name }}</td>
+                <td>{{ msg.receiver.first_name }} {{ msg.receiver.name }}</td>
+                <td>{{ msg.content|truncatechars:50 }}</td>
+                <td>
+                  {% if msg.service_request %}
+                    <a href="#" class="link-primary">{{ msg.service_request.service.name|truncatechars:20 }}</a>
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </td>
+                <td>
+                  {% if msg.is_read %}
+                    <span class="badge bg-success">Lu</span>
+                  {% else %}
+                    <span class="badge bg-warning">Non lu</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <button type="button" class="btn btn-sm btn-primary view-message" data-bs-toggle="modal" data-bs-target="#messageModal" data-message-id="{{ msg.id }}" data-message-content="{{ msg.content }}" data-sender="{{ msg.sender.first_name }} {{ msg.sender.name }}" data-receiver="{{ msg.receiver.first_name }} {{ msg.receiver.name }}" data-date="{{ msg.sent_at|date:'d/m/Y H:i' }}">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="7" class="text-center">Aucun message trouvé.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Message View Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="messageModalLabel">Détails du Message</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <strong>Date:</strong> <span id="message-date"></span>
+        </div>
+        <div class="mb-3">
+          <strong>De:</strong> <span id="message-sender"></span>
+        </div>
+        <div class="mb-3">
+          <strong>À:</strong> <span id="message-receiver"></span>
+        </div>
+        <div class="mb-3">
+          <strong>Message:</strong>
+          <div class="p-3 bg-light rounded" id="message-content"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Handle message view modal
+    const viewButtons = document.querySelectorAll('.view-message');
+    
+    viewButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const content = this.getAttribute('data-message-content');
+        const sender = this.getAttribute('data-sender');
+        const receiver = this.getAttribute('data-receiver');
+        const date = this.getAttribute('data-date');
+        
+        document.getElementById('message-content').textContent = content;
+        document.getElementById('message-sender').textContent = sender;
+        document.getElementById('message-receiver').textContent = receiver;
+        document.getElementById('message-date').textContent = date;
+        
+        // Mark the message as read via AJAX
+        const messageId = this.getAttribute('data-message-id');
+        markAsRead(messageId);
+      });
+    });
+    
+    // Function to mark message as read
+    function markAsRead(messageId) {
+      fetch(`/admin/messages/${messageId}/mark-read/`, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': getCookie('csrftoken')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update UI to show message is now read
+          const messageRow = document.querySelector(`button[data-message-id="${messageId}"]`).closest('tr');
+          messageRow.classList.remove('table-warning');
+          const statusBadge = messageRow.querySelector('.badge');
+          if (statusBadge) {
+            statusBadge.classList.remove('bg-warning');
+            statusBadge.classList.add('bg-success');
+            statusBadge.textContent = 'Lu';
+          }
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    }
+    
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,236 +1,761 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends 'client/base.html' %}
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Mes Demandes - MRE</title>
-  <meta name="description" content="Gestion des demandes client MRE">
-  <meta name="keywords" content="MRE, demandes, services">
+{% block title %}Mes Demandes - MRE{% endblock %}
+{% block meta_description %}Gestion des demandes client MRE{% endblock %}
+{% block meta_keywords %}MRE, demandes, services{% endblock %}
 
-  <!-- Favicons -->
-  <link href="../../static/img/favicon.png" rel="icon">
-  <link href="../../static/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../../static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-
-  <!-- Main CSS File -->
-  <link href="../../static/css/main.css" rel="stylesheet">
-
-  <style>
-    :root {
-      --sidebar-width: 280px;
-      --header-height: 60px;
-      --primary-color: #1e3c72;
-      --secondary-color: #2a5298;
-    }
-
-    body {
-      background-color: #f8f9fa;
-    }
-
-    .dashboard-wrapper {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: var(--sidebar-width);
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-      color: white;
-      position: fixed;
-      height: 100vh;
-      left: 0;
-      top: 0;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-
-    .main-content {
-      margin-left: var(--sidebar-width);
-      flex: 1;
-      padding: 2rem;
-    }
-
-    .demande-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 1rem;
-      transition: transform 0.2s;
-    }
-
-    .demande-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .status-badge {
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-    }
-
-    .status-en-cours {
-      background-color: #e3fcef;
-      color: #00a854;
-    }
-
-    .status-en-attente {
-      background-color: #fff7e6;
-      color: #fa8c16;
-    }
-
-    .status-termine {
-      background-color: #f6ffed;
-      color: #52c41a;
-    }
-
-    @media (max-width: 992px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-      .main-content {
-        margin-left: 0;
-      }
-      .sidebar.active {
-        transform: translateX(0);
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="dashboard-wrapper">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header p-3">
-        <h3>MRE</h3>
+{% block content %}
+  <!-- Main Content -->
+  <div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Mes Demandes de Services</h2>
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="newRequestDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-plus-lg me-2"></i>Nouvelle demande
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="newRequestDropdown">
+          <li><a class="dropdown-item" href="#" data-service="Service Administratif">Services Administratifs</a></li>
+          <li><a class="dropdown-item" href="#" data-service="Service Tourisme">Tourisme</a></li>
+          <li><a class="dropdown-item" href="#" data-service="Service Immobilier">Immobilier</a></li>
+          <li><a class="dropdown-item" href="#" data-service="Service Fiscal">Fiscalité</a></li>
+          <li><a class="dropdown-item" href="#" data-service="Service Investissement">Investissement</a></li>
+        </ul>
       </div>
-      <div class="sidebar-profile text-center p-3">
-        <img src="../../static/img/profile-placeholder.jpg" alt="Profile" class="rounded-circle" width="80">
-        <h5 class="mt-3 text-white">Mohammed Abd</h5>
-        <p class="text-white-50">Client</p>
-      </div>
-      <nav class="sidebar-menu">
-        <a href="dashboard.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
-        </a>
-        <a href="demandes.html" class="d-block p-3 text-white text-decoration-none active">
-          <i class="bi bi-file-text me-2"></i>Mes demandes
-        </a>
-        <a href="documents.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-folder me-2"></i>Mes documents
-        </a>
-        <a href="rendezvous.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-calendar me-2"></i>Rendez-vous
-        </a>
-        <a href="ressources.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-book me-2"></i>Ressources
-        </a>
-        <a href="../index.html" class="d-block p-3 text-white text-decoration-none">
-          <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
-        </a>
-      </nav>
-    </aside>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2>Mes Demandes</h2>
-          <button class="btn btn-primary">
-            <i class="bi bi-plus-lg me-2"></i>Nouvelle demande
-          </button>
-        </div>
-
-        <!-- Filtres -->
-        <div class="card mb-4">
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-3">
-                <select class="form-select">
-                  <option value="">Tous les statuts</option>
-                  <option value="en-cours">En cours</option>
-                  <option value="en-attente">En attente</option>
-                  <option value="termine">Terminé</option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <select class="form-select">
-                  <option value="">Tous les types</option>
-                  <option value="administrative">Administrative</option>
-                  <option value="fiscale">Fiscale</option>
-                  <option value="immobilier">Immobilier</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Rechercher une demande...">
-              </div>
-              <div class="col-md-2">
-                <button class="btn btn-outline-primary w-100">Filtrer</button>
-              </div>
+    <!-- Filtres -->
+    <form method="get" action="{% url 'client_demandes' %}">
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <select class="form-select" name="status">
+                <option value="">Tous les statuts</option>
+                <option value="new" {% if request.GET.status == 'new' %}selected{% endif %}>Nouvelle</option>
+                <option value="pending_info" {% if request.GET.status == 'pending_info' %}selected{% endif %}>En attente d'information</option>
+                <option value="in_progress" {% if request.GET.status == 'in_progress' %}selected{% endif %}>En cours</option>
+                <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Terminée</option>
+                <option value="cancelled" {% if request.GET.status == 'cancelled' %}selected{% endif %}>Annulée</option>
+              </select>
             </div>
-          </div>
-        </div>
-
-        <!-- Liste des demandes -->
-        <div class="demande-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h5 class="mb-1">Demande de certificat de résidence</h5>
-              <p class="text-muted mb-0">Type: Administrative</p>
+            <div class="col-md-3">
+              <select class="form-select" name="priority">
+                <option value="">Toutes les priorités</option>
+                <option value="low" {% if request.GET.priority == 'low' %}selected{% endif %}>Basse</option>
+                <option value="medium" {% if request.GET.priority == 'medium' %}selected{% endif %}>Moyenne</option>
+                <option value="high" {% if request.GET.priority == 'high' %}selected{% endif %}>Haute</option>
+                <option value="urgent" {% if request.GET.priority == 'urgent' %}selected{% endif %}>Urgente</option>
+              </select>
             </div>
-            <div class="text-end">
-              <span class="status-badge status-en-cours">En cours</span>
-              <p class="text-muted mb-0 mt-2">Créée le: 15/03/2024</p>
+            <div class="col-md-4">
+              <input type="text" class="form-control" name="search" placeholder="Rechercher une demande..." value="{{ request.GET.search|default:'' }}">
             </div>
-          </div>
-        </div>
-
-        <div class="demande-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h5 class="mb-1">Déclaration fiscale annuelle</h5>
-              <p class="text-muted mb-0">Type: Fiscale</p>
-            </div>
-            <div class="text-end">
-              <span class="status-badge status-en-attente">En attente</span>
-              <p class="text-muted mb-0 mt-2">Créée le: 10/03/2024</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="demande-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h5 class="mb-1">Achat immobilier</h5>
-              <p class="text-muted mb-0">Type: Immobilier</p>
-            </div>
-            <div class="text-end">
-              <span class="status-badge status-termine">Terminé</span>
-              <p class="text-muted mb-0 mt-2">Créée le: 01/03/2024</p>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-outline-primary w-100">Filtrer</button>
             </div>
           </div>
         </div>
       </div>
-    </main>
+    </form>
+
+    <!-- Liste des demandes -->
+    {% if requests %}
+      {% for demande in requests %}
+        <div class="demande-card p-3 mb-3">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h5 class="mb-2">{{ demande.title }}</h5>
+              <p class="mb-1 text-muted">{{ demande.description|truncatechars:150 }}</p>
+              <div class="d-flex align-items-center mt-3">
+                <span class="me-4">
+                  <i class="bi bi-calendar-event me-1"></i> {{ demande.created_at|date:"d/m/Y" }}
+                </span>
+                <span>
+                  <i class="bi bi-tag me-1"></i> {{ demande.service.title }}
+                </span>
+              </div>
+            </div>
+            <div class="d-flex flex-column align-items-end">
+              <div>
+                {% if demande.status == 'new' %}
+                  <span class="status-badge status-en-attente">Nouvelle</span>
+                {% elif demande.status == 'pending_info' %}
+                  <span class="status-badge status-en-attente">En attente</span>
+                {% elif demande.status == 'in_progress' %}
+                  <span class="status-badge status-en-cours">En cours</span>
+                {% elif demande.status == 'completed' %}
+                  <span class="status-badge status-termine">Terminée</span>
+                {% elif demande.status == 'cancelled' %}
+                  <span class="status-badge">Annulée</span>
+                {% else %}
+                  <span class="status-badge">{{ demande.status }}</span>
+                {% endif %}
+                
+                {% if demande.priority == 'urgent' %}
+                  <span class="badge bg-danger ms-2">Urgent</span>
+                {% elif demande.priority == 'high' %}
+                  <span class="badge bg-warning ms-2">Prioritaire</span>
+                {% endif %}
+              </div>
+              <div class="mt-3">
+                <a href="{% url 'custom_requests:request_detail' demande.id %}" class="btn btn-sm btn-primary">
+                  <i class="bi bi-eye me-1"></i> Détails
+                </a>
+                {% if demande.status == 'new' or demande.status == 'pending_info' %}
+                  <a href="{% url 'custom_requests:edit_request' demande.id %}" class="btn btn-sm btn-outline-secondary ms-2">
+                    <i class="bi bi-pencil me-1"></i> Modifier
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="alert alert-info">
+        Vous n'avez pas encore de demandes. Créez votre première demande en cliquant sur "Nouvelle demande".
+      </div>
+    {% endif %}
   </div>
+  
+  <!-- Service Request Form (Hidden by default) -->
+  <div class="service-request-form" id="serviceRequestFullForm" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; width: calc(100% - var(--sidebar-width)); background-color: #f8f9fa; z-index: 1050; padding: 1rem; overflow-y: auto; overflow-x: hidden; box-shadow: -5px 0 15px rgba(0,0,0,0.1);">
+    <div class="container-fluid py-2">
+      <div class="row justify-content-center">
+        <div class="col-lg-11 col-xl-10">
+          <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-white text-center py-4 border-bottom">
+              <div class="d-flex flex-column align-items-center justify-content-center">
+                <i class="bi bi-file-earmark-text text-primary fs-1 mb-3"></i>
+                <h3 class="card-title mb-1" id="formServiceTitle">Nouvelle demande</h3>
+                <p class="text-muted small" id="formServiceDescription">Veuillez remplir le formulaire ci-dessous</p>
+              </div>
+            </div>
+            <div class="card-body p-4 p-xl-5">
+              <form id="serviceRequestForm">
+                {% csrf_token %}
+                <input type="hidden" id="serviceType" name="serviceType" value="">
+                
+                <!-- Common fields for all services -->
+                <div class="mb-4">
+                  <h5 class="mb-3 border-bottom pb-2">Informations générales</h5>
+                  <div class="mb-3">
+                    <label for="requestTitle" class="form-label">Titre de votre demande</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-type"></i></span>
+                      <input type="text" class="form-control" id="requestTitle" name="requestTitle" required>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Administrative -->
+                <div id="adminFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service administratif</h5>
+                  <div class="mb-3">
+                    <label for="adminDocumentType" class="form-label">Type de document</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-file-earmark"></i></span>
+                      <select class="form-select" id="adminDocumentType" name="adminDocumentType">
+                        <option value="">Sélectionner un type de document</option>
+                        <option value="passeport">Passeport</option>
+                        <option value="carte_nationale">Carte Nationale d'Identité</option>
+                        <option value="acte_naissance">Acte de Naissance</option>
+                        <option value="certificat_residence">Certificat de Résidence</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="adminUrgency" class="form-label">Niveau d'urgence</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-exclamation-triangle"></i></span>
+                      <select class="form-select" id="adminUrgency" name="adminUrgency">
+                        <option value="normale">Normale</option>
+                        <option value="urgente">Urgente</option>
+                        <option value="tres_urgente">Très urgente</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Tourism -->
+                <div id="tourismeFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service touristique</h5>
+                  <div class="mb-3">
+                    <label for="tourismType" class="form-label">Type de service touristique</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                      <select class="form-select" id="tourismType" name="tourismType">
+                        <option value="">Sélectionner un service</option>
+                        <option value="reservation_hotel">Réservation d'hôtel</option>
+                        <option value="circuit_touristique">Circuit touristique</option>
+                        <option value="location_voiture">Location de voitures</option>
+                        <option value="guide_touristique">Guide touristique</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="dateArrivee" class="form-label">Date d'arrivée</label>
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                          <input type="date" class="form-control" id="dateArrivee" name="dateArrivee">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="dateDepart" class="form-label">Date de départ</label>
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text"><i class="bi bi-calendar-x"></i></span>
+                          <input type="date" class="form-control" id="dateDepart" name="dateDepart">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Real Estate -->
+                <div id="immobilierFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service immobilier</h5>
+                  <div class="mb-3">
+                    <label for="immobilierType" class="form-label">Type de service immobilier</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-house"></i></span>
+                      <select class="form-select" id="immobilierType" name="immobilierType">
+                        <option value="">Sélectionner un service</option>
+                        <option value="achat">Achat de bien</option>
+                        <option value="vente">Vente de bien</option>
+                        <option value="location">Location</option>
+                        <option value="gestion_bien">Gestion de bien</option>
+                        <option value="conseil">Conseil immobilier</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="propertyType" class="form-label">Type de bien</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-building"></i></span>
+                      <select class="form-select" id="propertyType" name="propertyType">
+                        <option value="">Sélectionner un type de bien</option>
+                        <option value="appartement">Appartement</option>
+                        <option value="maison">Maison</option>
+                        <option value="villa">Villa</option>
+                        <option value="terrain">Terrain</option>
+                        <option value="commerce">Local commercial</option>
+                        <option value="bureau">Bureau</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="propertyLocation" class="form-label">Ville</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                      <select class="form-select" id="propertyLocation" name="propertyLocation">
+                        <option value="">Sélectionner une ville</option>
+                        <option value="casablanca">Casablanca</option>
+                        <option value="rabat">Rabat</option>
+                        <option value="marrakech">Marrakech</option>
+                        <option value="tanger">Tanger</option>
+                        <option value="agadir">Agadir</option>
+                        <option value="fes">Fès</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Fiscal -->
+                <div id="fiscalFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service fiscal</h5>
+                  <div class="mb-3">
+                    <label for="fiscalType" class="form-label">Type de service fiscal</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-cash-coin"></i></span>
+                      <select class="form-select" id="fiscalType" name="fiscalType">
+                        <option value="">Sélectionner un service</option>
+                        <option value="declaration_impots">Déclaration d'impôts</option>
+                        <option value="optimisation_fiscale">Optimisation fiscale</option>
+                        <option value="conseil_fiscal">Conseil fiscal</option>
+                        <option value="contentieux_fiscal">Contentieux fiscal</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="fiscalYear" class="form-label">Année fiscale concernée</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                      <select class="form-select" id="fiscalYear" name="fiscalYear">
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Service-specific fields - Investment -->
+                <div id="investissementFields" class="service-fields" style="display: none;">
+                  <h5 class="mb-3 border-bottom pb-2">Détails du service d'investissement</h5>
+                  <div class="mb-3">
+                    <label for="investType" class="form-label">Type d'investissement</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-graph-up"></i></span>
+                      <select class="form-select" id="investType" name="investType">
+                        <option value="">Sélectionner un type d'investissement</option>
+                        <option value="immobilier">Immobilier</option>
+                        <option value="commerce">Commerce</option>
+                        <option value="industrie">Industrie</option>
+                        <option value="agriculture">Agriculture</option>
+                        <option value="technologie">Technologie</option>
+                        <option value="autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="investBudget" class="form-label">Budget approximatif (MAD)</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                      <select class="form-select" id="investBudget" name="investBudget">
+                        <option value="moins_500k">Moins de 500 000</option>
+                        <option value="500k_1m">500 000 - 1 000 000</option>
+                        <option value="1m_3m">1 000 000 - 3 000 000</option>
+                        <option value="3m_5m">3 000 000 - 5 000 000</option>
+                        <option value="plus_5m">Plus de 5 000 000</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Description field for all services -->
+                <div class="mb-4">
+                  <h5 class="mb-3 border-bottom pb-2">Description de votre demande</h5>
+                  <div class="mb-3">
+                    <label for="requestDescription" class="form-label">Description détaillée</label>
+                    <textarea class="form-control form-control-lg" id="requestDescription" name="requestDescription" rows="5" required></textarea>
+                    <div class="form-text">Décrivez votre besoin avec le plus de détails possible pour un traitement optimal.</div>
+                  </div>
+                </div>
+                
+                <!-- File upload field -->
+                <div class="mb-4">
+                  <h5 class="mb-3 border-bottom pb-2">Documents joints</h5>
+                  <div class="mb-3">
+                    <label for="requestFiles" class="form-label">Documents complémentaires (optionnel)</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-file-earmark-arrow-up"></i></span>
+                      <input class="form-control" type="file" id="requestFiles" name="requestFiles" multiple>
+                    </div>
+                    <div class="form-text">Vous pouvez joindre plusieurs documents (PDF, images, etc.)</div>
+                  </div>
+                </div>
+                
+                <!-- Boutons d'action -->
+                <div class="row mt-5">
+                  <div class="col-md-8 col-lg-5 mx-auto">
+                    <div class="d-grid gap-2">
+                      <button type="button" id="submitServiceRequest" class="btn btn-primary btn-lg py-3"><i class="bi bi-check-circle me-2"></i>Soumettre la demande</button>
+                      <button type="button" id="closeServiceForm" class="btn btn-outline-secondary py-2"><i class="bi bi-x-circle me-2"></i>Annuler</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Success Alert (Hidden by default) -->
+  <div class="alert-container" style="display: none; position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 1060; width: 90%; max-width: 500px;">
+    <div class="alert alert-success alert-dismissible fade shadow" role="alert" id="successAlert">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-check-circle-fill fs-4 me-2"></i>
+        <div>
+          <strong>Demande soumise avec succès!</strong>
+          <p class="mb-0 small">Votre demande a été enregistrée. Nous la traiterons dans les plus brefs délais.</p>
+        </div>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+{% endblock %}
 
-  <!-- Vendor JS Files -->
-  <script src="../../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../../static/vendor/aos/aos.js"></script>
-  <script src="../../static/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../../static/vendor/swiper/swiper-bundle.min.js"></script>
+{% block extra_js %}
+<script>
+  // Vérifie si Bootstrap est disponible, sinon le charge
+  if (typeof bootstrap === 'undefined') {
+    console.log('Bootstrap n\'est pas défini, chargement de la bibliothèque...');
+    const bootstrapScript = document.createElement('script');
+    bootstrapScript.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js';
+    bootstrapScript.integrity = 'sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4';
+    bootstrapScript.crossOrigin = 'anonymous';
+    bootstrapScript.onload = function() {
+      console.log('Bootstrap chargé avec succès!');
+      initializeEventHandlers();
+    };
+    document.head.appendChild(bootstrapScript);
+  } else {
+    initializeEventHandlers();
+  }
 
-  <!-- Main JS File -->
-  <script src="../../static/js/main.js"></script>
-</body>
+  // Fonction pour ouvrir le formulaire de demande de service à pleine page
+  function showServiceRequestForm(serviceType) {
+    console.log('Affichage du formulaire pour le service:', serviceType);
+    
+    const serviceRequestForm = document.getElementById('serviceRequestFullForm');
+    const mainContent = document.querySelector('.main-content');
+    
+    if (!serviceRequestForm) {
+      console.error('Formulaire de service non trouvé!');
+      return;
+    }
+    
+    // Réinitialiser le formulaire
+    document.getElementById('serviceRequestForm').reset();
+    
+    // Cacher tous les champs spécifiques
+    document.querySelectorAll('.service-fields').forEach(field => {
+      field.style.display = 'none';
+    });
+    
+    // Définir le type de service et mettre à jour le formulaire
+    document.getElementById('serviceType').value = serviceType;
+    document.getElementById('formServiceTitle').textContent = serviceType;
+    
+    // Afficher les champs spécifiques en fonction du type
+    let fieldsToShow = '';
+    let serviceDescription = '';
+    
+    switch(serviceType) {
+      case 'Service Administratif':
+      case 'Services Administratifs':
+        fieldsToShow = 'adminFields';
+        serviceDescription = 'Demandez des documents officiels, des attestations ou tout autre service administratif.';
+        break;
+      case 'Service Tourisme':
+      case 'Tourisme':
+        fieldsToShow = 'tourismeFields';
+        serviceDescription = 'Réservations d\'hôtels, circuits touristiques, location de voitures et autres services touristiques.';
+        break;
+      case 'Service Immobilier':
+      case 'Immobilier':
+        fieldsToShow = 'immobilierFields';
+        serviceDescription = 'Services d\'achat, vente, location ou gestion de biens immobiliers.';
+        break;
+      case 'Service Fiscal':
+      case 'Fiscalité':
+        fieldsToShow = 'fiscalFields';
+        serviceDescription = 'Déclarations fiscales, optimisation fiscale, conseils et assistance pour vos impôts.';
+        break;
+      case 'Service Investissement':
+      case 'Investissement':
+        fieldsToShow = 'investissementFields';
+        serviceDescription = 'Conseils et accompagnement pour vos projets d\'investissement au Maroc.';
+        break;
+      default:
+        serviceDescription = 'Veuillez spécifier les détails de votre demande dans la description.';
+    }
+    
+    // Afficher les champs pertinents
+    if (fieldsToShow) {
+      const fieldsElement = document.getElementById(fieldsToShow);
+      if (fieldsElement) {
+        fieldsElement.style.display = 'block';
+      } else {
+        console.error('Élément', fieldsToShow, 'non trouvé!');
+      }
+    }
+    
+    // Définir la description du service
+    document.getElementById('formServiceDescription').textContent = serviceDescription;
+    
+    // Cacher le contenu principal
+    if (mainContent) {
+      mainContent.style.visibility = 'hidden';
+    }
+    
+    // Afficher le formulaire avec animation
+    serviceRequestForm.style.display = 'block';
+    setTimeout(() => {
+      serviceRequestForm.classList.add('show');
+    }, 50);
+  }
+  
+  // Initialisation des gestionnaires d'événements
+  function initializeEventHandlers() {
+    // Gestionnaire pour les items du dropdown
+    document.querySelectorAll('.dropdown-item[data-service]').forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        const serviceType = this.getAttribute('data-service');
+        console.log('Option de service cliquée:', serviceType);
+        showServiceRequestForm(serviceType);
+      });
+    });
+    
+    // Fermeture du formulaire
+    const closeFormBtn = document.getElementById('closeServiceForm');
+    if (closeFormBtn) {
+      closeFormBtn.addEventListener('click', function() {
+        console.log('Fermeture du formulaire');
+        const serviceRequestForm = document.getElementById('serviceRequestFullForm');
+        const mainContent = document.querySelector('.main-content');
+        
+        serviceRequestForm.classList.remove('show');
+        
+        setTimeout(() => {
+          serviceRequestForm.style.display = 'none';
+          // Restaurer la visibilité du contenu principal
+          if (mainContent) {
+            mainContent.style.visibility = 'visible';
+          }
+        }, 300);
+      });
+    }
+    
+    // Soumission du formulaire
+    const submitBtn = document.getElementById('submitServiceRequest');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', function() {
+        console.log('Tentative de soumission du formulaire');
+        const form = document.getElementById('serviceRequestForm');
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        
+        // Collecter les données du formulaire
+        const formData = new FormData(form);
+        
+        // Ajouter les fichiers s'il y en a
+        const fileInput = document.getElementById('requestFiles');
+        if (fileInput.files.length > 0) {
+          for (let i = 0; i < fileInput.files.length; i++) {
+            formData.append('files[]', fileInput.files[i]);
+          }
+        }
+        
+        // Afficher l'état de traitement
+        const submitButton = document.getElementById('submitServiceRequest');
+        const originalButtonText = submitButton.innerHTML;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Traitement...';
+        submitButton.disabled = true;
+        
+        // Fonction pour obtenir le token CSRF
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+        
+        // Envoyer les données au serveur
+        fetch('/requests/ajax/create-request/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Cacher le formulaire
+          const serviceRequestForm = document.getElementById('serviceRequestFullForm');
+          const mainContent = document.querySelector('.main-content');
+          
+          serviceRequestForm.classList.remove('show');
+          setTimeout(() => {
+            serviceRequestForm.style.display = 'none';
+            // Restaurer la visibilité du contenu principal
+            if (mainContent) {
+              mainContent.style.visibility = 'visible';
+            }
+          }, 300);
+          
+          if (data.success) {
+            // Afficher le message de succès
+            const successAlert = document.querySelector('.alert-container');
+            const successMessage = document.querySelector('#successAlert');
+            successAlert.style.display = 'block';
+            successMessage.classList.add('show');
+            
+            // Cacher l'alerte après 5 secondes
+            setTimeout(() => {
+              successMessage.classList.remove('show');
+              setTimeout(() => {
+                successAlert.style.display = 'none';
+              }, 500);
+            }, 5000);
+            
+            // Recharger la page après 2 secondes pour afficher la nouvelle demande
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          } else {
+            // Afficher un message d'erreur
+            alert('Erreur lors de la création de la demande: ' + (data.message || 'Erreur inconnue'));
+          }
+          
+          // Réinitialiser le bouton
+          submitButton.innerHTML = originalButtonText;
+          submitButton.disabled = false;
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+          alert('Erreur lors de la communication avec le serveur. Veuillez réessayer.');
+          submitButton.innerHTML = originalButtonText;
+          submitButton.disabled = false;
+        });
+      });
+    }
+  }
+  
+  // Assurez-vous que les gestionnaires d'événements sont initialisés lors du chargement
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialiser les gestionnaires s'ils ne sont pas déjà initialisés
+    if (typeof bootstrap !== 'undefined') {
+      initializeEventHandlers();
+    }
+  });
+</script>
+{% endblock %}
 
-</html> 
+{% block extra_css %}
+<style>
+  /* Service card and form styles */
+  .service-fields {
+    margin-bottom: 1.5rem;
+  }
+  
+  .demande-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+  }
+  
+  .demande-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  }
+  
+  .status-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+  }
+  
+  .status-en-attente {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .status-en-cours {
+    background-color: #cce5ff;
+    color: #004085;
+  }
+  
+  .status-termine {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  /* Success alert styles */
+  .alert-container .alert {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border-left: 4px solid #198754;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+  }
+  
+  .alert-container .alert.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .alert.fade {
+    transition: opacity 0.15s linear;
+  }
+  
+  .alert.fade.show {
+    opacity: 1;
+  }
+  
+  /* Dropdown styles */
+  .dropdown-menu .service-item {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0;
+    transition: all 0.2s;
+  }
+  
+  .dropdown-menu .service-item:hover {
+    background-color: #f0f7ff;
+    color: var(--primary-color);
+  }
+  
+  /* Form styles */
+  #serviceRequestForm label {
+    font-weight: 500;
+    color: #444;
+  }
+  
+  #serviceRequestForm .form-control:focus,
+  #serviceRequestForm .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(30, 60, 114, 0.1);
+  }
+  
+  /* Service Request Form Styles */
+  .service-request-form {
+    opacity: 0;
+    transition: all 0.3s ease;
+    transform: translateY(10px);
+    backdrop-filter: blur(5px);
+  }
+  
+  .service-request-form.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Overlay to hide main content when form is open */
+  .service-request-form::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(248, 249, 250, 0.97);
+    z-index: -1;
+  }
+  
+  /* Media query for responsiveness */
+  @media (max-width: 992px) {
+    .service-request-form {
+      width: 100% !important;
+      left: 0;
+    }
+  }
+</style>
+{% endblock %}

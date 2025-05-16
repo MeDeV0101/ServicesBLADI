@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>{% block title %}MRE{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{% endblock %}">
+  <meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
+
+  <!-- Favicons -->
+  <link href="../../static/img/favicon.png" rel="icon">
+  <link href="../../static/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../../static/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../../static/vendor/animate.css/animate.min.css" rel="stylesheet">
+  <link href="../../static/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../../static/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="../../static/css/main.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --sidebar-width: 280px;
+      --header-height: 60px;
+      --primary-color: #1e3c72;
+      --secondary-color: #2a5298;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    .dashboard-wrapper {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      width: 100%;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      height: 100vh;
+      left: 0;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      overflow-y: auto;
+      scrollbar-width: thin; /* Pour Firefox */
+      scrollbar-color: rgba(255,255,255,0.3) transparent; /* Pour Firefox */
+    }
+    
+    /* Style de la barre de défilement pour Webkit (Chrome, Safari) */
+    .sidebar::-webkit-scrollbar {
+      width: 5px;
+    }
+    
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: rgba(255,255,255,0.3);
+      border-radius: 10px;
+    }
+    
+    .sidebar-header {
+      padding: 0.5rem 1rem 1.5rem;
+      text-align: center;
+    }
+
+    .sidebar-profile {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .profile-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      margin-bottom: 0.5rem;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.15);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .profile-icon i {
+      font-size: 3rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .sidebar-menu {
+      padding: 0.5rem 0;
+    }
+
+    .sidebar-menu a {
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: white;
+      text-decoration: none !important;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-menu a.active {
+      background-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+    }
+    
+    .sidebar-menu a i {
+      font-size: 1.4rem;
+      margin-right: 0.75rem;
+      width: 28px;
+      text-align: center;
+      opacity: 0.9;
+    }
+    
+    .sidebar-menu a.active i {
+      opacity: 1;
+    }
+
+    .main-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 2rem;
+      width: calc(100% - var(--sidebar-width));
+      overflow-y: auto;
+    }
+
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+    }
+    
+    /* Make sure content is fully visible at 100% zoom */
+    @media (min-width: 993px) {
+      .dashboard-wrapper {
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+      
+      .main-content {
+        box-sizing: border-box;
+      }
+    }
+
+    .sidebar-profile h5 {
+      margin-top: 0.5rem;
+      margin-bottom: 0.3rem;
+    }
+    
+    .sidebar-profile p {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+
+<body class="dashboard-page">
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h3>ServicesBLADI</h3>
+      </div>
+      <div class="sidebar-profile">
+        <div class="profile-icon">
+          <i class="bi bi-person-circle"></i>
+        </div>
+        <h5 class="text-white">{{ user.name }} {{ user.first_name }}</h5>
+        <p class="text-white-50">Client</p>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="{% url 'client_dashboard' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
+          <i class="bi bi-speedometer2"></i>
+          <span>Tableau de bord</span>
+        </a>
+        <a href="{% url 'client_demandes' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_demandes' %}active{% endif %}">
+          <i class="bi bi-file-text"></i>
+          <span>Mes demandes</span>
+        </a>
+        <a href="{% url 'client_documents' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_documents' %}active{% endif %}">
+          <i class="bi bi-folder"></i>
+          <span>Mes documents</span>
+        </a>
+        <a href="{% url 'custom_requests:client_appointments' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_appointments' %}active{% endif %}">
+          <i class="bi bi-calendar"></i>
+          <span>Rendez-vous</span>
+        </a>
+        <a href="{% url 'client_ressources' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_ressources' %}active{% endif %}">
+          <i class="bi bi-book"></i>
+          <span>Ressources</span>
+        </a>
+        <a href="{% url 'client_messages' %}" class="text-white text-decoration-none {% if request.resolver_match.url_name == 'client_messages' %}active{% endif %}">
+          <i class="bi bi-envelope"></i>
+          <span>Messages</span>
+        </a>
+        <a href="#" class="text-white text-decoration-none" id="editProfileBtn" data-active="false">
+          <i class="bi bi-person-gear"></i>
+          <span>Modifier Profil</span>
+        </a>
+        <a href="{% url 'accounts:logout' %}" class="text-white text-decoration-none">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Déconnexion</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Mobile sidebar toggle button -->
+      <button id="sidebarToggle" class="d-lg-none btn btn-sm btn-primary mb-3">
+        <i class="bi bi-list"></i> Menu
+      </button>
+      
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Profile Edit Form (Hidden by default) -->
+  <div class="profile-edit-form" id="profileEditForm" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; width: calc(100% - var(--sidebar-width)); background-color: #f8f9fa; z-index: 1050; padding: 1rem; overflow-y: auto; overflow-x: hidden; box-shadow: -5px 0 15px rgba(0,0,0,0.1);">
+    <div class="container-fluid py-2">
+      <div class="row justify-content-center">
+        <div class="col-lg-11 col-xl-10">
+          <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-white text-center py-4 border-bottom">
+              <div class="d-flex flex-column align-items-center justify-content-center">
+                <i class="bi bi-person-gear text-primary fs-1 mb-3"></i>
+                <h3 class="card-title mb-1">Modifier votre profil</h3>
+                <p class="text-muted small">Mettez à jour vos informations personnelles</p>
+              </div>
+            </div>
+            <div class="card-body p-4 p-xl-5">
+              <form id="userProfileForm" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <!-- Informations personnelles -->
+                <h5 class="mb-3 border-bottom pb-2">Informations personnelles</h5>
+                
+                <div class="row g-3 mb-4">
+                  <!-- Nom -->
+                  <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Nom</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-person"></i></span>
+                      <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                    </div>
+                  </div>
+                  
+                  <!-- Prénom -->
+                  <div class="col-md-6 mb-3">
+                    <label for="first_name" class="form-label">Prénom</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-person-plus"></i></span>
+                      <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Coordonnées -->
+                <h5 class="mb-3 border-bottom pb-2">Coordonnées</h5>
+                
+                <div class="row g-3 mb-4">
+                  <!-- Email -->
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                      <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                  </div>
+                  
+                  <!-- Téléphone -->
+                  <div class="col-md-6 mb-3">
+                    <label for="phone" class="form-label">Numéro de téléphone</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                      <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone|default:'' }}">
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Localisation -->
+                <h5 class="mb-3 border-bottom pb-2">Localisation</h5>
+                
+                <div class="row g-3 mb-4">
+                  <!-- Pays de résidence -->
+                  <div class="col-md-8 col-lg-7 mb-3">
+                    <label for="residence_country" class="form-label">Pays de résidence</label>
+                    <div class="input-group input-group-lg">
+                      <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                      <select class="form-select" id="residence_country" name="residence_country">
+                        {% for country_code, country_name in settings.COUNTRIES %}
+                          <option value="{{ country_code }}" {% if user.residence_country == country_code %}selected{% endif %}>{{ country_name }}</option>
+                        {% empty %}
+                          <option value="MA" {% if user.residence_country == 'MA' %}selected{% endif %}>Maroc</option>
+                          <option value="FR" {% if user.residence_country == 'FR' %}selected{% endif %}>France</option>
+                          <option value="ES" {% if user.residence_country == 'ES' %}selected{% endif %}>Espagne</option>
+                          <option value="BE" {% if user.residence_country == 'BE' %}selected{% endif %}>Belgique</option>
+                          <option value="CA" {% if user.residence_country == 'CA' %}selected{% endif %}>Canada</option>
+                          <option value="IT" {% if user.residence_country == 'IT' %}selected{% endif %}>Italie</option>
+                          <option value="DE" {% if user.residence_country == 'DE' %}selected{% endif %}>Allemagne</option>
+                          <option value="NL" {% if user.residence_country == 'NL' %}selected{% endif %}>Pays-Bas</option>
+                          <option value="GB" {% if user.residence_country == 'GB' %}selected{% endif %}>Royaume-Uni</option>
+                          <option value="US" {% if user.residence_country == 'US' %}selected{% endif %}>États-Unis</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Boutons d'action -->
+                <div class="row mt-5">
+                  <div class="col-md-8 col-lg-5 mx-auto">
+                    <div class="d-grid gap-2">
+                      <button type="submit" class="btn btn-primary btn-lg py-3"><i class="bi bi-check-circle me-2"></i>Enregistrer</button>
+                      <button type="button" id="closeProfileForm" class="btn btn-outline-secondary py-2"><i class="bi bi-x-circle me-2"></i>Annuler</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Alert (Hidden by default) -->
+  <div class="alert-container" style="display: none; position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 1060; width: 90%; max-width: 500px;">
+    <div class="alert alert-success alert-dismissible fade shadow" role="alert" id="successAlert">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-check-circle-fill fs-4 me-2"></i>
+        <div>
+          <strong>Profil mis à jour avec succès!</strong>
+          <p class="mb-0 small">Vos informations personnelles ont été actualisées.</p>
+        </div>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Vendor JS Files -->
+  <script src="../../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../static/vendor/aos/aos.js"></script>
+  <script src="../../static/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../../static/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="../../static/js/main.js"></script>
+  
+  <script>
+    // Function to redirect to the appropriate service request page
+    function redirectToCreateRequest(serviceType) {
+      // Map service types to URLs with correct paths including the /requests/ prefix
+      const serviceUrls = {
+        'admin': '/requests/client/create/administrative/',
+        'administrative': '/requests/client/create/administrative/',
+        'tourisme': '/requests/client/create/tourism/',
+        'tourism': '/requests/client/create/tourism/',
+        'immobilier': '/requests/client/create/real_estate/',
+        'real_estate': '/requests/client/create/real_estate/',
+        'fiscal': '/requests/client/create/fiscal/',
+        'tax': '/requests/client/create/fiscal/',
+        'investissement': '/requests/client/create/investment/',
+        'investment': '/requests/client/create/investment/',
+        'service': '/requests/client/create/administrative/'
+      };
+      
+      // Use the mapped URL or default to the base URL
+      const redirectUrl = serviceUrls[serviceType] || '/requests/client/create/administrative/';
+      window.location.href = redirectUrl;
+    }
+    
+    // Sidebar toggle functionality for mobile devices
+    document.addEventListener("DOMContentLoaded", function() {
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const sidebar = document.querySelector('.sidebar');
+      
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('active');
+        });
+      }
+      
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(event) {
+        const isClickInsideSidebar = sidebar.contains(event.target);
+        const isClickInsideToggle = sidebarToggle && sidebarToggle.contains(event.target);
+        
+        if (!isClickInsideSidebar && !isClickInsideToggle && window.innerWidth <= 992 && sidebar.classList.contains('active')) {
+          sidebar.classList.remove('active');
+        }
+      });
+    });
+    
+    // Profile edit functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const editProfileBtn = document.getElementById('editProfileBtn');
+      const profileEditForm = document.getElementById('profileEditForm');
+      const closeProfileForm = document.getElementById('closeProfileForm');
+      const userProfileForm = document.getElementById('userProfileForm');
+      const successAlert = document.getElementById('successAlert');
+      const alertContainer = document.querySelector('.alert-container');
+      const mainContent = document.querySelector('.main-content');
+      
+      // Show profile edit form when clicking the button
+      if (editProfileBtn) {
+        // Fonction pour maintenir le focus sur le bouton "Modifier Profil"
+        function maintainEditProfileFocus() {
+          if (editProfileBtn && editProfileBtn.getAttribute('data-active') === 'true') {
+            editProfileBtn.focus();
+          }
+        }
+        
+        // Intercepter tout changement de focus potentiel
+        document.addEventListener('focusin', function(e) {
+          if (editProfileBtn && editProfileBtn.getAttribute('data-active') === 'true') {
+            // Si le formulaire de profil est ouvert, maintenir l'aspect visuel actif
+            editProfileBtn.classList.add('active');
+          }
+        });
+
+        editProfileBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Add active class to the button and remove from others that aren't dynamic
+          const allMenuItems = document.querySelectorAll('.sidebar-menu a');
+          allMenuItems.forEach(item => {
+            if (item !== this && !item.id) {
+              item.classList.remove('active');
+            }
+          });
+          
+          // Add special class to body
+          document.body.classList.add('edit-profile-active');
+          
+          this.classList.add('active');
+          this.setAttribute('data-active', 'true');
+          this.focus(); // Assure que le focus est bien sur ce bouton
+          
+          // Hide any potential overflow content from main content
+          if (mainContent) {
+            mainContent.style.visibility = 'hidden';
+          }
+          
+          // Show the form with animation
+          profileEditForm.style.display = 'block';
+          setTimeout(() => {
+            profileEditForm.classList.add('show');
+          }, 50);
+        });
+      }
+      
+      // Close profile edit form
+      if (closeProfileForm) {
+        closeProfileForm.addEventListener('click', function() {
+          profileEditForm.classList.remove('show');
+          
+          // Keep the active class on the edit profile button
+          if (editProfileBtn) {
+            editProfileBtn.classList.add('active');
+            editProfileBtn.setAttribute('data-active', 'true');
+            // Refocus the button
+            setTimeout(() => {
+              editProfileBtn.focus();
+            }, 10);
+          }
+          
+          // Remove special class from body
+          document.body.classList.remove('edit-profile-active');
+          
+          setTimeout(() => {
+            profileEditForm.style.display = 'none';
+            // Restore main content visibility
+            if (mainContent) {
+              mainContent.style.visibility = 'visible';
+            }
+          }, 300);
+        });
+      }
+      
+      // Form validation
+      if (userProfileForm) {
+        userProfileForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Check form validity
+          if (!this.checkValidity()) {
+            e.stopPropagation();
+            this.classList.add('was-validated');
+            return;
+          }
+          
+          // Get form data
+          const formData = new FormData(userProfileForm);
+          
+          // Create an object with the form data
+          const profileData = {
+            name: formData.get('name'),
+            first_name: formData.get('first_name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            residence_country: formData.get('residence_country'),
+            // Si le type de compte est CLIENT, ajoutez les données du profil client
+            profile: {
+              preferred_language: 'fr' // Valeur par défaut
+            }
+          };
+          
+          // Show loading state on button
+          const submitButton = userProfileForm.querySelector('button[type="submit"]');
+          const originalButtonText = submitButton.innerHTML;
+          submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Enregistrement...';
+          submitButton.disabled = true;
+          
+          // Function to get CSRF token from cookies
+          function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+                }
+              }
+            }
+            return cookieValue;
+          }
+          
+          // Send the data to the server using fetch API
+          fetch('/accounts/api/update_profile/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(profileData)
+          })
+          .then(response => response.json())
+          .then(data => {
+            // Return button to normal state
+            submitButton.innerHTML = originalButtonText;
+            submitButton.disabled = false;
+            
+            if (data.success) {
+              // Mettre à jour les informations dans la sidebar avant le rechargement
+              const sidebarName = document.querySelector('.sidebar-profile h5');
+              if (sidebarName) {
+                sidebarName.textContent = profileData.name + ' ' + profileData.first_name;
+              }
+              
+              // Afficher un message de succès temporaire
+              alertContainer.style.display = 'block';
+              successAlert.classList.add('show');
+              
+              // Attendre un court instant pour que l'utilisateur voie le message
+              setTimeout(function() {
+                // Recharger complètement la page pour refléter les modifications partout
+                window.location.reload();
+              }, 1500);
+            } else {
+              // Show error message
+              alert('Une erreur est survenue: ' + (data.message || 'Erreur inconnue'));
+            }
+          })
+          .catch(error => {
+            // Handle error
+            submitButton.innerHTML = originalButtonText;
+            submitButton.disabled = false;
+            alert('Erreur de connexion: ' + error.message);
+          });
+          
+          this.classList.remove('was-validated');
+        });
+      }
+      
+      // Keep focus when tabbing in the form
+      profileEditForm.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+          // Prevent the tab key from removing focus from the form
+          e.stopPropagation();
+        }
+      });
+    });
+  </script>
+  
+  <style>
+    /* Profile Edit Form Styles */
+    .profile-edit-form {
+      opacity: 0;
+      transition: all 0.3s ease;
+      transform: translateY(10px);
+      backdrop-filter: blur(5px);
+    }
+    
+    .profile-edit-form.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Overlay to hide main content when form is open */
+    .profile-edit-form::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(248, 249, 250, 0.97);
+      z-index: -1;
+    }
+    
+    /* Hide main content when profile form is shown */
+    .profile-edit-form.show + .main-content {
+      visibility: hidden;
+    }
+    
+    /* Style for form sections */
+    #userProfileForm h5 {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      margin-top: 1rem;
+    }
+    
+    /* Input styles */
+    #userProfileForm .input-group-text {
+      background-color: #f8f9fa;
+      color: var(--primary-color);
+    }
+    
+    #userProfileForm .form-control:focus,
+    #userProfileForm .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(30, 60, 114, 0.15);
+    }
+    
+    /* Success alert styles */
+    .alert-container .alert {
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      border-left: 4px solid #198754;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.3s ease;
+    }
+    
+    .alert-container .alert.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Media query for responsiveness */
+    @media (max-width: 992px) {
+      .profile-edit-form {
+        width: 100% !important;
+        left: 0;
+      }
+    }
+    
+    /* Styles spécifiques pour le bouton "Modifier Profil" */
+    #editProfileBtn.active {
+      background-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+    }
+    
+    #editProfileBtn:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+    }
+    
+    /* Styles pour le bouton Modifier Profil quand le formulaire est actif */
+    body.edit-profile-active #editProfileBtn {
+      background-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+    }
+    
+    /* S'assurer que le focus visuel est toujours présent */
+    body.edit-profile-active #editProfileBtn:focus {
+      background-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {% if category == 'legal' %}Documents Légaux
+  {% elif category == 'administrative' %}Documents Administratifs
+  {% elif category == 'fiscal' %}Documents Fiscaux
+  {% elif category == 'tourism' %}Tourisme
+  {% elif category == 'real_estate' %}Immobilier
+  {% else %}Autres Documents
+  {% endif %} - ServicesBLADI
+{% endblock %}
+
+{% block meta_description %}Ressources {{ category }} pour les Marocains Résidant à l'Étranger - ServicesBLADI{% endblock %}
+{% block meta_keywords %}ressources, {{ category }}, documents, guides, ServicesBLADI{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Accueil</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'resources:resource_list' %}">Ressources</a></li>
+      <li class="breadcrumb-item active" aria-current="page">
+        {% if category == 'legal' %}Documents Légaux
+        {% elif category == 'administrative' %}Documents Administratifs
+        {% elif category == 'fiscal' %}Documents Fiscaux
+        {% elif category == 'tourism' %}Tourisme
+        {% elif category == 'real_estate' %}Immobilier
+        {% else %}Autres Documents
+        {% endif %}
+      </li>
+    </ol>
+  </nav>
+
+  <h1 class="mb-4">
+    {% if category == 'legal' %}Documents Légaux
+    {% elif category == 'administrative' %}Documents Administratifs
+    {% elif category == 'fiscal' %}Documents Fiscaux
+    {% elif category == 'tourism' %}Tourisme
+    {% elif category == 'real_estate' %}Immobilier
+    {% else %}Autres Documents
+    {% endif %}
+  </h1>
+  
+  <!-- Filtres -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <form method="get" action="{% url 'resources:resource_category' category %}">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Langue</label>
+            <select name="language" class="form-select">
+              <option value="">Toutes les langues</option>
+              <option value="fr" {% if current_language == 'fr' %}selected{% endif %}>Français</option>
+              <option value="en" {% if current_language == 'en' %}selected{% endif %}>Anglais</option>
+              <option value="ar" {% if current_language == 'ar' %}selected{% endif %}>Arabe</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">&nbsp;</label>
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-filter me-2"></i> Filtrer
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  {% if not resources %}
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle me-2"></i> Aucune ressource disponible dans cette catégorie pour les critères sélectionnés.
+    </div>
+  {% else %}
+    <div class="row">
+      {% for resource in resources %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">{{ resource.title }}</h5>
+              <p class="card-text text-muted">{{ resource.description|truncatechars:120 }}</p>
+              
+              <div class="mb-3">
+                {% for lang in resource.available_languages.split %}
+                  <span class="badge bg-secondary me-1">{{ lang }}</span>
+                {% endfor %}
+                <span class="badge bg-info text-dark">
+                  <i class="bi bi-eye me-1"></i> {{ resource.view_count }}
+                </span>
+              </div>
+            </div>
+            <div class="card-footer bg-white border-top-0">
+              <a href="{% url 'resources:resource_detail' resource.id %}" class="btn btn-outline-primary w-100">
+                <i class="bi bi-file-earmark-text me-1"></i> Voir les détails
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  
+  <div class="mt-4">
+    <a href="{% url 'resources:resource_list' %}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1"></i> Retour à toutes les ressources
+    </a>
+  </div>
+</div>
+{% endblock %} 

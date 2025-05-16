@@ -1,0 +1,477 @@
+{% extends 'client/base.html' %}
+{% load static %}
+
+{% block title %}Messagerie - MRE{% endblock %}
+{% block meta_description %}Espace de messagerie client MRE{% endblock %}
+{% block meta_keywords %}MRE, messagerie, communication, experts{% endblock %}
+
+{% block content %}
+  <!-- Main Content -->
+  <div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Messagerie</h2>
+      <div class="d-flex gap-2">
+        {% if unread_messages_count > 0 %}
+        <button class="btn btn-outline-primary">
+          <i class="bi bi-bell"></i>
+          <span class="badge bg-danger">{{ unread_messages_count }}</span>
+        </button>
+        {% endif %}
+      </div>
+    </div>
+    
+    <!-- Chat Interface -->
+    <div class="chat-container">
+      <!-- Contacts List -->
+      <div class="contacts-list">
+        <div class="contacts-header">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-0">
+              <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control bg-light border-0" placeholder="Rechercher..." id="contactSearch">
+          </div>
+        </div>
+        
+        {% if contacts %}
+          {% for contact in contacts %}
+            <div class="contact-item {% if active_contact.id == contact.user.id %}active{% endif %}" data-contact-id="{{ contact.user.id }}">
+              <img src="{% static 'img/team/team-1.jpg' %}" alt="{{ contact.user.name }}" class="contact-avatar">
+              <div class="contact-info">
+                <div class="contact-name">{{ contact.user.name }} {{ contact.user.first_name }}</div>
+                <div class="contact-preview">{{ contact.last_message }}</div>
+              </div>
+              <div class="contact-meta">
+                {% if contact.last_message_time %}
+                  <div class="contact-time">{{ contact.last_message_time|date:"H:i" }}</div>
+                {% endif %}
+                {% if contact.unread_count > 0 %}
+                  <div class="contact-unread">{{ contact.unread_count }}</div>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="contact-item active">
+            <img src="{% static 'img/team/team-1.jpg' %}" alt="Support" class="contact-avatar">
+            <div class="contact-info">
+              <div class="contact-name">Support ServicesBladi</div>
+              <div class="contact-preview">Comment pouvons-nous vous aider?</div>
+            </div>
+            <div class="contact-meta">
+              <div class="contact-time">Aujourd'hui</div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Chat Main Area -->
+      <div class="chat-main">
+        {% if active_contact %}
+          <div class="chat-header">
+            <button class="btn btn-sm btn-outline-secondary me-2 d-lg-none" id="showContacts">
+              <i class="bi bi-arrow-left"></i>
+            </button>
+            <img src="{% static 'img/team/team-1.jpg' %}" alt="{{ active_contact.name }}" class="chat-avatar">
+            <div class="chat-contact-info">
+              <div class="chat-contact-name">{{ active_contact.name }} {{ active_contact.first_name }}</div>
+              <div class="chat-contact-status">
+                {% if active_contact.account_type == 'expert' %}Expert{% elif active_contact.account_type == 'admin' %}Administrateur{% else %}Client{% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="chat-messages" id="chatMessages">
+            {% for message in messages %}
+              <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                <div class="message-content">
+                  <div>{{ message.content }}</div>
+                  <div class="message-time">{{ message.sent_at|date:"H:i" }}</div>
+                </div>
+              </div>
+            {% empty %}
+              <div class="empty-conversation">
+                <i class="bi bi-chat-dots"></i>
+                <h4>Commencez une conversation</h4>
+                <p>Envoyez un message pour démarrer la conversation</p>
+              </div>
+            {% endfor %}
+          </div>
+          
+          <form class="chat-input" id="messageForm" action="{% url 'custom_requests:client_send_message' active_contact.id %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="message" placeholder="Tapez votre message..." id="messageInput" required>
+            <button type="submit">
+              <i class="bi bi-send"></i>
+            </button>
+          </form>
+        {% else %}
+          <div class="empty-conversation">
+            <i class="bi bi-chat-dots"></i>
+            <h4>Sélectionnez un contact</h4>
+            <p>Choisissez un contact dans la liste pour commencer à discuter</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Chat interface styles */
+    .chat-container {
+      display: flex;
+      height: calc(100vh - 210px);
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .contacts-list {
+      width: 300px;
+      border-right: 1px solid #eee;
+      overflow-y: auto;
+    }
+
+    .contacts-header {
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 10;
+    }
+
+    .contact-item {
+      display: flex;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #f5f5f5;
+      cursor: pointer;
+      transition: background 0.2s;
+      align-items: center;
+    }
+
+    .contact-item:hover, .contact-item.active {
+      background: #f8f9fa;
+    }
+
+    .contact-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 0.75rem;
+    }
+
+    .contact-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .contact-name {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .contact-preview {
+      font-size: 0.8rem;
+      color: #6c757d;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .contact-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      margin-left: 0.5rem;
+    }
+
+    .contact-time {
+      font-size: 0.7rem;
+      color: #6c757d;
+      margin-bottom: 0.25rem;
+    }
+
+    .contact-unread {
+      background: var(--primary-color);
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 10px;
+      min-width: 1.2rem;
+      text-align: center;
+    }
+
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .chat-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 0.75rem;
+    }
+
+    .chat-contact-info {
+      flex: 1;
+    }
+
+    .chat-contact-name {
+      font-weight: 500;
+    }
+
+    .chat-contact-status {
+      font-size: 0.75rem;
+      color: #6c757d;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      background: #f8f9fa;
+    }
+
+    .message {
+      margin-bottom: 1rem;
+      display: flex;
+    }
+
+    .message.sent {
+      justify-content: flex-end;
+    }
+
+    .message-content {
+      max-width: 80%;
+      padding: 0.75rem 1rem;
+      border-radius: 1rem;
+      position: relative;
+    }
+
+    .sent .message-content {
+      background: var(--primary-color);
+      color: white;
+      border-bottom-right-radius: 0;
+    }
+
+    .received .message-content {
+      background: white;
+      border: 1px solid #eee;
+      border-bottom-left-radius: 0;
+    }
+
+    .message-time {
+      font-size: 0.7rem;
+      margin-top: 0.25rem;
+      opacity: 0.7;
+      text-align: right;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 0.75rem;
+      border-top: 1px solid #eee;
+    }
+
+    .chat-input input {
+      flex: 1;
+      border: 1px solid #eee;
+      border-radius: 20px;
+      padding: 0.5rem 1rem;
+      margin-right: 0.5rem;
+    }
+
+    .chat-input button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .chat-input button:hover {
+      background: var(--secondary-color);
+    }
+
+    /* Placeholder for empty conversation */
+    .empty-conversation {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #999;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .empty-conversation i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .contacts-list {
+        width: 100%;
+        position: absolute;
+        height: 100%;
+        z-index: 5;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      .contacts-list.active {
+        transform: translateX(0);
+      }
+      .chat-header {
+        padding: 0.75rem;
+      }
+    }
+  </style>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mobile view - show contacts list
+    const showContactsBtn = document.getElementById('showContacts');
+    const contactsList = document.querySelector('.contacts-list');
+    
+    if (showContactsBtn) {
+      showContactsBtn.addEventListener('click', function() {
+        contactsList.classList.add('active');
+      });
+    }
+    
+    // Handle contact item clicks
+    const contactItems = document.querySelectorAll('.contact-item');
+    contactItems.forEach(item => {
+      item.addEventListener('click', function() {
+        // Get contact ID
+        const contactId = this.dataset.contactId;
+        if (contactId) {
+          window.location.href = "{% url 'client_messages' %}?contact=" + contactId;
+        }
+      });
+    });
+    
+    // Contact search functionality
+    const searchInput = document.getElementById('contactSearch');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        contactItems.forEach(item => {
+          const name = item.querySelector('.contact-name').textContent.toLowerCase();
+          if (name.includes(searchTerm)) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    }
+    
+    // Auto-scroll to bottom of chat
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Handle message form submission with AJAX
+    const messageForm = document.getElementById('messageForm');
+    const messageInput = document.getElementById('messageInput');
+    
+    if (messageForm) {
+      messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const message = messageInput.value.trim();
+        if (message) {
+          const formData = new FormData(messageForm);
+          
+          // Display the message immediately
+          const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const messageHTML = `
+            <div class="message sent">
+              <div class="message-content">
+                <div>${message}</div>
+                <div class="message-time">${currentTime}</div>
+              </div>
+            </div>
+          `;
+          
+          chatMessages.insertAdjacentHTML('beforeend', messageHTML);
+          messageInput.value = '';
+          
+          // Scroll to bottom
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          
+          // Send the message with AJAX
+          fetch(messageForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          }).then(response => response.json())
+            .then(data => {
+              if (!data.success) {
+                console.error('Error sending message:', data.error);
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        }
+      });
+    }
+    
+    // Check for new messages every 10 seconds
+    function checkNewMessages() {
+      const activeContact = document.querySelector('.contact-item.active');
+      if (activeContact) {
+        const contactId = activeContact.dataset.contactId;
+        
+        fetch(`{% url 'custom_requests:client_check_messages' %}?contact=${contactId}`, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        }).then(response => response.json())
+          .then(data => {
+            if (data.new_messages) {
+              // Reload the page to show new messages
+              window.location.reload();
+            }
+          })
+          .catch(error => {
+            console.error('Error checking messages:', error);
+          });
+      }
+    }
+    
+    // Poll for new messages every 10 seconds
+    setInterval(checkNewMessages, 10000);
+  });
+  </script>
+{% endblock %}
