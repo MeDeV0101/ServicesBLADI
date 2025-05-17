@@ -122,44 +122,49 @@
         </div>
       </div>
 
-      <!-- Messages Card -->
-      <div class="card shadow-sm mb-4">
+      <!-- Messages -->
+      <div class="dashboard-card mb-4">
         <div class="card-header">
-          <h5 class="mb-0">Messages</h5>
+          <h5 class="mb-0">
+            <i class="bi bi-chat-dots me-2"></i>Messages
+            {% if service_request.status != 'pending' %}
+              <a href="{% url 'messaging:chat' service_request.id %}" class="btn btn-sm btn-primary float-end">
+                <i class="bi bi-chat-text me-1"></i>Ouvrir le chat
+              </a>
+            {% endif %}
+          </h5>
         </div>
         <div class="card-body">
-          <div class="messages-container mb-4" style="max-height: 300px; overflow-y: auto;">
-            {% if messages_list %}
-              {% for message in messages_list %}
-                <div class="card mb-3 {% if message.sender == request.user %}bg-light border-primary{% endif %}">
-                  <div class="card-body py-2 px-3">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <strong>{{ message.sender.first_name }} {{ message.sender.name }}</strong>
-                      <small class="text-muted">{{ message.sent_at|date:"d/m/Y H:i" }}</small>
+          <div class="row">
+            <div class="col-12">
+              {% if messages_list %}
+                <div class="messages-container" style="max-height: 300px; overflow-y: auto;">
+                  {% for message in messages_list %}
+                    <div class="message mb-3 p-3 {% if message.sender == request.user %}bg-light text-start{% else %}bg-primary text-white text-start{% endif %}" style="border-radius: 10px;">
+                      <div class="message-header d-flex justify-content-between mb-2">
+                        <span class="fw-bold">{{ message.sender.first_name }} {{ message.sender.name }}</span>
+                        <small>{{ message.sent_at|date:"d/m/Y H:i" }}</small>
+                      </div>
+                      <div class="message-content">
+                        {{ message.content }}
+                      </div>
                     </div>
-                    <p class="mb-0">{{ message.content }}</p>
-                  </div>
+                  {% endfor %}
                 </div>
-              {% endfor %}
-            {% else %}
-              <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i> Aucun message n'a été échangé pour cette demande.
-              </div>
-            {% endif %}
-          </div>
-
-          <form action="{% url 'expert_send_message' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="service_request_id" value="{{ service_request.id }}">
-            <input type="hidden" name="recipient_id" value="{{ service_request.client.id }}">
-            <div class="form-group mb-3">
-              <label for="message_content">Nouveau message:</label>
-              <textarea class="form-control" id="message_content" name="content" rows="3" required></textarea>
+              {% elif service_request.status == 'pending' %}
+                <div class="text-center py-4">
+                  <p class="text-muted">Vous devez prendre en charge cette demande avant de pouvoir démarrer une conversation.</p>
+                </div>
+              {% else %}
+                <div class="text-center py-4">
+                  <p class="text-muted">Aucun message pour le moment. Démarrez la conversation avec le client.</p>
+                  <a href="{% url 'messaging:chat' service_request.id %}" class="btn btn-primary">
+                    <i class="bi bi-chat-text me-1"></i>Démarrer la conversation
+                  </a>
+                </div>
+              {% endif %}
             </div>
-            <button type="submit" class="btn btn-primary">
-              <i class="bi bi-send me-1"></i> Envoyer
-            </button>
-          </form>
+          </div>
         </div>
       </div>
 

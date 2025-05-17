@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Q, Count
 from django.utils.translation import gettext_lazy as _
+from django.contrib import messages
 
 from accounts.models import Utilisateur, Expert, Client
 from custom_requests.models import ServiceRequest, Document, RendezVous, Message, Notification
@@ -105,7 +106,7 @@ def expert_messages_view(request):
         return redirect('home')
 
 @login_required
-def expert_requests_view_new(request):
+def expert_requests_view(request):
     """View function for expert requests."""
     if request.user.account_type.lower() != 'expert':
         return redirect('home')
@@ -114,16 +115,23 @@ def expert_requests_view_new(request):
         expert = Expert.objects.get(user=request.user)
         
         # Get service requests assigned to this expert
-        requests = ServiceRequest.objects.filter(
+        assigned_requests = ServiceRequest.objects.filter(
             expert=expert.user
         ).order_by('-created_at')
         
+        # Get unassigned service requests that experts can take
+        unassigned_requests = ServiceRequest.objects.filter(
+            expert__isnull=True,
+            status='new'  # Only show new requests that need experts
+        ).order_by('-created_at')
+        
         context = {
-            'requests': requests,
+            'assigned_requests': assigned_requests,
+            'unassigned_requests': unassigned_requests,
             'expert': expert
         }
         
-        return render(request, 'expert/requests_new.html', context)
+        return render(request, 'expert/demandes.html', context)
     
     except Expert.DoesNotExist:
         return redirect('home')
@@ -142,8 +150,6 @@ def expert_resources_view(request):
         
         # Import here to avoid circular import
         from resources.models import Resource, ResourceFile, ResourceLink
-        from django.contrib import messages
-        import os
         
         # Debug info
         print(f"====== EXPERT RESOURCES VIEW DEBUG ======")
@@ -233,7 +239,6 @@ def expert_request_detail(request, request_id):
         return render(request, 'expert/request_detail.html', context)
     
     except Exception as e:
-        from django.contrib import messages
         messages.error(request, f"Erreur: {str(e)}")
         print(f"Error in expert_request_detail: {str(e)}")
         return redirect('expert_demandes')
@@ -256,7 +261,6 @@ def expert_send_message(request):
         service_request_id = request.POST.get('service_request_id')
         
         if not recipient_id or not content:
-            from django.contrib import messages
             messages.error(request, "Le destinataire et le contenu sont obligatoires.")
             if service_request_id:
                 return redirect('expert_request_detail', request_id=service_request_id)
@@ -272,7 +276,6 @@ def expert_send_message(request):
             
             # Check if this expert is assigned to this request
             if service_request.expert != request.user:
-                from django.contrib import messages
                 messages.error(request, "Vous n'êtes pas autorisé à envoyer des messages pour cette demande.")
                 return redirect('expert_demandes')
         
@@ -294,7 +297,6 @@ def expert_send_message(request):
             related_service_request=service_request
         )
         
-        from django.contrib import messages
         messages.success(request, _('Message envoyé avec succès.'))
         
         # Redirect back to appropriate page
@@ -303,7 +305,6 @@ def expert_send_message(request):
         return redirect('expert_demandes')
         
     except Exception as e:
-        from django.contrib import messages
         messages.error(request, f"Erreur lors de l'envoi du message: {str(e)}")
         if service_request_id:
             return redirect('expert_request_detail', request_id=service_request_id)
@@ -327,7 +328,6 @@ def expert_upload_document(request):
         service_request_id = request.POST.get('service_request_id')
         
         if not name or not document_type or not service_request_id or 'file' not in request.FILES:
-            from django.contrib import messages
             messages.error(request, "Tous les champs sont obligatoires.")
             return redirect('expert_request_detail', request_id=service_request_id)
         
@@ -336,7 +336,6 @@ def expert_upload_document(request):
         
         # Check if this expert is assigned to this request
         if service_request.expert != request.user:
-            from django.contrib import messages
             messages.error(request, "Vous n'êtes pas autorisé à télécharger des documents pour cette demande.")
             return redirect('expert_demandes')
         
@@ -361,13 +360,11 @@ def expert_upload_document(request):
             related_service_request=service_request
         )
         
-        from django.contrib import messages
         messages.success(request, _('Document téléchargé avec succès.'))
         
         return redirect('expert_request_detail', request_id=service_request_id)
         
     except Exception as e:
-        from django.contrib import messages
         messages.error(request, f"Erreur lors du téléchargement du document: {str(e)}")
         if service_request_id:
             return redirect('expert_request_detail', request_id=service_request_id)
@@ -390,7 +387,6 @@ def expert_update_request_status(request, request_id):
         
         # Check if this expert is assigned to this request
         if service_request.expert != request.user:
-            from django.contrib import messages
             messages.error(request, "Vous n'êtes pas autorisé à mettre à jour cette demande.")
             return redirect('expert_demandes')
         
@@ -401,7 +397,6 @@ def expert_update_request_status(request, request_id):
         # Verify that the status is valid for experts
         valid_statuses = ['in_progress', 'pending_info', 'completed']
         if new_status not in valid_statuses:
-            from django.contrib import messages
             messages.error(request, "Statut invalide.")
             return redirect('expert_request_detail', request_id=request_id)
         
@@ -428,13 +423,11 @@ def expert_update_request_status(request, request_id):
             related_service_request=service_request
         )
         
-        from django.contrib import messages
         messages.success(request, _('Statut mis à jour avec succès.'))
         
         return redirect('expert_request_detail', request_id=request_id)
         
     except Exception as e:
-        from django.contrib import messages
         messages.error(request, f"Erreur lors de la mise à jour du statut: {str(e)}")
         return redirect('expert_request_detail', request_id=request_id)
 
@@ -458,7 +451,6 @@ def expert_schedule_appointment(request):
         notes = request.POST.get('notes', '')
         
         if not service_request_id or not date_time_str or not duration or not appointment_type:
-            from django.contrib import messages
             messages.error(request, "Tous les champs sont obligatoires.")
             return redirect('expert_request_detail', request_id=service_request_id)
         
@@ -467,7 +459,6 @@ def expert_schedule_appointment(request):
         
         # Check if this expert is assigned to this request
         if service_request.expert != request.user:
-            from django.contrib import messages
             messages.error(request, "Vous n'êtes pas autorisé à planifier des rendez-vous pour cette demande.")
             return redirect('expert_demandes')
         
@@ -496,13 +487,11 @@ def expert_schedule_appointment(request):
             related_service_request=service_request
         )
         
-        from django.contrib import messages
         messages.success(request, _('Rendez-vous planifié avec succès.'))
         
         return redirect('expert_request_detail', request_id=service_request_id)
         
     except Exception as e:
-        from django.contrib import messages
         messages.error(request, f"Erreur lors de la planification du rendez-vous: {str(e)}")
         if service_request_id:
             return redirect('expert_request_detail', request_id=service_request_id)
@@ -525,7 +514,6 @@ def expert_update_appointment(request):
         status = request.POST.get('status')
         
         if not appointment_id or not status:
-            from django.contrib import messages
             messages.error(request, "L'identifiant du rendez-vous et le statut sont obligatoires.")
             return redirect('expert_demandes')
         
@@ -534,13 +522,11 @@ def expert_update_appointment(request):
         
         # Check if this expert is assigned to this appointment
         if appointment.expert != request.user:
-            from django.contrib import messages
             messages.error(request, "Vous n'êtes pas autorisé à mettre à jour ce rendez-vous.")
             return redirect('expert_demandes')
         
         # Check if status is valid
         if status not in ['completed', 'cancelled']:
-            from django.contrib import messages
             messages.error(request, "Statut invalide.")
             return redirect('expert_request_detail', request_id=appointment.service_request.id)
         
@@ -558,12 +544,66 @@ def expert_update_appointment(request):
             related_service_request=appointment.service_request
         )
         
-        from django.contrib import messages
         messages.success(request, _(f'Rendez-vous marqué comme {status_display} avec succès.'))
         
         return redirect('expert_request_detail', request_id=appointment.service_request.id)
         
     except Exception as e:
-        from django.contrib import messages
         messages.error(request, f"Erreur lors de la mise à jour du rendez-vous: {str(e)}")
+        return redirect('expert_demandes')
+
+@login_required
+def expert_take_request(request, request_id):
+    """Allow an expert to take an unassigned service request"""
+    if request.user.account_type.lower() != 'expert':
+        messages.error(request, _("Vous n'avez pas les permissions nécessaires."))
+        return redirect('home')
+    
+    try:
+        # Get the expert profile
+        expert = Expert.objects.get(user=request.user)
+        
+        # Get the service request
+        service_request = get_object_or_404(ServiceRequest, id=request_id)
+        
+        # Check if the request is already assigned
+        if service_request.expert:
+            messages.error(request, _("Cette demande est déjà assignée à un expert."))
+            return redirect('expert_demandes')
+        
+        # Assign the request to this expert
+        service_request.expert = request.user
+        service_request.status = 'in_progress'  # Automatically change status to in progress
+        service_request.save()
+        
+        # Create a notification for the client
+        Notification.objects.create(
+            user=service_request.client,
+            type='request_update',
+            title=_('Expert assigné'),
+            content=_(f'Un expert ({request.user.first_name} {request.user.name}) a pris en charge votre demande "{service_request.title}".'),
+            related_service_request=service_request
+        )
+        
+        # Send a message to the client
+        Message.objects.create(
+            sender=request.user,
+            recipient=service_request.client,
+            content=_(f"Bonjour, je suis {request.user.first_name} {request.user.name}, l'expert qui va prendre en charge votre demande. Je vais l'examiner et vous contacter prochainement."),
+            service_request=service_request
+        )
+        
+        messages.success(request, _(f"Vous avez pris en charge la demande '{service_request.title}' avec succès."))
+        
+        # Redirect to the request detail page
+        return redirect('expert_request_detail', request_id=request_id)
+        
+    except Expert.DoesNotExist:
+        messages.error(request, _("Profil d'expert introuvable."))
+        return redirect('home')
+    except Exception as e:
+        messages.error(request, _(f"Une erreur s'est produite: {str(e)}"))
+        print(f"Error in expert_take_request: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return redirect('expert_demandes')

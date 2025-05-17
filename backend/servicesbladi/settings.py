@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'services',
     'custom_requests',
     'resources',
+    'channels',  # Ajouter Django Channels
+    'messaging',  # Application de messagerie
 ]
 
 AUTH_USER_MODEL = 'accounts.Utilisateur'
@@ -210,3 +212,14 @@ AUTHENTICATION_BACKENDS = [
     'accounts.backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+# Django Channels
+ASGI_APPLICATION = 'servicesbladi.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'CONFIG': {
+            'capacity': 1500,  # default is 100
+        },
+    },
+}

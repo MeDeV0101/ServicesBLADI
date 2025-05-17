@@ -1,8 +1,8 @@
 {% extends 'expert/base.html' %}
 {% load static %}
 
-{% block title %}Demandes Assignées - MRE{% endblock %}
-{% block meta_description %}Gestion des demandes clients assignées à l'expert - Espace expert{% endblock %}
+{% block title %}Demandes - MRE{% endblock %}
+{% block meta_description %}Gestion des demandes clients - Espace expert{% endblock %}
 {% block meta_keywords %}demandes, expert, requêtes, gestion{% endblock %}
 
 {% block extra_styles %}
@@ -25,24 +25,29 @@
     font-size: 0.8rem;
   }
 
-  .status-nouvelle {
+  .status-new, .status-nouvelle {
     background-color: #e6f7ff;
     color: #1890ff;
     }
 
-    .status-en-cours {
+  .status-in_progress, .status-en-cours {
     background-color: #fff7e6;
     color: #fa8c16;
   }
 
-  .status-terminee {
+  .status-completed, .status-terminee {
       background-color: #e3fcef;
       color: #00a854;
     }
 
-  .status-annulee {
+  .status-cancelled, .status-annulee {
     background-color: #fff1f0;
     color: #f5222d;
+    }
+  
+  .status-pending_info {
+    background-color: #f9f0ff;
+    color: #722ed1;
     }
 
     .priority-badge {
@@ -52,7 +57,7 @@
     margin-left: 0.5rem;
     }
 
-  .priority-high {
+  .priority-high, .priority-urgent {
       background-color: #fff1f0;
       color: #f5222d;
     }
@@ -66,70 +71,152 @@
     background-color: #e6f7ff;
     color: #1890ff;
     }
+  
+  .section-title {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .take-request-btn {
+    background-color: #52c41a;
+    border-color: #52c41a;
+  }
+  
+  .take-request-btn:hover {
+    background-color: #389e0d;
+    border-color: #389e0d;
+  }
   </style>
 {% endblock %}
 
 {% block content %}
 <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2>Demandes Assignées</h2>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Gestion des Demandes</h2>
+</div>
 
 <!-- Filters -->
 <div class="dashboard-card mb-4">
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-3">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-3">
         <label class="form-label">Statut</label>
-                <select class="form-select">
-                  <option value="">Tous les statuts</option>
-          <option value="nouvelle">Nouvelle</option>
-                  <option value="en-cours">En cours</option>
-          <option value="terminee">Terminée</option>
-          <option value="annulee">Annulée</option>
-                </select>
-              </div>
-              <div class="col-md-3">
+        <select class="form-select" id="status-filter">
+          <option value="">Tous les statuts</option>
+          <option value="new">Nouvelle</option>
+          <option value="in_progress">En cours</option>
+          <option value="pending_info">En attente d'informations</option>
+          <option value="completed">Terminée</option>
+          <option value="cancelled">Annulée</option>
+        </select>
+      </div>
+      <div class="col-md-3">
         <label class="form-label">Priorité</label>
-                <select class="form-select">
-                  <option value="">Toutes les priorités</option>
+        <select class="form-select" id="priority-filter">
+          <option value="">Toutes les priorités</option>
+          <option value="urgent">Urgente</option>
           <option value="high">Haute</option>
           <option value="medium">Moyenne</option>
           <option value="low">Basse</option>
-                </select>
-              </div>
-              <div class="col-md-4">
+        </select>
+      </div>
+      <div class="col-md-4">
         <label class="form-label">Recherche</label>
-                <input type="text" class="form-control" placeholder="Rechercher une demande...">
-              </div>
-              <div class="col-md-2">
+        <input type="text" class="form-control" id="search-input" placeholder="Rechercher une demande...">
+      </div>
+      <div class="col-md-2">
         <label class="form-label">&nbsp;</label>
-                <button class="btn btn-outline-primary w-100">Filtrer</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <button class="btn btn-outline-primary w-100" id="filter-btn">Filtrer</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <!-- Liste des demandes -->
-{% if requests %}
-  {% for request in requests %}
-    <div class="request-card p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
+<!-- Demandes disponibles -->
+<h3 class="section-title">Demandes Disponibles</h3>
+{% if unassigned_requests %}
+  {% for request in unassigned_requests %}
+    <div class="request-card p-3 mb-3 request-item" 
+         data-status="{{ request.status }}" 
+         data-priority="{{ request.priority }}">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
           <h5 class="mb-1">{{ request.title }}</h5>
-          <p class="text-muted mb-1">Soumise le {{ request.submission_date|date:"d/m/Y" }} par {{ request.client.name }}</p>
+          <p class="text-muted mb-1">Soumise le {{ request.created_at|date:"d/m/Y" }} par {{ request.client.first_name }} {{ request.client.name }}</p>
           <div class="d-flex align-items-center">
-            <span class="request-status status-{{ request.status }}">{{ request.get_status_display }}</span>
-            {% if request.priority == 'high' %}
-              <span class="priority-badge priority-high">Haute priorité</span>
-            {% elif request.priority == 'medium' %}
-              <span class="priority-badge priority-medium">Priorité moyenne</span>
-            {% elif request.priority == 'low' %}
-              <span class="priority-badge priority-low">Basse priorité</span>
-            {% endif %}
+            <span class="request-status status-{{ request.status }}">
+              {% if request.status == 'new' %}Nouvelle
+              {% elif request.status == 'in_progress' %}En cours
+              {% elif request.status == 'pending_info' %}En attente d'infos
+              {% elif request.status == 'completed' %}Terminée
+              {% elif request.status == 'cancelled' %}Annulée
+              {% else %}{{ request.status }}
+              {% endif %}
+            </span>
+            <span class="priority-badge priority-{{ request.priority }}">
+              {% if request.priority == 'urgent' %}Urgente
+              {% elif request.priority == 'high' %}Haute priorité
+              {% elif request.priority == 'medium' %}Priorité moyenne
+              {% elif request.priority == 'low' %}Basse priorité
+              {% else %}{{ request.priority }}
+              {% endif %}
+            </span>
           </div>
+          <p class="mt-2">{{ request.description|truncatechars:150 }}</p>
         </div>
-            <div>
+        <div class="d-flex flex-column">
+          <a href="{% url 'expert_take_request' request.id %}" class="btn btn-success mb-2 take-request-btn" onclick="return confirm('Voulez-vous prendre en charge cette demande?');">
+            <i class="bi bi-check-circle me-1"></i>Prendre en charge
+          </a>
+          <a href="{% url 'expert_request_detail' request.id %}" class="btn btn-outline-primary">
+            <i class="bi bi-eye me-1"></i>Voir détails
+          </a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-info">
+    <i class="bi bi-info-circle me-2"></i> Aucune demande n'est actuellement disponible pour prise en charge.
+  </div>
+{% endif %}
+
+<!-- Demandes assignées -->
+<h3 class="section-title mt-5">Mes Demandes Assignées</h3>
+{% if assigned_requests %}
+  {% for request in assigned_requests %}
+    <div class="request-card p-3 mb-3 request-item" 
+         data-status="{{ request.status }}" 
+         data-priority="{{ request.priority }}">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="mb-1">{{ request.title }}</h5>
+          <p class="text-muted mb-1">Soumise le {{ request.created_at|date:"d/m/Y" }} par {{ request.client.first_name }} {{ request.client.name }}</p>
+          <div class="d-flex align-items-center">
+            <span class="request-status status-{{ request.status }}">
+              {% if request.status == 'new' %}Nouvelle
+              {% elif request.status == 'in_progress' %}En cours
+              {% elif request.status == 'pending_info' %}En attente d'infos
+              {% elif request.status == 'completed' %}Terminée
+              {% elif request.status == 'cancelled' %}Annulée
+              {% else %}{{ request.status }}
+              {% endif %}
+            </span>
+            <span class="priority-badge priority-{{ request.priority }}">
+              {% if request.priority == 'urgent' %}Urgente
+              {% elif request.priority == 'high' %}Haute priorité
+              {% elif request.priority == 'medium' %}Priorité moyenne
+              {% elif request.priority == 'low' %}Basse priorité
+              {% else %}{{ request.priority }}
+              {% endif %}
+            </span>
+          </div>
+          <p class="mt-2">{{ request.description|truncatechars:150 }}</p>
+        </div>
+        <div>
           <a href="{% url 'expert_request_detail' request.id %}" class="btn btn-primary">
             <i class="bi bi-eye me-1"></i>Voir détails
           </a>
@@ -148,7 +235,49 @@
 {% block extra_scripts %}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Request filtering logic can be added here
+    // Request filtering logic
+    const statusFilter = document.getElementById('status-filter');
+    const priorityFilter = document.getElementById('priority-filter');
+    const searchInput = document.getElementById('search-input');
+    const filterBtn = document.getElementById('filter-btn');
+    
+    filterBtn.addEventListener('click', function() {
+      const status = statusFilter.value;
+      const priority = priorityFilter.value;
+      const search = searchInput.value.toLowerCase();
+      
+      document.querySelectorAll('.request-item').forEach(function(item) {
+        const itemStatus = item.dataset.status;
+        const itemPriority = item.dataset.priority;
+        const itemContent = item.textContent.toLowerCase();
+        
+        const statusMatch = !status || itemStatus === status;
+        const priorityMatch = !priority || itemPriority === priority;
+        const searchMatch = !search || itemContent.includes(search);
+        
+        if (statusMatch && priorityMatch && searchMatch) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+    
+    // Reset filters
+    const resetFilters = function() {
+      statusFilter.value = '';
+      priorityFilter.value = '';
+      searchInput.value = '';
+      document.querySelectorAll('.request-item').forEach(function(item) {
+        item.style.display = 'block';
+      });
+    };
+    
+    document.getElementById('status-filter').addEventListener('change', function() {
+      if (this.value === '') {
+        resetFilters();
+      }
+    });
   });
 </script>
 {% endblock %} 

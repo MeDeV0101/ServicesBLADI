@@ -24,7 +24,7 @@ from resources.client_views import client_resources_view
 from custom_requests.dashboard_views import client_dashboard_view, expert_dashboard_view, admin_dashboard_view
 from custom_requests.views import documents_view, client_requests_view, client_appointments_view, expert_requests_view, expert_appointments_view
 from custom_requests.message_views import client_messages_view, expert_messages_view
-from custom_requests.expert_views import expert_documents_view, expert_appointments_view as expert_appointments_view_new, expert_messages_view as expert_messages_view_new, expert_resources_view, expert_requests_view_new, expert_request_detail, expert_send_message, expert_upload_document, expert_update_request_status, expert_schedule_appointment, expert_update_appointment
+from custom_requests.expert_views import expert_documents_view, expert_appointments_view as expert_appointments_view_new, expert_messages_view as expert_messages_view_new, expert_resources_view, expert_requests_view, expert_request_detail, expert_send_message, expert_upload_document, expert_update_request_status, expert_schedule_appointment, expert_update_appointment, expert_take_request
 
 # Import admin views for frontend URLs
 from custom_requests.admin_views import (
@@ -79,11 +79,12 @@ urlpatterns = [
     path('expert/dashboard/', expert_dashboard_view, name='expert_dashboard'),
     path('expert/demandes/', expert_requests_view, name='expert_demandes'),
     path('expert/demandes/<int:request_id>/', expert_request_detail, name='expert_request_detail'),
+    path('expert/demandes/take/<int:request_id>/', expert_take_request, name='expert_take_request'),
     path('expert/documents/', documents_view, name='expert_documents'),
     path('expert/messages/', expert_messages_view, name='expert_messages'),
     path('expert/rendezvous/', expert_appointments_view, name='expert_rendezvous'),
     path('expert/ressources/', expert_resources_view, name='expert_ressources'),
-    path('expert/send-message/', expert_send_message, name='expert_send_message'),
+    path('expert/send-message/<int:client_id>/', expert_send_message, name='expert_send_message'),
     path('expert/upload-document/', expert_upload_document, name='expert_upload_document'),
     path('expert/update-request-status/<int:request_id>/', expert_update_request_status, name='expert_update_request_status'),
     path('expert/schedule-appointment/', expert_schedule_appointment, name='expert_schedule_appointment'),

@@ -42,6 +42,7 @@ urlpatterns = [
     path('services/', include('services.urls')),
     path('requests/', include('custom_requests.urls')),
     path('resources/', include('resources.urls')),
+    path('messaging/', include('messaging.urls')),
     
     # Frontend URLs (existing HTML templates integration)
     path('', include('servicesbladi.frontend_urls')),
