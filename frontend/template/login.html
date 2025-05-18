@@ -1,16 +1,14 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}ServicesBladi - Connexion{% endblock %}
-{% block meta_description %}Connectez-vous à votre compte ServicesBladi pour accéder aux services pour les Marocains résidant à l'étranger{% endblock %}
-{% block meta_keywords %}login, connexion, MRE, services, compte{% endblock %}
-
-{% block body_class %}login-page{% endblock %}
-
-{% block extra_css %}
+{% extends 'base.html' %} {% load static %} {% load i18n %} {% load
+crispy_forms_tags %} {% block title %} {% trans "ServicesBladi - Connexion" %}
+{% endblock %} {% block meta_description %} {% trans "Connectez-vous à votre
+compte ServicesBladi pour accéder aux services pour les Marocains résidant à
+l'étranger" %} {% endblock %} {% block meta_keywords %} {% trans "login,
+connexion, MRE, services, compte" %} {% endblock %} {% block body_class %}
+login-page {% endblock %} {% block extra_css %}
 <style>
   body.login-page {
-    background: url('{% static "img/background_login_image.png" %}') no-repeat center center fixed;
+    background: url('{% static "img/background_login_image.png" %}') no-repeat
+      center center fixed;
     background-size: cover;
     height: 100vh;
   }
@@ -133,59 +131,180 @@
     }
   }
 </style>
-{% endblock %}
+{% endblock %} {% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">{% trans "Connexion" %}</h2>
 
-{% block content %}
-  <section class="login-section">
-    <div class="container">
-      <div class="login-container">
-        <div class="login-header">
-          <img src="{% static 'img/logo_principale.png' %}" alt="ServicesBladi Logo">
-          <h3 class="mt-3">Connexion à votre compte</h3>
-        </div>
-
-        {% if messages %}
-        <div class="{% if messages.tags == 'error' %}error-message{% else %}alert alert-success{% endif %}">
-          {% for message in messages %}
-            {{ message }}
-            {% if not forloop.last %}<br>{% endif %}
-          {% endfor %}
-        </div>
-        {% endif %}
-
-        <form action="{% url 'accounts:login' %}" method="post">
-          {% csrf_token %}
-          <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Votre email" required>
+          {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+            <div
+              class="alert alert-{{ message.tags }} alert-dismissible fade show"
+              role="alert"
+            >
+              {{ message }}
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+            {% endfor %}
           </div>
+          {% endif %}
 
-          <div class="mb-3">
-            <label for="password" class="form-label">Mot de passe</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Votre mot de passe" required>
+          <form method="post" id="loginForm">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="email" class="form-label">{% trans "Email" %}</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label"
+                >{% trans "Mot de passe" %}</label
+              >
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                required
+              />
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">
+                {% trans "Se connecter" %}
+              </button>
+            </div>
+          </form>
+
+          <div class="mt-3 text-center">
+            <p>
+              {% trans "Pas encore de compte ?" %}
+              <a href="{% url 'accounts:register' %}"
+                >{% trans "S'inscrire" %}</a
+              >
+            </p>
+            <p>
+              <a href="{% url 'accounts:password_reset' %}"
+                >{% trans "Mot de passe oublié ?" %}</a
+              >
+            </p>
           </div>
-
-          <div class="forgot-password">
-            <a href="{% url 'accounts:password_reset' %}" class="text-decoration-none">Mot de passe oublié?</a>
-          </div>
-
-          <button type="submit" class="btn-login">Se connecter</button>
-
-          <input type="hidden" name="next" value="{{ next }}">
-        </form>
-
-        <div class="social-login">
-          <p class="text-muted mb-3">Ou connectez-vous avec</p>
-          <div class="d-flex justify-content-center">
-            <button class="social-btn me-2"><i class="bi bi-google"></i> Google</button>
-            <button class="social-btn"><i class="bi bi-facebook"></i> Facebook</button>
-          </div>
-        </div>
-
-        <div class="register-link">
-          <p>Vous n'avez pas de compte? <a href="{% url 'accounts:register' %}" class="text-decoration-none">S'inscrire</a></p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.getElementById("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    // Get the CSRF token from the cookie
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === name + "=") {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    const csrftoken = getCookie("csrftoken");
+
+    const formData = {
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value,
+    };
+
+    // Show loading state
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.innerHTML = '{% trans "Connexion en cours..." %}';
+
+    fetch('{% url "accounts:login" %}', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          window.location.href = data.redirect;
+        } else {
+          // Show error message
+          const alertDiv = document.createElement("div");
+          alertDiv.className = "alert alert-danger alert-dismissible fade show";
+          alertDiv.innerHTML = `
+                ${data.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+
+          // Remove any existing alerts
+          const existingAlerts = document.querySelectorAll(".alert");
+          existingAlerts.forEach((alert) => alert.remove());
+
+          // Add new alert
+          document
+            .querySelector(".card-body")
+            .insertBefore(alertDiv, document.querySelector("form"));
+
+          // If verification is needed, show additional info
+          if (data.needs_verification) {
+            const infoDiv = document.createElement("div");
+            infoDiv.className =
+              "alert alert-info alert-dismissible fade show mt-3";
+            infoDiv.innerHTML = `
+                    <i class="fas fa-info-circle"></i> {% trans "Vérifiez votre boîte de réception et vos spams pour l'email de vérification." %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+            document
+              .querySelector(".card-body")
+              .insertBefore(infoDiv, document.querySelector("form"));
+          }
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        // Show error message
+        const alertDiv = document.createElement("div");
+        alertDiv.className = "alert alert-danger alert-dismissible fade show";
+        alertDiv.innerHTML = `
+            {% trans "Une erreur est survenue. Veuillez réessayer." %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        document
+          .querySelector(".card-body")
+          .insertBefore(alertDiv, document.querySelector("form"));
+      })
+      .finally(() => {
+        // Reset button state
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonText;
+      });
+  });
+</script>
 {% endblock %}

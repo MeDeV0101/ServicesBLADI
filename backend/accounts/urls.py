@@ -45,4 +45,5 @@ urlpatterns = [
     # API endpoints
     path('api/profile/', views.api_profile, name='api_profile'),
     path('api/update_profile/', views.api_update_profile, name='api_update_profile'),
+    path('activate/<str:uidb64>/<str:token>/', views.activate_account, name='activate'),
 ]

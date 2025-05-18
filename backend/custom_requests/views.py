@@ -534,21 +534,10 @@ def cancel_appointment_view(request, appointment_id):
 # Expert views
 @login_required
 def expert_requests_view(request):
-    """View function for expert requests."""
-    if not request.user.account_type.lower() == 'expert':
-        return redirect('home')
-
+    """Display requests assigned to expert"""
     try:
-        # Print debug information
-        print(f"Expert email: {request.user.email}")
-        print(f"Total service requests: {ServiceRequest.objects.count()}")
-        print(f"Requests assigned to this expert: {ServiceRequest.objects.filter(expert=request.user).count()}")
-        
-        # Get service requests assigned to this expert
-        requests = ServiceRequest.objects.filter(expert=request.user)
-        
-        for req in requests:
-            print(f"Request ID: {req.id}, Title: {req.title}, Status: {req.status}")
+        expert = Expert.objects.get(user=request.user)
+        requests = ServiceRequest.objects.filter(expert=expert.user).order_by('-created_at')
         
         context = {
             'requests': requests,
@@ -556,9 +545,8 @@ def expert_requests_view(request):
         
         return render(request, 'expert/demandes.html', context)
     
-    except Exception as e:
-        print(f"Error in expert_requests_view: {str(e)}")
-        return render(request, 'expert/demandes.html', {'requests': []})
+    except Expert.DoesNotExist:
+        return redirect('home')
 
 @login_required
 def expert_appointments_view(request):

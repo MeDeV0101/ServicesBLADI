@@ -16,7 +16,7 @@
         <div class="icon text-primary">
           <i class="bi bi-file-earmark"></i>
         </div>
-        <div class="count">{{ total_documents }}</div>
+        <div class="count">{{ stats.total }}</div>
         <div class="title">Total Documents</div>
       </div>
     </div>
@@ -26,7 +26,7 @@
         <div class="icon text-success">
           <i class="bi bi-file-earmark-check"></i>
         </div>
-        <div class="count">{{ verified_documents }}</div>
+        <div class="count">{{ stats.verified }}</div>
         <div class="title">Documents Vérifiés</div>
       </div>
     </div>
@@ -36,7 +36,7 @@
         <div class="icon text-warning">
           <i class="bi bi-file-earmark-break"></i>
         </div>
-        <div class="count">{{ pending_documents }}</div>
+        <div class="count">{{ stats.pending }}</div>
         <div class="title">En Attente</div>
       </div>
     </div>
@@ -46,7 +46,7 @@
         <div class="icon text-danger">
           <i class="bi bi-file-earmark-x"></i>
         </div>
-        <div class="count">{{ rejected_documents }}</div>
+        <div class="count">{{ stats.rejected }}</div>
         <div class="title">Refusés</div>
       </div>
     </div>
@@ -123,13 +123,15 @@
             {% for doc in documents %}
             <tr>
               <td>{{ doc.name }}</td>
-              <td>{{ doc.uploaded_by.first_name }} {{ doc.uploaded_by.name }}</td>
-              <td>{% if doc.service_request %}{{ doc.service_request.service.name }}{% else %}N/A{% endif %}</td>
-              <td>{{ doc.get_type_display }}</td>
-              <td>{{ doc.upload_date|date:"d/m/Y H:i" }}</td>
+              <td>{{ doc.user.first_name }} {{ doc.user.name }}</td>
+              <td>{% if doc.request %}{{ doc.request.service.name }}{% else %}N/A{% endif %}</td>
+              <td>{{ doc.document_type }}</td>
+              <td>{{ doc.uploaded_at|date:"d/m/Y H:i" }}</td>
               <td>
-                {% if doc.is_official %}
+                {% if doc.status == 'verified' %}
                 <span class="badge bg-success">Vérifié</span>
+                {% elif doc.status == 'rejected' %}
+                <span class="badge bg-danger">Refusé</span>
                 {% else %}
                 <span class="badge bg-warning">En attente</span>
                 {% endif %}

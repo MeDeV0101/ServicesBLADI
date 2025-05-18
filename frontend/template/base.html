@@ -1,194 +1,386 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="{% if LANGUAGE_CODE %}{{ LANGUAGE_CODE }}{% else %}fr{% endif %}">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>{% block title %}ServicesBladi{% endblock %}</title>
+    <meta
+      name="description"
+      content="{% block meta_description %}ServicesBladi - Services pour les Marocains résidant à l'étranger{% endblock %}"
+    />
+    <meta
+      name="keywords"
+      content="{% block meta_keywords %}MRE, services, marocains, étranger{% endblock %}"
+    />
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>{% block title %}ServicesBladi{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}ServicesBladi - Services pour les Marocains résidant à l'étranger{% endblock %}">
-  <meta name="keywords" content="{% block meta_keywords %}MRE, services, marocains, étranger{% endblock %}">
- 
-  <!-- Favicons -->
-  <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
-  <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}" />
+    <link
+      href="{% static 'img/apple-touch-icon.png' %}"
+      rel="apple-touch-icon"
+    />
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-  
-  <!-- Vendor CSS Files -->
-  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/animate.css/animate.min.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Main CSS File -->
-  <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    <!-- Vendor CSS Files -->
+    <link
+      href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}"
+      rel="stylesheet"
+    />
+    <link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet" />
+    <link
+      href="{% static 'vendor/animate.css/animate.min.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'vendor/glightbox/css/glightbox.min.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'vendor/swiper/swiper-bundle.min.css' %}"
+      rel="stylesheet"
+    />
 
-  {% block extra_css %}{% endblock %}
-</head>
+    <!-- Main CSS File -->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" />
 
-<body class="{% block body_class %}{% endblock %}">
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
 
-  <header id="header" class="header d-flex align-items-center fixed-top">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
 
-      <a href="{% url 'home' %}" class="logo d-flex align-items-center">
-        <img src="{% static 'img/logo_principale.png' %}" alt="ServicesBladi Logo" style="height: 2.1cm !important; width: auto; object-fit: contain; max-width: 100%; background-color: wheat; border-radius: 100px; padding: 0;">
-      </a>
+      .content-wrapper {
+        flex: 1 0 auto;
+      }
 
-      <nav id="navmenu" class="navmenu">
-        <ul>
-          <li><a href="{% url 'home' %}#hero" class="{% if request.path == '/' %}active{% endif %}" data-translate="home">Accueil</a></li>
-          <li><a href="{% url 'about' %}" class="{% if 'about' in request.path %}active{% endif %}" data-translate="about">À propos</a></li>
-          <li class="dropdown"><a href="#" class="{% if 'tourisme' in request.path or 'administrative' in request.path or 'investment' in request.path or 'immobilier' in request.path or 'fiscale' in request.path %}active{% endif %}"><span data-translate="services">Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="{% url 'tourisme' %}">Tourisme</a></li>
-              <li><a href="{% url 'administrative' %}">Administrative</a></li>
-              <li><a href="{% url 'investment' %}">Investissement</a></li>
-              <li><a href="{% url 'immobilier' %}">Immobilier</a></li>
-              <li><a href="{% url 'fiscale' %}">Fiscale</a></li>
-            </ul>
-          </li>
-          <li><a href="{% url 'contact' %}" class="{% if 'contact' in request.path %}active{% endif %}" data-translate="contact">Contact</a></li>
-          {% if user.is_authenticated %}
+      .footer {
+        color: var(--default-color);
+        background-color: var(--background-color);
+        font-size: 14px;
+        text-align: center;
+        padding: 30px 0;
+        position: relative;
+        flex-shrink: 0;
+        margin-top: auto;
+      }
+
+      .dark-background {
+        --background-color: #2a2c39;
+        --default-color: #ffffff;
+        --heading-color: #ffffff;
+        --surface-color: #404356;
+        --contrast-color: #ffffff;
+      }
+
+      .footer a {
+        color: var(--default-color);
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        color: var(--contrast-color);
+        text-decoration: underline;
+      }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+  </head>
+
+  <body class="{% block body_class %}{% endblock %}">
+    <header id="header" class="header d-flex align-items-center fixed-top">
+      <div
+        class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between"
+      >
+        <a href="{% url 'home' %}" class="logo d-flex align-items-center">
+          <img
+            src="{% static 'img/logo_principale.png' %}"
+            alt="ServicesBladi Logo"
+            style="
+              height: 2.1cm !important;
+              width: auto;
+              object-fit: contain;
+              max-width: 100%;
+              background-color: wheat;
+              border-radius: 100px;
+              padding: 0;
+            "
+          />
+        </a>
+
+        <nav id="navmenu" class="navmenu">
+          <ul>
+            <li>
+              <a
+                href="{% url 'home' %}#hero"
+                class="{% if request.path == '/' %}active{% endif %}"
+                data-translate="home"
+                >Accueil</a
+              >
+            </li>
+            <li>
+              <a
+                href="{% url 'about' %}"
+                class="{% if 'about' in request.path %}active{% endif %}"
+                data-translate="about"
+                >À propos</a
+              >
+            </li>
             <li class="dropdown">
-              <a href="#"><span>{{ user.first_name|default:user.email }}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <a
+                href="#"
+                class="{% if 'tourisme' in request.path or 'administrative' in request.path or 'investment' in request.path or 'immobilier' in request.path or 'fiscale' in request.path %}active{% endif %}"
+                ><span data-translate="services">Services</span>
+                <i class="bi bi-chevron-down toggle-dropdown"></i
+              ></a>
               <ul>
-                {% if user.account_type == 'admin' %}
-                  <li><a href="{% url 'admin_dashboard' %}">Tableau de bord</a></li>
-                {% elif user.account_type == 'expert' %}
-                  <li><a href="{% url 'expert_dashboard' %}">Tableau de bord</a></li>
-                {% else %}
-                  <li><a href="{% url 'client_dashboard' %}">Tableau de bord</a></li>
-                {% endif %}
-                <li><a href="{% url 'accounts:logout' %}">Se déconnecter</a></li>
+                <li><a href="{% url 'tourisme' %}">Tourisme</a></li>
+                <li><a href="{% url 'administrative' %}">Administrative</a></li>
+                <li><a href="{% url 'investment' %}">Investissement</a></li>
+                <li><a href="{% url 'immobilier' %}">Immobilier</a></li>
+                <li><a href="{% url 'fiscale' %}">Fiscale</a></li>
               </ul>
             </li>
-          {% else %}
-            <li><a href="{% url 'accounts:login' %}" data-translate="login">Se Connecter</a></li>
-          {% endif %}
-          <li class="dropdown"><a href="#"><span><i class="bi bi-translate"></i> <span data-translate="language">Langue</span></span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#" class="lang-option" data-lang="fr">Français</a></li>
-              <li><a href="#" class="lang-option" data-lang="ar">العربية</a></li>
-              <li><a href="#" class="lang-option" data-lang="en">English</a></li>
-              <li><a href="#" class="lang-option" data-lang="es">Español</a></li>
-            </ul>
-          </li>
-        </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-      </nav>
+            <li>
+              <a
+                href="{% url 'contact' %}"
+                class="{% if 'contact' in request.path %}active{% endif %}"
+                data-translate="contact"
+                >Contact</a
+              >
+            </li>
+            {% if user.is_authenticated %}
+            <li class="dropdown">
+              <a href="#"
+                ><span>{{ user.first_name|default:user.email }}</span>
+                <i class="bi bi-chevron-down toggle-dropdown"></i
+              ></a>
+              <ul>
+                {% if user.account_type == 'admin' %}
+                <li>
+                  <a href="{% url 'admin_dashboard' %}">Tableau de bord</a>
+                </li>
+                {% elif user.account_type == 'expert' %}
+                <li>
+                  <a href="{% url 'expert_dashboard' %}">Tableau de bord</a>
+                </li>
+                {% else %}
+                <li>
+                  <a href="{% url 'client_dashboard' %}">Tableau de bord</a>
+                </li>
+                {% endif %}
+                <li>
+                  <a href="{% url 'accounts:logout' %}">Se déconnecter</a>
+                </li>
+              </ul>
+            </li>
+            {% else %}
+            <li>
+              <a href="{% url 'accounts:login' %}" data-translate="login"
+                >Se Connecter</a
+              >
+            </li>
+            {% endif %}
+            <li class="dropdown">
+              <a href="#"
+                ><span
+                  ><i class="bi bi-translate"></i>
+                  <span data-translate="language">Langue</span></span
+                >
+                <i class="bi bi-chevron-down toggle-dropdown"></i
+              ></a>
+              <ul>
+                <li>
+                  <a href="#" class="lang-option" data-lang="fr">Français</a>
+                </li>
+                <li>
+                  <a href="#" class="lang-option" data-lang="ar">العربية</a>
+                </li>
+                <li>
+                  <a href="#" class="lang-option" data-lang="en">English</a>
+                </li>
+                <li>
+                  <a href="#" class="lang-option" data-lang="es">Español</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+      </div>
+    </header>
 
+    <div class="content-wrapper">
+      <main class="main">{% block content %}{% endblock %}</main>
     </div>
-  </header>
 
-  <main class="main">
-    {% block content %}{% endblock %}
-  </main>
-  
-  <footer id="footer" class="footer dark-background">
-    <div class="container">
-      <div class="row">
-        <!-- Logo et texte d'introduction -->
-        <div class="col-md-4">
-          <div class="mb-4">
-            <img style="max-height: 3cm; width: auto; border-radius: 20px; object-fit: cover; background-color: wheat;" src="{% static 'img/logo_principale.png' %}" alt="Logo">
-          </div>
-          <p>L'équipe ADVAL met à votre disposition ses compétences et son expérience et vous accompagne</p>
-          
-          <!-- Icônes réseaux sociaux -->
-          <div class="social-links d-flex justify-content-center">
-            <a href="https://web.facebook.com/advalmaroc"><i class="bi bi-facebook"></i></a>
-            <a href="https://wa.me/+212666679779"><i class="bi bi-whatsapp"></i></a>
-            <a href="https://twitter.com/AdvalMaroc"><i class="bi bi-twitter"></i></a>
-            <a href="https://www.linkedin.com/in/mehdi-aboulfaraj-bb8b44167?trk=public_profile_samename-profile_profile-result-card_result-card_full-click&originalSubdomain=ma"><i class="bi bi-linkedin"></i></a>
-          </div>
-        </div>
-        
-        <!-- Liens Utiles -->
-        <div class="col-md-4">
-          <h3 class="mb-4">Liens Utiles</h3>
-          
-          <div class="mt-4">
-            <h5 class="mb-3">À propos de nous</h5>
-            
-            <ul class="list-unstyled">
-              <li class="mb-3"><a href="{% url 'about' %}" style="color: white; text-decoration: none;">Qui sommes nous</a></li>
-              <li class="mb-3"><a href="{% url 'contact' %}" style="color: white; text-decoration: none;">Contact nous</a></li>
-            </ul>
-          </div>
-        </div>
-        
-        <!-- Contacts -->
-        <div class="col-md-4">
-          <h3 class="mb-4">Contacts</h3>
-          
-          <!-- Adresse -->
-          <div class="mb-4">
-            <div class="d-flex align-items-start mb-2">
-              <i class="bi bi-geo-alt text-primary me-3 fs-4" style="color: #0d6efd;"></i>
-              <div>
-                <h5 class="mb-1">Adresse</h5>
-                <p class="mb-0">15, Rue Al khaizourane Hay Al Houda<br>26000 - Berrechid - Maroc</p>
-              </div>
+    <footer id="footer" class="footer dark-background">
+      <div class="container">
+        <div class="row">
+          <!-- Logo et texte d'introduction -->
+          <div class="col-md-4">
+            <div class="mb-4">
+              <img
+                style="
+                  max-height: 3cm;
+                  width: auto;
+                  border-radius: 20px;
+                  object-fit: cover;
+                  background-color: wheat;
+                "
+                src="{% static 'img/logo_principale.png' %}"
+                alt="Logo"
+              />
+            </div>
+            <p>
+              L'équipe ADVAL met à votre disposition ses compétences et son
+              expérience et vous accompagne
+            </p>
+
+            <!-- Icônes réseaux sociaux -->
+            <div class="social-links d-flex justify-content-center">
+              <a href="https://web.facebook.com/advalmaroc"
+                ><i class="bi bi-facebook"></i
+              ></a>
+              <a href="https://wa.me/+212666679779"
+                ><i class="bi bi-whatsapp"></i
+              ></a>
+              <a href="https://twitter.com/AdvalMaroc"
+                ><i class="bi bi-twitter"></i
+              ></a>
+              <a
+                href="https://www.linkedin.com/in/mehdi-aboulfaraj-bb8b44167?trk=public_profile_samename-profile_profile-result-card_result-card_full-click&originalSubdomain=ma"
+                ><i class="bi bi-linkedin"></i
+              ></a>
             </div>
           </div>
-          
-          <!-- Téléphone -->
-          <div class="mb-4">
-            <div class="d-flex align-items-start mb-2">
-              <i class="bi bi-telephone text-primary me-3 fs-4" style="color: #0d6efd;"></i>
-              <div>
-                <h5 class="mb-1">Avez-vous des questions?</h5>
-                <p class="mb-0">TEL: +212 5 22 86 34 36</p>
-                <p class="mb-0">GSM: +212 6 66 67 97 79</p>
-                <p class="mb-0">France: +33 783 187 890</p>
-              </div>
+
+          <!-- Liens Utiles -->
+          <div class="col-md-4">
+            <h3 class="mb-4">Liens Utiles</h3>
+
+            <div class="mt-4">
+              <h5 class="mb-3">À propos de nous</h5>
+
+              <ul class="list-unstyled">
+                <li class="mb-3">
+                  <a
+                    href="{% url 'about' %}"
+                    style="color: var(--default-color); text-decoration: none"
+                    >Qui sommes nous</a
+                  >
+                </li>
+                <li class="mb-3">
+                  <a
+                    href="{% url 'contact' %}"
+                    style="color: var(--default-color); text-decoration: none"
+                    >Contact nous</a
+                  >
+                </li>
+              </ul>
             </div>
           </div>
-          
-          <!-- Email -->
-          <div class="mb-4">
-            <div class="d-flex align-items-start mb-2">
-              <i class="bi bi-envelope text-primary me-3 fs-4" style="color: #0d6efd;"></i>
-              <div>
-                <h5 class="mb-1">Email</h5>
-                <p class="mb-0">contact@advalmaroc.com</p>
-                <p class="mb-0">pgcparis@gmail.com</p>
+
+          <!-- Contacts -->
+          <div class="col-md-4">
+            <h3 class="mb-4">Contacts</h3>
+
+            <!-- Adresse -->
+            <div class="mb-4">
+              <div class="d-flex align-items-start mb-2">
+                <i
+                  class="bi bi-geo-alt text-primary me-3 fs-4"
+                  style="color: var(--contrast-color)"
+                ></i>
+                <div>
+                  <h5 class="mb-1">Adresse</h5>
+                  <p class="mb-0">
+                    15, Rue Al khaizourane Hay Al Houda<br />26000 - Berrechid -
+                    Maroc
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Téléphone -->
+            <div class="mb-4">
+              <div class="d-flex align-items-start mb-2">
+                <i
+                  class="bi bi-telephone text-primary me-3 fs-4"
+                  style="color: var(--contrast-color)"
+                ></i>
+                <div>
+                  <h5 class="mb-1">Avez-vous des questions?</h5>
+                  <p class="mb-0">TEL: +212 5 22 86 34 36</p>
+                  <p class="mb-0">GSM: +212 6 66 67 97 79</p>
+                  <p class="mb-0">France: +33 783 187 890</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4">
+              <div class="d-flex align-items-start mb-2">
+                <i
+                  class="bi bi-envelope text-primary me-3 fs-4"
+                  style="color: var(--contrast-color)"
+                ></i>
+                <div>
+                  <h5 class="mb-1">Email</h5>
+                  <p class="mb-0">contact@advalmaroc.com</p>
+                  <p class="mb-0">pgcparis@gmail.com</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </footer>
+    </footer>
 
-  <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <!-- Scroll Top -->
+    <a
+      href="#"
+      id="scroll-top"
+      class="scroll-top d-flex align-items-center justify-content-center"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
 
-  <!-- Preloader -->
-  <div id="preloader"></div>
+    <!-- Preloader -->
+    <div id="preloader"></div>
 
-  <!-- Vendor JS Files -->
-  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
-  <script src="{% static 'vendor/aos/aos.js' %}"></script>
-  <script src="{% static 'vendor/glightbox/js/glightbox.min.js' %}"></script>
-  <script src="{% static 'vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
-  <script src="{% static 'vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
-  <script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
+    <!-- Vendor JS Files -->
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
+    <script src="{% static 'vendor/aos/aos.js' %}"></script>
+    <script src="{% static 'vendor/glightbox/js/glightbox.min.js' %}"></script>
+    <script src="{% static 'vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+    <script src="{% static 'vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
 
-  <!-- Main JS File -->
-  <script src="{% static 'js/main.js' %}"></script>
-  <script src="{% static 'js/language.js' %}"></script>
-  <script src="{% static 'js/translations.js' %}"></script>
-  <script src="{% static 'js/translate.js' %}"></script>
+    <!-- Main JS File -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/language.js' %}"></script>
+    <script src="{% static 'js/translations.js' %}"></script>
+    <script src="{% static 'js/translate.js' %}"></script>
 
-  {% block extra_js %}{% endblock %}
-</body>
+    {% block extra_js %}{% endblock %}
+  </body>
 </html>

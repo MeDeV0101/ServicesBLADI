@@ -1,0 +1,72 @@
+{% extends 'base.html' %} {% load static %} {% load i18n %} {% block title %} {%
+trans "Vérification de l'email en attente" %} {% endblock %} {% block
+meta_description %} {% trans "Vérifiez votre email pour activer votre compte
+ServicesBladi" %} {% endblock %} {% block body_class %} verification-page {%
+endblock %} {% block extra_css %}
+<style>
+  .verification-container {
+    max-width: 600px;
+    margin: 100px auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .verification-icon {
+    font-size: 64px;
+    color: #0ea2bd;
+    margin-bottom: 20px;
+  }
+
+  .verification-title {
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .verification-message {
+    color: #666;
+    margin-bottom: 30px;
+  }
+
+  .verification-actions {
+    margin-top: 30px;
+  }
+
+  .btn-resend {
+    background-color: #0ea2bd;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+
+  .btn-resend:hover {
+    background-color: #0c8a9e;
+    color: white;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container">
+  <div class="verification-container">
+    <div class="verification-icon">
+      <i class="fas fa-envelope"></i>
+    </div>
+    <h1 class="verification-title">
+      {% trans "Vérification de l'email en attente" %}
+    </h1>
+    <p class="verification-message">
+      {% trans "Nous avons envoyé un email de vérification à votre adresse
+      email. Veuillez vérifier votre boîte de réception et vos spams pour
+      activer votre compte." %}
+    </p>
+    <div class="verification-actions">
+      <a href="{% url 'accounts:resend_verification' %}" class="btn btn-resend">
+        {% trans "Renvoyer l'email de vérification" %}
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
