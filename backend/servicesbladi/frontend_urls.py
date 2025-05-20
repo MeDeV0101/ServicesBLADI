@@ -31,7 +31,7 @@ from custom_requests.admin_views import (
     admin_complete_appointment, admin_cancel_appointment, admin_reschedule_appointment,
     admin_add_resource, admin_edit_resource, admin_delete_resource,
     admin_toggle_resource_visibility, admin_messages_view, admin_mark_message_read,
-    admin_profile_view, admin_edit_profile_view
+    admin_profile_view, admin_edit_profile_view, admin_assign_expert, admin_update_request_status
 )
 
 # Import admin bulk action views
@@ -109,4 +109,6 @@ urlpatterns = [
     path('admin/messages/<int:message_id>/mark-read/', admin_mark_message_read, name='admin_mark_message_read'),
     path('admin/profile/', admin_profile_view, name='admin_profile'),
     path('admin/profile/edit/', admin_edit_profile_view, name='admin_edit_profile'),
+    path('admin/demandes/<int:request_id>/assign-expert/', admin_assign_expert, name='admin_assign_expert'),
+    path('admin/demandes/<int:request_id>/update-status/', admin_update_request_status, name='admin_update_request_status'),
 ]

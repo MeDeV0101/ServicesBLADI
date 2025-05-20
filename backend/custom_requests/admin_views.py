@@ -11,10 +11,11 @@ import csv
 import os
 from io import StringIO
 from django.http import HttpResponse
+from django.utils.translation import gettext as _
 
 from accounts.models import Utilisateur, Client, Expert, Address
 from accounts.forms import UserEditForm
-from custom_requests.models import ServiceRequest, Document, RendezVous, Message
+from custom_requests.models import ServiceRequest, Document, RendezVous, Message, Notification
 from services.models import Service, ServiceCategory
 from resources.models import Resource
 
@@ -69,7 +70,12 @@ def admin_requests_view(request):
         # Get categories for filter dropdown
         from services.models import ServiceCategory
         categories = ServiceCategory.objects.all()
-          # Get some stats
+        
+        # Get experts for assignment dropdown
+        from accounts.models import Expert
+        experts = Expert.objects.select_related('user').all()
+          
+        # Get some stats
         total_requests = requests.count()
         pending_requests = requests.filter(status='pending').count()
         in_progress_requests = requests.filter(status='in_progress').count()
@@ -89,8 +95,10 @@ def admin_requests_view(request):
             requests_page = paginator.page(paginator.num_pages)
         
         context = {
+            'user': request.user,
             'requests': requests_page,
             'categories': categories,
+            'experts': experts,
             'status_filter': status_filter,
             'category_filter': category_filter,
             'period_filter': period_filter,
@@ -107,6 +115,7 @@ def admin_requests_view(request):
     
     except Exception as e:
         context = {
+            'user': request.user,
             'error': str(e)
         }
         return render(request, 'admin/demandes.html', context)
@@ -174,6 +183,7 @@ def admin_users_view(request):
             users_page = paginator.page(paginator.num_pages)
         
         context = {
+            'user': request.user,
             'users': users_page,  # This is now a page object, not the queryset
             'user_type': user_type,
             'status_filter': status_filter,
@@ -193,6 +203,7 @@ def admin_users_view(request):
     
     except Exception as e:
         context = {
+            'user': request.user,
             'error': str(e)
         }
         return render(request, 'admin/users.html', context)
@@ -795,6 +806,7 @@ def admin_resources_view(request):
             resources_page = paginator.page(paginator.num_pages)
         
         context = {
+            'user': request.user,
             'resources': resources_page,
             'categories': categories,
             'category': category,
@@ -811,6 +823,7 @@ def admin_resources_view(request):
     
     except Exception as e:
         context = {
+            'user': request.user,
             'error': str(e)
         }
         return render(request, 'admin/ressources.html', context)
@@ -872,6 +885,7 @@ def admin_messages_view(request):
         recent_messages = messages_list.filter(sent_at__gte=one_day_ago).count()
         
         context = {
+            'user': request.user,
             'messages_list': messages_list,
             'status_filter': status_filter,
             'period_filter': period_filter,
@@ -888,6 +902,7 @@ def admin_messages_view(request):
     
     except Exception as e:
         context = {
+            'user': request.user,
             'error': str(e)
         }
         return render(request, 'admin/messages.html', context)
@@ -988,6 +1003,7 @@ def admin_documents_view(request):
             documents_page = paginator.page(paginator.num_pages)
         
         context = {
+            'user': request.user,
             'documents': documents_page,
             'document_types': document_types,
             'clients': clients,
@@ -1007,6 +1023,7 @@ def admin_documents_view(request):
     
     except Exception as e:
         context = {
+            'user': request.user,
             'error': str(e)
         }
         return render(request, 'admin/documents.html', context)
@@ -1091,6 +1108,7 @@ def admin_appointments_view(request):
             appointments_page = paginator.page(paginator.num_pages)
         
         context = {
+            'user': request.user,
             'appointments': appointments_page,
             'clients': clients,
             'experts': experts,
@@ -1111,6 +1129,7 @@ def admin_appointments_view(request):
     
     except Exception as e:
         context = {
+            'user': request.user,
             'error': str(e)
         }
         return render(request, 'admin/rendezvous.html', context)
@@ -1161,3 +1180,126 @@ def admin_profile_view(request):
     }
     
     return render(request, 'admin/profile.html', context)
+
+@login_required
+def admin_assign_expert(request, request_id):
+    """Assign an expert to a service request"""
+    # Check if user is admin
+    if request.user.account_type.lower() != 'admin':
+        return redirect('home')
+    
+    # Get the service request
+    demande = get_object_or_404(ServiceRequest, id=request_id)
+    
+    if request.method == 'POST':
+        expert_id = request.POST.get('expert_id')
+        notes = request.POST.get('notes', '')
+        
+        if expert_id:
+            # Get the expert user
+            expert_user = get_object_or_404(Utilisateur, id=expert_id, account_type='expert')
+            
+            # Update the request
+            demande.expert = expert_user
+            demande.status = 'in_progress'  # Change status to in progress
+            demande.save()
+            
+            # Notify the expert
+            Notification.objects.create(
+                user=expert_user,
+                type='request_assignment',
+                title=_('New Assignment'),
+                content=_(f'You have been assigned to the request "{demande.title}" by {request.user.name} {request.user.first_name}.'),
+                related_service_request=demande
+            )
+            
+            # Also notify the client
+            Notification.objects.create(
+                user=demande.client,
+                type='request_update',
+                title=_('Expert Assigned'),
+                content=_(f'An expert has been assigned to your request "{demande.title}".'),
+                related_service_request=demande
+            )
+            
+            # Add notes as a message if provided
+            if notes:
+                # From admin to expert
+                Message.objects.create(
+                    sender=request.user,
+                    recipient=expert_user,
+                    content=_('Admin notes: ') + notes,
+                    service_request=demande
+                )
+            
+            messages.success(request, _('Expert successfully assigned to the request.'))
+        else:
+            messages.error(request, _('Please select an expert to assign.'))
+    
+    return redirect('admin_demandes')
+
+@login_required
+def admin_update_request_status(request, request_id):
+    """Update the status of a service request"""
+    # Check if user is admin
+    if request.user.account_type.lower() != 'admin':
+        return redirect('home')
+    
+    # Get the service request
+    demande = get_object_or_404(ServiceRequest, id=request_id)
+    
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        comment = request.POST.get('comment', '')
+        
+        if new_status in [s[0] for s in ServiceRequest.STATUS_CHOICES]:
+            # Store the old status for notification
+            old_status = demande.status
+            
+            # Update the request status
+            demande.status = new_status
+            demande.save()
+            
+            # Add comment as message if provided
+            if comment:
+                Message.objects.create(
+                    sender=request.user,
+                    recipient=demande.client,
+                    content=_('Statut mis à jour: ') + comment,
+                    service_request=demande
+                )
+                
+                # If there's an expert assigned, send the message to them as well
+                if demande.expert:
+                    Message.objects.create(
+                        sender=request.user,
+                        recipient=demande.expert,
+                        content=_('Statut mis à jour: ') + comment,
+                        service_request=demande
+                    )
+            
+            # Create notification for client
+            status_translated = dict(ServiceRequest.STATUS_CHOICES).get(new_status, new_status)
+            Notification.objects.create(
+                user=demande.client,
+                type='request_update',
+                title=_('Statut de la demande mis à jour'),
+                content=_(f'Le statut de votre demande "{demande.title}" a été mis à jour à "{status_translated}".'),
+                related_service_request=demande
+            )
+            
+            # Create notification for expert if assigned
+            if demande.expert:
+                Notification.objects.create(
+                    user=demande.expert,
+                    type='request_update',
+                    title=_('Statut de la demande mis à jour'),
+                    content=_(f'Le statut de la demande "{demande.title}" a été mis à jour à "{status_translated}".'),
+                    related_service_request=demande
+                )
+            
+            messages.success(request, _('Le statut de la demande a été mis à jour avec succès.'))
+        else:
+            messages.error(request, _('Le statut spécifié est invalide.'))
+    
+    return redirect('admin_demandes')

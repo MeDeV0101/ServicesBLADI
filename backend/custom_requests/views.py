@@ -214,7 +214,8 @@ def edit_request_view(request, request_id):
     """Edit an existing request"""
     try:
         client = Client.objects.get(user=request.user)
-        demande = get_object_or_404(ServiceRequest, id=request_id, client=client)
+        # Utiliser request.user pour le client car c'est une ForeignKey vers Utilisateur
+        demande = get_object_or_404(ServiceRequest, id=request_id, client=request.user)
         
         # Only allow editing if request is new or pending information
         if demande.status not in ['new', 'pending_info']:
@@ -224,16 +225,19 @@ def edit_request_view(request, request_id):
         if request.method == 'POST':
             title = request.POST.get('title')
             description = request.POST.get('description')
+            priority = request.POST.get('priority')
             
             # Update the request
             demande.title = title
             demande.description = description
+            demande.priority = priority
             demande.save()
             
             # Notify assigned expert if any
-            if demande.assigned_expert:
+            # Utiliser demande.expert au lieu de demande.assigned_expert
+            if demande.expert:
                 Notification.objects.create(
-                    user=demande.assigned_expert.user,
+                    user=demande.expert,  # L'expert est déjà un Utilisateur
                     type='request_update',
                     title=_('Request Updated'),
                     content=_(f'Request "{demande.title}" has been updated by {client.user.name} {client.user.first_name}.'),

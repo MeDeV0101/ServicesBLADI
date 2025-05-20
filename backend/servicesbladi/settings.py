@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     
     # Third party apps
     'crispy_forms',
@@ -46,6 +47,8 @@ INSTALLED_APPS = [
     'custom_requests',
     'resources',
 ]
+
+SITE_ID = 1
 
 AUTH_USER_MODEL = 'accounts.Utilisateur'
 
@@ -92,7 +95,7 @@ WSGI_APPLICATION = 'servicesbladi.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'servicesbladi',
+        'NAME': 'sb_db',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
@@ -173,8 +176,21 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'accounts:dashboard_redirect'
 LOGOUT_REDIRECT_URL = 'home'
 
-# Email settings (for development)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'adval.devteam@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'qxzl mlcu nyeu nyuw'  # Your Gmail app password
+DEFAULT_FROM_EMAIL = f"ServiceBladi <{EMAIL_HOST_USER}>"
+
+# Email Verification Settings
+ACCOUNT_ACTIVATION_DAYS = 7  # Number of days the activation link is valid
+
+# Email Debug Settings (for development)
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # REST Framework settings
 REST_FRAMEWORK = {
@@ -210,3 +226,47 @@ AUTHENTICATION_BACKENDS = [
     'accounts.backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'django.log'),
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'accounts': {  # Your app's logger
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+# Create logs directory if it doesn't exist
+LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+if not os.path.exists(LOGS_DIR):
+    os.makedirs(LOGS_DIR)

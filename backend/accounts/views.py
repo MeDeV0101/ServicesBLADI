@@ -9,12 +9,45 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.core.mail import send_mail, BadHeaderError
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse
+import logging
 
 from .models import Utilisateur, Client, Expert, Address, Notification
 from .forms import UserEditForm, CustomPasswordChangeForm  # Added form imports
 from custom_requests.models import Document, Message
 
+# Set up logger
+logger = logging.getLogger(__name__)
+
 # Authentication views
+def resend_verification_email(request, user):
+    """Resend verification email to user"""
+    try:
+        # Log resend attempt
+        logger.info(f"Attempting to resend verification email to {user.email}")
+        
+        # Send activation email
+        email_sent = send_activation_email(user, request)
+        
+        if email_sent:
+            messages.success(request, _('Un nouvel email de vérification a été envoyé à votre adresse email.'))
+            logger.info(f"Successfully resent verification email to {user.email}")
+        else:
+            messages.error(request, _('Erreur lors de l\'envoi de l\'email de vérification. Veuillez réessayer.'))
+            logger.error(f"Failed to resend verification email to {user.email}")
+            
+        return email_sent
+        
+    except Exception as e:
+        logger.error(f"Error in resend_verification_email: {str(e)}")
+        messages.error(request, _('Une erreur est survenue. Veuillez réessayer.'))
+        return False
+
 def custom_login_view(request):
     """Custom login view that handles both form and API requests"""
     # Clear any existing service-related error messages
@@ -41,6 +74,15 @@ def custom_login_view(request):
                 user = authenticate(request, email=email, password=password)
                 
                 if user is not None:
+                    if not user.is_active:
+                        # Resend verification email
+                        resend_verification_email(request, user)
+                        return JsonResponse({
+                            'success': False,
+                            'message': _('Votre compte n\'est pas encore vérifié. Un nouvel email de vérification a été envoyé à votre adresse email.'),
+                            'needs_verification': True
+                        }, status=400)
+                    
                     print(f"API login successful for user: {user.email}, account_type: {user.account_type}")
                     login(request, user)
                     redirect_url = request.GET.get('next', '/accounts/dashboard/')
@@ -59,7 +101,7 @@ def custom_login_view(request):
                 else:
                     return JsonResponse({
                         'success': False,
-                        'message': _('Invalid email or password')
+                        'message': _('Email ou mot de passe incorrect')
                     }, status=400)
                     
             except Exception as e:
@@ -73,37 +115,26 @@ def custom_login_view(request):
         password = request.POST.get('password')
         
         if not email or not password:
-            messages.error(request, _('Please provide both email and password'))
+            messages.error(request, _('Veuillez fournir votre email et mot de passe'))
             return render(request, 'login.html')
         
-        # Debug: Check if user exists
-        try:
-            user_exists = Utilisateur.objects.filter(email=email).exists()
-            print(f"User exists: {user_exists}")
-        except Exception as e:
-            print(f"Error checking user existence: {str(e)}")
-        
-        # Debug: Try to get user directly
-        try:
-            user = Utilisateur.objects.get(email=email)
-            print(f"Found user: {user.email}, is_active: {user.is_active}")
-        except Utilisateur.DoesNotExist:
-            print(f"No user found with email: {email}")
-        except Exception as e:
-            print(f"Error getting user: {str(e)}")
-            
         # Try authentication
         user = authenticate(request, email=email, password=password)
-        print(f"Authentication result: {user is not None}")
         
         if user is not None:
+            if not user.is_active:
+                # Resend verification email
+                resend_verification_email(request, user)
+                messages.warning(request, _('Votre compte n\'est pas encore vérifié. Un nouvel email de vérification a été envoyé à votre adresse email.'))
+                return render(request, 'login.html')
+                
             login(request, user)
             next_url = request.POST.get('next')
             if next_url:
                 return redirect(next_url)
             return redirect('accounts:dashboard_redirect')
         else:
-            messages.error(request, _('Invalid email or password'))
+            messages.error(request, _('Email ou mot de passe incorrect'))
     
     return render(request, 'login.html')
 
@@ -196,6 +227,72 @@ def create_admin_user(request):
     # GET request - show the form
     return render(request, 'admin/create_admin.html')
 
+def send_activation_email(user, request):
+    """Send activation email to user"""
+    try:
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        
+        # Build activation link
+        activation_link = request.build_absolute_uri(
+            reverse('accounts:activate', kwargs={'uidb64': uid, 'token': token})
+        )
+        
+        # Render email template
+        context = {
+            'user': user,
+            'activation_link': activation_link,
+            'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS
+        }
+        html_message = render_to_string('accounts/emails/activation_email.html', context)
+        
+        # Log email attempt
+        logger.info(f"Attempting to send activation email to {user.email}")
+        
+        # Check email configuration
+        if not settings.EMAIL_HOST_USER or not settings.EMAIL_HOST_PASSWORD:
+            logger.error("Email configuration is incomplete. Check EMAIL_HOST_USER and EMAIL_HOST_PASSWORD settings.")
+            return False
+        
+        # Send email
+        send_mail(
+            subject=_('Activez votre compte ServiceBladi'),
+            message=f'Pour activer votre compte, cliquez sur ce lien : {activation_link}',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            html_message=html_message,
+            fail_silently=False  # Raise exceptions for debugging
+        )
+        
+        logger.info(f"Successfully sent activation email to {user.email}")
+        return True
+        
+    except BadHeaderError as e:
+        logger.error(f"Invalid header found while sending email to {user.email}: {str(e)}")
+        return False
+    except Exception as e:
+        logger.error(f"Failed to send activation email to {user.email}: {str(e)}")
+        # Log the full traceback for debugging
+        import traceback
+        logger.error(traceback.format_exc())
+        return False
+
+def activate_account(request, uidb64, token):
+    """Activate user account"""
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = Utilisateur.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, Utilisateur.DoesNotExist):
+        user = None
+    
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, _('Votre compte a été activé avec succès.'))
+        return render(request, 'accounts/activation_success.html')
+    else:
+        return render(request, 'accounts/activation_error.html')
+
 def register_view(request):
     """Handle client registration"""
     if request.method == 'POST':
@@ -207,7 +304,7 @@ def register_view(request):
         email = request.POST.get('email', '')
         password = request.POST.get('password', '')
         password_confirm = request.POST.get('password_confirm', '')
-        name = request.POST.get('last_name', '')  # last_name is the name field in the form
+        name = request.POST.get('last_name', '')
         first_name = request.POST.get('first_name', '')
         phone = request.POST.get('phone', '')
         
@@ -227,7 +324,7 @@ def register_view(request):
             return render(request, 'register.html')
         
         try:
-            # Create user
+            # Create user with is_active=False
             user = Utilisateur.objects.create_user(
                 email=email,
                 password=password,
@@ -236,6 +333,7 @@ def register_view(request):
                 phone=phone,
                 account_type='client',
                 preferred_languages=request.POST.get('preferred_language', 'fr'),
+                is_active=False  # Set to False until email verification
             )
             
             # Create client profile
@@ -255,13 +353,19 @@ def register_view(request):
                     address_type='HOME',
                 )
             
-            # Log the user in
-            user = authenticate(request, email=email, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('accounts:dashboard_redirect')
+            # Send activation email
+            email_sent = send_activation_email(user, request)
+            if not email_sent:
+                # If email fails, delete the user and show error
+                user.delete()
+                messages.error(request, _('Erreur lors de l\'envoi de l\'email de vérification. Veuillez réessayer.'))
+                return render(request, 'register.html')
+            
+            messages.success(request, _('Votre compte a été créé. Veuillez vérifier votre email pour activer votre compte.'))
+            return redirect('accounts:login')
             
         except Exception as e:
+            logger.error(f"Registration error: {str(e)}")
             messages.error(request, str(e))
             return render(request, 'register.html')
     
@@ -270,7 +374,6 @@ def register_view(request):
         'countries': settings.COUNTRIES,
     }
     return render(request, 'register.html', context)
-
 
 def register_expert_view(request):
     """Handle expert registration"""
@@ -317,7 +420,7 @@ def register_expert_view(request):
             return render(request, 'register_expert.html', {'countries': settings.COUNTRIES})
         
         try:
-            # Create user
+            # Create user with is_active=False
             user = Utilisateur.objects.create_user(
                 email=email,
                 password=password,
@@ -326,6 +429,7 @@ def register_expert_view(request):
                 phone=phone,
                 account_type='expert',
                 preferred_languages='fr',
+                is_active=False  # Set to False until email verification
             )
             
             # Create expert profile
@@ -338,18 +442,18 @@ def register_expert_view(request):
                 years_of_experience=experience or 0
             )
             
+            # Send activation email
+            send_activation_email(user, request)
+            
             # For AJAX requests, return success response
             if is_ajax:
                 return JsonResponse({
                     'success': True,
-                    'message': _('Expert enregistré avec succès')
+                    'message': _('Expert enregistré avec succès. Veuillez vérifier votre email pour activer votre compte.')
                 })
             
-            # For regular form submission, log the user in
-            user = authenticate(request, email=email, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('accounts:dashboard_redirect')
+            messages.success(request, _('Votre compte a été créé. Veuillez vérifier votre email pour activer votre compte.'))
+            return redirect('accounts:login')
             
         except Exception as e:
             error_msg = str(e)

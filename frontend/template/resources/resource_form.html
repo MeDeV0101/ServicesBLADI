@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% if resource %}{% trans "Modifier la ressource" %}{% else %}{% trans "Ajouter une ressource" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Accueil" %}</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'expert_ressources' %}">{% trans "Ressources" %}</a></li>
+          <li class="breadcrumb-item active">
+            {% if resource %}{% trans "Modifier" %}{% else %}{% trans "Ajouter" %}{% endif %}
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">
+            {% if resource %}
+              {% trans "Modifier la ressource" %}
+            {% else %}
+              {% trans "Ajouter une nouvelle ressource" %}
+            {% endif %}
+          </h3>
+        </div>
+        <div class="card-body">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data" action="{% if resource %}{% url 'resources:edit_resource' resource.id %}{% else %}{% url 'resources:expert_add_resource' %}{% endif %}">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label for="title" class="form-label">{% trans "Titre" %} <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="title" name="title" required value="{{ resource.title|default:'' }}">
+            </div>
+
+            <div class="mb-3">
+              <label for="category" class="form-label">{% trans "Catégorie" %} <span class="text-danger">*</span></label>
+              <select class="form-select" id="category" name="category" required>
+                <option value="" {% if not resource %}selected{% endif %}>{% trans "Sélectionner une catégorie" %}</option>
+                <option value="documentation" {% if resource and resource.category == 'documentation' %}selected{% endif %}>{% trans "Documentation" %}</option>
+                <option value="guide" {% if resource and resource.category == 'guide' %}selected{% endif %}>{% trans "Guide" %}</option>
+                <option value="form" {% if resource and resource.category == 'form' %}selected{% endif %}>{% trans "Formulaire" %}</option>
+                <option value="video" {% if resource and resource.category == 'video' %}selected{% endif %}>{% trans "Vidéo" %}</option>
+                <option value="tool" {% if resource and resource.category == 'tool' %}selected{% endif %}>{% trans "Outil" %}</option>
+                <option value="other" {% if resource and resource.category == 'other' %}selected{% endif %}>{% trans "Autre" %}</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">{% trans "Description" %} <span class="text-danger">*</span></label>
+              <textarea class="form-control" id="description" name="description" rows="4" required>{{ resource.description|default:'' }}</textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{% trans "Langues disponibles" %}</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="languages" value="fr" id="lang_fr" 
+                {% if not resource or 'fr' in available_languages %}checked{% endif %}>
+                <label class="form-check-label" for="lang_fr">Français</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="languages" value="en" id="lang_en"
+                {% if resource and 'en' in available_languages %}checked{% endif %}>
+                <label class="form-check-label" for="lang_en">English</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="languages" value="ar" id="lang_ar"
+                {% if resource and 'ar' in available_languages %}checked{% endif %}>
+                <label class="form-check-label" for="lang_ar">العربية</label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="files" class="form-label">{% trans "Fichiers" %}</label>
+              <input type="file" class="form-control" id="files" name="files" multiple>
+              <div class="form-text">{% trans "Vous pouvez sélectionner plusieurs fichiers" %}</div>
+            </div>
+
+            {% if files %}
+            <div class="mb-3">
+              <label class="form-label">{% trans "Fichiers existants" %}</label>
+              <ul class="list-group">
+                {% for file in files %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  {{ file.file_name }}
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="delete_file_{{ file.id }}" id="delete_file_{{ file.id }}">
+                    <label class="form-check-label text-danger" for="delete_file_{{ file.id }}">
+                      {% trans "Supprimer" %}
+                    </label>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+
+            <div id="links-container" class="mb-3">
+              <label class="form-label">{% trans "Liens" %}</label>
+              <div class="link-inputs mb-2">
+                <div class="input-group">
+                  <input type="text" class="form-control" name="links" placeholder="{% trans 'URL du lien' %}">
+                  <input type="text" class="form-control" name="link_titles" placeholder="{% trans 'Titre du lien' %}">
+                  <button type="button" class="btn btn-outline-secondary remove-link" disabled>-</button>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline-primary btn-sm" id="add-link">
+                <i class="bi bi-plus-circle me-1"></i> {% trans "Ajouter un lien" %}
+              </button>
+            </div>
+
+            {% if links %}
+            <div class="mb-3">
+              <label class="form-label">{% trans "Liens existants" %}</label>
+              <ul class="list-group">
+                {% for link in links %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>{{ link.title }}</strong>
+                    <div><a href="{{ link.url }}" target="_blank">{{ link.url }}</a></div>
+                  </div>
+                  <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary edit-link" data-id="{{ link.id }}">
+                      {% trans "Modifier" %}
+                    </button>
+                    <div class="form-check d-inline-block ms-2">
+                      <input class="form-check-input" type="checkbox" name="delete_link_{{ link.id }}" id="delete_link_{{ link.id }}">
+                      <label class="form-check-label text-danger" for="delete_link_{{ link.id }}">
+                        {% trans "Supprimer" %}
+                      </label>
+                    </div>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="is_active" name="is_active" 
+              {% if not resource or resource.is_active %}checked{% endif %}>
+              <label class="form-check-label" for="is_active">{% trans "Ressource active (visible pour les utilisateurs)" %}</label>
+            </div>
+
+            <div class="mt-4">
+              <a href="{% url 'expert_ressources' %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle me-1"></i> {% trans "Annuler" %}
+              </a>
+              <button type="submit" class="btn btn-primary ms-2">
+                <i class="bi bi-save me-1"></i> 
+                {% if resource %}{% trans "Mettre à jour" %}{% else %}{% trans "Enregistrer" %}{% endif %}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add link functionality
+    const linksContainer = document.getElementById('links-container');
+    const addLinkBtn = document.getElementById('add-link');
+    
+    addLinkBtn.addEventListener('click', function() {
+      const linkDiv = document.createElement('div');
+      linkDiv.className = 'link-inputs mb-2';
+      linkDiv.innerHTML = `
+        <div class="input-group">
+          <input type="text" class="form-control" name="links" placeholder="{% trans 'URL du lien' %}">
+          <input type="text" class="form-control" name="link_titles" placeholder="{% trans 'Titre du lien' %}">
+          <button type="button" class="btn btn-outline-danger remove-link">-</button>
+        </div>
+      `;
+      
+      // Insert before the add button
+      linksContainer.insertBefore(linkDiv, addLinkBtn);
+      
+      // Enable remove buttons
+      document.querySelectorAll('.remove-link').forEach(btn => {
+        btn.disabled = document.querySelectorAll('.link-inputs').length <= 1;
+        btn.addEventListener('click', function() {
+          this.closest('.link-inputs').remove();
+          // Update disabled state of remaining buttons
+          document.querySelectorAll('.remove-link').forEach(btn => {
+            btn.disabled = document.querySelectorAll('.link-inputs').length <= 1;
+          });
+        });
+      });
+    });
+    
+    // Edit link functionality (for existing links)
+    document.querySelectorAll('.edit-link').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const linkId = this.getAttribute('data-id');
+        const linkItem = this.closest('li');
+        const linkUrl = linkItem.querySelector('a').getAttribute('href');
+        const linkTitle = linkItem.querySelector('strong').textContent;
+        
+        const editForm = document.createElement('div');
+        editForm.className = 'mt-2';
+        editForm.innerHTML = `
+          <input type="hidden" name="edit_link_${linkId}" value="1">
+          <div class="input-group mt-2">
+            <input type="text" class="form-control form-control-sm" name="link_url_${linkId}" value="${linkUrl}">
+            <input type="text" class="form-control form-control-sm" name="link_title_${linkId}" value="${linkTitle}">
+          </div>
+        `;
+        
+        linkItem.appendChild(editForm);
+        this.style.display = 'none';
+      });
+    });
+  });
+</script>
+{% endblock %} 

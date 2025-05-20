@@ -242,9 +242,8 @@
             <label for="expert" class="form-label">Expert:</label>
             <select class="form-select" id="expert" name="expert_id" required>
               <option value="">Sélectionner un expert</option>
-              <!-- TODO: Replace with actual experts from the view context -->
               {% for expert in experts %}
-              <option value="{{ expert.id }}" {% if request.expert and request.expert.id == expert.id %}selected{% endif %}>{{ expert.user.first_name }} {{ expert.user.name }}</option>
+              <option value="{{ expert.user.id }}" {% if request.expert and request.expert.id == expert.user.id %}selected{% endif %}>{{ expert.user.first_name }} {{ expert.user.name }}</option>
               {% endfor %}
             </select>
           </div>

@@ -5,12 +5,848 @@
 {% block meta_keywords %}MRE, demande, service, détail{% endblock %}
 
 {% block content %}
+<style>
+  /* Variables de couleur */
+  :root {
+    --primary-color: #1e3c72;
+    --secondary-color: #2a5298;
+    --accent-color: #4a6fa5;
+    --text-color: #2c3e50;
+    --light-bg: #f8f9fa;
+    --card-bg: #ffffff;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+  }
+
+  /* Réinitialisation de base pour éviter les conflits */
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Styles généraux */
+  body {
+    background-color: #f5f7fa !important;
+    color: var(--text-color) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  }
+
+  .container-fluid {
+    padding: 2rem !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+  }
+
+  h2 {
+    color: var(--primary-color) !important;
+    font-weight: 700 !important;
+    margin-bottom: 1.5rem !important;
+    font-size: 1.8rem !important;
+  }
+
+  strong {
+    font-weight: 600 !important;
+    color: #333 !important;
+  }
+
+  /* Cards */
+  .card {
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.3s ease !important;
+    margin-bottom: 1.75rem !important;
+    overflow: hidden !important;
+    background-color: #fff !important;
+  }
+
+  .card:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-5px) !important;
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.05), rgba(42, 82, 152, 0.05)) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    padding: 1.25rem 1.5rem !important;
+  }
+
+  .card-header h5 {
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0 !important;
+    font-size: 1.25rem !important;
+  }
+
+  .card-body {
+    padding: 1.5rem !important;
+    background-color: #fff !important;
+  }
+
+  /* Badges */
+  .badge {
+    padding: 0.5rem 0.85rem !important;
+    font-weight: 500 !important;
+    border-radius: 30px !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+    display: inline-block !important;
+    margin-right: 0.25rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .bg-info {
+    background: linear-gradient(135deg, #0dcaf0, #0bb1d3) !important;
+    color: white !important;
+  }
+
+  .bg-warning {
+    background: linear-gradient(135deg, #ffc107, #e7ae06) !important;
+    color: #856404 !important;
+  }
+
+  .bg-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    color: white !important;
+  }
+
+  .bg-success {
+    background: linear-gradient(135deg, #28a745, #1f9d38) !important;
+    color: white !important;
+  }
+
+  .bg-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    color: white !important;
+  }
+
+  .bg-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    color: white !important;
+  }
+
+  /* Boutons */
+  .btn {
+    border-radius: 8px !important;
+    padding: 0.5rem 1.25rem !important;
+    font-weight: 500 !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    line-height: 1.5 !important;
+    font-size: 1rem !important;
+  }
+
+  .btn-sm {
+    padding: 0.25rem 0.75rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  .btn-outline-primary {
+    border: 2px solid var(--primary-color) !important;
+    color: var(--primary-color) !important;
+    background: transparent !important;
+    position: relative !important;
+    z-index: 1 !important;
+    overflow: hidden !important;
+  }
+  
+  .btn-outline-primary::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 0 !important;
+    background-color: var(--primary-color) !important;
+    transition: height 0.3s ease !important;
+    z-index: -1 !important;
+  }
+  
+  .btn-outline-primary:hover {
+    color: white !important;
+  }
+  
+  .btn-outline-primary:hover::after {
+    height: 100% !important;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2) !important;
+    color: white !important;
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(30, 60, 114, 0.3) !important;
+    transform: translateY(-3px) !important;
+  }
+
+  .btn-outline-danger {
+    border: 2px solid var(--danger-color) !important;
+    color: var(--danger-color) !important;
+    background: transparent !important;
+  }
+  
+  .btn-outline-danger:hover {
+    background-color: var(--danger-color) !important;
+    color: white !important;
+  }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    border: none !important;
+    color: white !important;
+  }
+
+  /* Tables */
+  .table {
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+    color: var(--text-color) !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background-color: transparent !important;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: rgba(30, 60, 114, 0.03) !important;
+  }
+
+  .table th, .table td {
+    padding: 1rem !important;
+    vertical-align: middle !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .table thead th {
+    vertical-align: bottom !important;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05) !important;
+    font-weight: 600 !important;
+    color: var(--primary-color) !important;
+    background-color: rgba(0, 0, 0, 0.02) !important;
+  }
+
+  .table-responsive {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Formulaires */
+  .form-control, .form-select {
+    border-radius: 8px !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.3s ease !important;
+    width: 100% !important;
+    font-size: 1rem !important;
+    background-color: #fff !important;
+    color: #495057 !important;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(30, 60, 114, 0.15) !important;
+    outline: 0 !important;
+  }
+
+  textarea.form-control {
+    min-height: 120px !important;
+    resize: vertical !important;
+  }
+
+  .form-label {
+    font-weight: 500 !important;
+    color: var(--text-color) !important;
+    margin-bottom: 0.5rem !important;
+    display: inline-block !important;
+  }
+
+  .form-group {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Modal */
+  .modal-content {
+    border-radius: 16px !important;
+    border: none !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
+  }
+  
+  .modal-header {
+    border-bottom: none !important;
+    padding: 1.75rem !important;
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.05), rgba(42, 82, 152, 0.05)) !important;
+  }
+  
+  .modal-body {
+    padding: 1.75rem !important;
+  }
+  
+  .modal-footer {
+    border-top: none !important;
+    padding: 1.5rem 1.75rem !important;
+    background: rgba(0, 0, 0, 0.01) !important;
+  }
+
+  .btn-close {
+    box-sizing: content-box !important;
+    width: 1em !important;
+    height: 1em !important;
+    padding: 0.25em 0.25em !important;
+    color: #000 !important;
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat !important;
+    border: 0 !important;
+    border-radius: 0.25rem !important;
+    opacity: .5 !important;
+  }
+
+  /* Messages */
+  .messages-container {
+    height: 400px !important;
+    overflow-y: auto !important;
+    padding: 1rem !important;
+    background-color: #fafbfc !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .message-bubble {
+    padding: 1rem 1.25rem !important;
+    border-radius: 12px !important;
+    margin-bottom: 1rem !important;
+    max-width: 80% !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
+    animation: fadeIn 0.3s ease-out !important;
+    position: relative !important;
+    clear: both !important;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .message-in {
+    background: linear-gradient(135deg, #f8f9fa, #f1f0f0) !important;
+    margin-right: auto !important;
+    float: left !important;
+    border-bottom-left-radius: 0 !important;
+  }
+  
+  .message-out {
+    background: linear-gradient(135deg, #e3f2fd, #e1f5fe) !important;
+    margin-left: auto !important;
+    float: right !important;
+    border-bottom-right-radius: 0 !important;
+  }
+  
+  .message-header {
+    margin-bottom: 0.5rem !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    padding-bottom: 0.5rem !important;
+  }
+  
+  .sender-name {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    color: var(--primary-color) !important;
+  }
+  
+  .message-content {
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Text utilities */
+  .text-muted {
+    color: #6c757d !important;
+  }
+
+  .text-center {
+    text-align: center !important;
+  }
+
+  .py-5 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  /* Layout utilities */
+  .d-flex {
+    display: flex !important;
+  }
+
+  .justify-content-between {
+    justify-content: space-between !important;
+  }
+
+  .justify-content-end {
+    justify-content: flex-end !important;
+  }
+
+  .align-items-center {
+    align-items: center !important;
+  }
+
+  .mb-4 {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .mb-3 {
+    margin-bottom: 1rem !important;
+  }
+
+  .mb-1 {
+    margin-bottom: 0.25rem !important;
+  }
+
+  .mb-0 {
+    margin-bottom: 0 !important;
+  }
+
+  .mt-2 {
+    margin-top: 0.5rem !important;
+  }
+
+  .mt-3 {
+    margin-top: 1rem !important;
+  }
+
+  .mt-4 {
+    margin-top: 1.5rem !important;
+  }
+
+  .me-1 {
+    margin-right: 0.25rem !important;
+  }
+
+  .me-2 {
+    margin-right: 0.5rem !important;
+  }
+
+  .me-4 {
+    margin-right: 1.5rem !important;
+  }
+
+  .ms-1 {
+    margin-left: 0.25rem !important;
+  }
+
+  /* Grid system */
+  .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin-right: -15px !important;
+    margin-left: -15px !important;
+  }
+
+  .col-lg-7, .col-lg-5 {
+    position: relative !important;
+    width: 100% !important;
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+  }
+
+  @media (min-width: 992px) {
+    .col-lg-7 {
+      flex: 0 0 58.333333% !important;
+      max-width: 58.333333% !important;
+    }
+    
+    .col-lg-5 {
+      flex: 0 0 41.666667% !important;
+      max-width: 41.666667% !important;
+    }
+  }
+
+  /* Icons */
+  .bi {
+    vertical-align: -0.125em !important;
+    display: inline-block !important;
+    width: 1em !important;
+    height: 1em !important;
+    margin-right: 0.25rem !important;
+  }
+
+  /* Media queries */
+  @media (max-width: 768px) {
+    .container-fluid {
+      padding: 1rem !important;
+    }
+    
+    .card {
+      margin-bottom: 1rem !important;
+    }
+    
+    .badge {
+      padding: 0.4rem 0.7rem !important;
+    }
+
+    .d-flex {
+      flex-direction: column !important;
+    }
+
+    .me-4 {
+      margin-right: 0 !important;
+      margin-bottom: 1rem !important;
+    }
+  }
+
+  /* Améliorations pour les boutons d'action dans les tables */
+  .action-button-container {
+    display: flex !important;
+    gap: 0.5rem !important;
+    justify-content: flex-start !important;
+  }
+  
+  .action-btn-view {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 0.35rem 0.75rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .action-btn-view:hover {
+    background-color: var(--secondary-color) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 3px 10px rgba(30, 60, 114, 0.2) !important;
+  }
+  
+  .action-btn-delete {
+    background-color: var(--danger-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 0.35rem 0.75rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .action-btn-delete:hover {
+    background-color: #c82333 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 3px 10px rgba(220, 53, 69, 0.2) !important;
+  }
+  
+  /* Utility class for icon text */
+  .icon-text {
+    margin-left: 0.25rem !important;
+  }
+
+  /* Bouton d'ajout de document */
+  .btn-add-document {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1.25rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    box-shadow: 0 4px 10px rgba(30, 60, 114, 0.15) !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+  }
+  
+  .btn-add-document:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 15px rgba(30, 60, 114, 0.25) !important;
+  }
+
+  /* Bouton de planification de rendez-vous */
+  .btn-schedule-appointment {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1.25rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    box-shadow: 0 4px 10px rgba(30, 60, 114, 0.15) !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+  }
+  
+  .btn-schedule-appointment:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 15px rgba(30, 60, 114, 0.25) !important;
+  }
+  
+  /* Amélioration des badges de statut */
+  .status-badge {
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+    text-align: center !important;
+    min-width: 80px !important;
+  }
+  
+  .status-info {
+    background-color: #e0f7fa !important;
+    color: #006064 !important;
+    border: 1px solid #b2ebf2 !important;
+  }
+  
+  .status-success {
+    background-color: #e8f5e9 !important;
+    color: #1b5e20 !important;
+    border: 1px solid #c8e6c9 !important;
+  }
+  
+  .status-secondary {
+    background-color: #eceff1 !important;
+    color: #455a64 !important;
+    border: 1px solid #cfd8dc !important;
+  }
+  
+  .status-primary {
+    background-color: #e3f2fd !important;
+    color: #0d47a1 !important;
+    border: 1px solid #bbdefb !important;
+  }
+  
+  .status-danger {
+    background-color: #ffebee !important;
+    color: #b71c1c !important;
+    border: 1px solid #ffcdd2 !important;
+  }
+
+  /* Bouton de retour */
+  .btn-back {
+    background-color: transparent !important;
+    color: var(--primary-color) !important;
+    border: 2px solid var(--primary-color) !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.25rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+  }
+  
+  .btn-back:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 5px 15px rgba(30, 60, 114, 0.2) !important;
+  }
+  
+  /* Badges de demande */
+  .badge-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+  
+  .request-badge {
+    padding: 0.5rem 1rem !important;
+    border-radius: 30px !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.3px !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+    display: inline-block !important;
+    white-space: nowrap !important;
+  }
+  
+  .new-badge {
+    background-color: #e3f2fd !important;
+    color: #0d47a1 !important;
+    border: 1px solid #bbdefb !important;
+  }
+  
+  .pending-badge {
+    background-color: #fff8e1 !important;
+    color: #ff8f00 !important;
+    border: 1px solid #ffecb3 !important;
+  }
+  
+  .progress-badge {
+    background-color: #e8eaf6 !important;
+    color: #303f9f !important;
+    border: 1px solid #c5cae9 !important;
+  }
+  
+  .completed-badge {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    border: 1px solid #c8e6c9 !important;
+  }
+  
+  .cancelled-badge {
+    background-color: #f5f5f5 !important;
+    color: #616161 !important;
+    border: 1px solid #e0e0e0 !important;
+  }
+  
+  .rejected-badge {
+    background-color: #ffebee !important;
+    color: #c62828 !important;
+    border: 1px solid #ffcdd2 !important;
+  }
+  
+  .urgent-badge {
+    background-color: #ffebee !important;
+    color: #c62828 !important;
+    border: 1px solid #ffcdd2 !important;
+  }
+  
+  .high-badge {
+    background-color: #fff8e1 !important;
+    color: #ff8f00 !important;
+    border: 1px solid #ffecb3 !important;
+  }
+  
+  .medium-badge {
+    background-color: #e0f7fa !important;
+    color: #006064 !important;
+    border: 1px solid #b2ebf2 !important;
+  }
+  
+  .low-badge {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    border: 1px solid #c8e6c9 !important;
+  }
+  
+  /* Boutons d'action */
+  .action-btn-edit {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.25rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 10px rgba(30, 60, 114, 0.15) !important;
+  }
+  
+  .action-btn-edit:hover {
+    background-color: var(--secondary-color) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 15px rgba(30, 60, 114, 0.25) !important;
+  }
+  
+  .action-btn-cancel {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.25rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.15) !important;
+  }
+  
+  .action-btn-cancel:hover {
+    background-color: #c82333 !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 15px rgba(220, 53, 69, 0.25) !important;
+  }
+
+  /* Bouton d'envoi de message */
+  .btn-send-message {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.5rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 10px rgba(30, 60, 114, 0.15) !important;
+  }
+  
+  .btn-send-message:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 15px rgba(30, 60, 114, 0.25) !important;
+  }
+  
+  /* Boutons de modal */
+  .modal-btn-cancel {
+    background-color: #f8f9fa !important;
+    color: #6c757d !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.5rem !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+  }
+  
+  .modal-btn-cancel:hover {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+  }
+  
+  .modal-btn-submit {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.5rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 10px rgba(30, 60, 114, 0.15) !important;
+  }
+  
+  .modal-btn-submit:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 15px rgba(30, 60, 114, 0.25) !important;
+  }
+</style>
+
   <!-- Main Content -->
   <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>Détail de la demande</h2>
       <div>
-        <a href="{% url 'client_demandes' %}" class="btn btn-outline-primary">
+        <a href="{% url 'client_demandes' %}" class="btn-back">
           <i class="bi bi-arrow-left me-2"></i>Retour aux demandes
         </a>
       </div>
@@ -22,29 +858,29 @@
         <div class="card mb-4">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">{{ demande.title }}</h5>
-            <div>
+            <div class="badge-container">
               {% if demande.status == 'new' %}
-                <span class="badge bg-info">Nouvelle</span>
+                <span class="request-badge new-badge">Nouvelle</span>
               {% elif demande.status == 'pending_info' %}
-                <span class="badge bg-warning">En attente d'information</span>
+                <span class="request-badge pending-badge">En attente d'information</span>
               {% elif demande.status == 'in_progress' %}
-                <span class="badge bg-primary">En cours</span>
+                <span class="request-badge progress-badge">En cours</span>
               {% elif demande.status == 'completed' %}
-                <span class="badge bg-success">Terminée</span>
+                <span class="request-badge completed-badge">Terminée</span>
               {% elif demande.status == 'cancelled' %}
-                <span class="badge bg-secondary">Annulée</span>
+                <span class="request-badge cancelled-badge">Annulée</span>
               {% elif demande.status == 'rejected' %}
-                <span class="badge bg-danger">Rejetée</span>
+                <span class="request-badge rejected-badge">Rejetée</span>
               {% endif %}
               
               {% if demande.priority == 'urgent' %}
-                <span class="badge bg-danger ms-1">Urgent</span>
+                <span class="request-badge urgent-badge">Urgent</span>
               {% elif demande.priority == 'high' %}
-                <span class="badge bg-warning ms-1">Haute</span>
+                <span class="request-badge high-badge">Haute</span>
               {% elif demande.priority == 'medium' %}
-                <span class="badge bg-info ms-1">Moyenne</span>
+                <span class="request-badge medium-badge">Moyenne</span>
               {% elif demande.priority == 'low' %}
-                <span class="badge bg-success ms-1">Basse</span>
+                <span class="request-badge low-badge">Basse</span>
               {% endif %}
             </div>
           </div>
@@ -77,10 +913,10 @@
             <!-- Actions -->
             <div class="d-flex justify-content-end mt-4">
               {% if demande.status == 'new' or demande.status == 'pending_info' %}
-                <a href="{% url 'custom_requests:edit_request' demande.id %}" class="btn btn-outline-primary me-2">
+                <a href="{% url 'custom_requests:edit_request' demande.id %}" class="action-btn-edit me-2">
                   <i class="bi bi-pencil me-1"></i>Modifier
                 </a>
-                <a href="{% url 'custom_requests:cancel_request' demande.id %}" class="btn btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette demande ?');">
+                <a href="{% url 'custom_requests:cancel_request' demande.id %}" class="action-btn-cancel" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette demande ?');">
                   <i class="bi bi-x-circle me-1"></i>Annuler
                 </a>
               {% endif %}
@@ -92,7 +928,7 @@
         <div class="card mb-4">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Documents</h5>
-            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
+            <button type="button" class="btn-add-document" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
               <i class="bi bi-upload me-1"></i>Ajouter
             </button>
           </div>
@@ -113,12 +949,16 @@
                         <td>{{ doc.name }}</td>
                         <td>{{ doc.upload_date|date:"d/m/Y" }}</td>
                         <td>
-                          <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
-                            <i class="bi bi-eye"></i>
-                          </a>
-                          <a href="{% url 'custom_requests:delete_document' doc.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?');">
-                            <i class="bi bi-trash"></i>
-                          </a>
+                          <div class="action-button-container">
+                            <a href="{{ doc.file.url }}" class="action-btn-view" target="_blank">
+                              <i class="bi bi-eye"></i>
+                              <span class="icon-text">Voir</span>
+                            </a>
+                            <a href="{% url 'custom_requests:delete_document' doc.id %}" class="action-btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?');">
+                              <i class="bi bi-trash"></i>
+                              <span class="icon-text">Supprimer</span>
+                            </a>
+                          </div>
                         </td>
                       </tr>
                     {% endfor %}
@@ -139,7 +979,7 @@
             <h5 class="mb-0">Messages</h5>
           </div>
           <div class="card-body">
-            <div class="messages-container" style="height: 400px; overflow-y: auto;">
+            <div class="messages-container">
               {% if messages %}
                 {% for message in messages %}
                   <div class="message-bubble {% if message.sender == request.user %}message-out{% else %}message-in{% endif %} mb-3">
@@ -164,7 +1004,7 @@
                 <textarea class="form-control" name="message" rows="3" placeholder="Écrire un message..." required></textarea>
               </div>
               <div class="d-flex justify-content-end mt-2">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn-send-message">
                   <i class="bi bi-send me-1"></i>Envoyer
                 </button>
               </div>
@@ -172,11 +1012,11 @@
           </div>
         </div>
         
-        <!-- Appointments section -->
+        <!-- Rendez-vous section -->
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Rendez-vous</h5>
-            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createAppointmentModal">
+            <button type="button" class="btn-schedule-appointment" data-bs-toggle="modal" data-bs-target="#createAppointmentModal">
               <i class="bi bi-calendar-plus me-1"></i>Planifier
             </button>
           </div>
@@ -197,15 +1037,15 @@
                         <td>{{ rdv.date_time|date:"d/m/Y H:i" }}</td>
                         <td>
                           {% if rdv.status == 'scheduled' %}
-                            <span class="badge bg-info">Planifié</span>
+                            <span class="status-badge status-info">Planifié</span>
                           {% elif rdv.status == 'confirmed' %}
-                            <span class="badge bg-success">Confirmé</span>
+                            <span class="status-badge status-success">Confirmé</span>
                           {% elif rdv.status == 'cancelled' %}
-                            <span class="badge bg-secondary">Annulé</span>
+                            <span class="status-badge status-secondary">Annulé</span>
                           {% elif rdv.status == 'completed' %}
-                            <span class="badge bg-primary">Terminé</span>
+                            <span class="status-badge status-primary">Terminé</span>
                           {% elif rdv.status == 'missed' %}
-                            <span class="badge bg-danger">Manqué</span>
+                            <span class="status-badge status-danger">Manqué</span>
                           {% endif %}
                         </td>
                         <td>{{ rdv.get_consultation_type_display }}</td>
@@ -254,8 +1094,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <button type="submit" class="btn btn-primary">Télécharger</button>
+            <button type="button" class="modal-btn-cancel" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="modal-btn-submit">Télécharger</button>
           </div>
         </form>
       </div>
@@ -311,37 +1151,11 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-            <button type="submit" class="btn btn-primary">Planifier</button>
+            <button type="button" class="modal-btn-cancel" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="modal-btn-submit">Planifier</button>
           </div>
         </form>
       </div>
     </div>
   </div>
-{% endblock %}
-
-{% block extra_style %}
-<style>
-  .message-bubble {
-    padding: 12px 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    max-width: 80%;
-  }
-  
-  .message-in {
-    background-color: #f1f0f0;
-    margin-right: auto;
-  }
-  
-  .message-out {
-    background-color: #e1f5fe;
-    margin-left: auto;
-  }
-  
-  .sender-name {
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
-</style>
 {% endblock %}

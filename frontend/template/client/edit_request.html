@@ -10,33 +10,52 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>Modifier ma demande</h2>
       <div>
-        <a href="{% url 'custom_requests:request_detail' demande.id %}" class="btn btn-outline-primary">
+        <a href="{% url 'custom_requests:request_detail' demande.id %}" class="btn-back">
           <i class="bi bi-arrow-left me-2"></i>Retour aux détails
         </a>
       </div>
-    </div>    <div class="card">
-      <div class="card-header">
+    </div>
+    
+    <div class="edit-request-container">
+      <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">{{ demande.service.title }} - {{ demande.service.service_type.category.name }}</h5>
+        <div class="badge-container">
+          {% if demande.status == 'new' %}
+            <span class="request-badge new-badge">Nouvelle</span>
+          {% elif demande.status == 'pending_info' %}
+            <span class="request-badge pending-badge">En attente d'information</span>
+          {% endif %}
+          
+          {% if demande.priority == 'urgent' %}
+            <span class="request-badge urgent-badge">Urgent</span>
+          {% elif demande.priority == 'high' %}
+            <span class="request-badge high-badge">Haute</span>
+          {% elif demande.priority == 'medium' %}
+            <span class="request-badge medium-badge">Moyenne</span>
+          {% elif demande.priority == 'low' %}
+            <span class="request-badge low-badge">Basse</span>
+          {% endif %}
+        </div>
       </div>
       <div class="card-body">
         <form method="post">
           {% csrf_token %}
           
-          <div class="mb-3">
+          <div class="form-group mb-4">
             <label for="title" class="form-label">Titre*</label>
-            <input type="text" class="form-control" id="title" name="title" value="{{ demande.title }}" required>
+            <input type="text" class="custom-input" id="title" name="title" value="{{ demande.title }}" required>
             <div class="form-text">Un titre court et descriptif pour votre demande.</div>
           </div>
           
-          <div class="mb-3">
+          <div class="form-group mb-4">
             <label for="description" class="form-label">Description*</label>
-            <textarea class="form-control" id="description" name="description" rows="5" required>{{ demande.description }}</textarea>
+            <textarea class="custom-textarea" id="description" name="description" rows="5" required>{{ demande.description }}</textarea>
             <div class="form-text">Décrivez en détail votre besoin ou votre demande.</div>
           </div>
           
-          <div class="mb-3">
+          <div class="form-group mb-4">
             <label for="priority" class="form-label">Priorité</label>
-            <select class="form-select" id="priority" name="priority">
+            <select class="custom-select" id="priority" name="priority">
               <option value="low" {% if demande.priority == 'low' %}selected{% endif %}>Basse</option>
               <option value="medium" {% if demande.priority == 'medium' %}selected{% endif %}>Moyenne</option>
               <option value="high" {% if demande.priority == 'high' %}selected{% endif %}>Haute</option>
@@ -44,8 +63,8 @@
             </select>
           </div>
           
-          <div class="d-flex justify-content-end mt-4">
-            <button type="submit" class="btn btn-primary">
+          <div class="d-flex justify-content-end mt-5">
+            <button type="submit" class="action-btn-edit">
               <i class="bi bi-save me-2"></i>Enregistrer les modifications
             </button>
           </div>
@@ -53,4 +72,217 @@
       </div>
     </div>
   </div>
+
+  <style>
+    /* Variables de couleur */
+    :root {
+      --primary-color: #1e3c72 !important;
+      --secondary-color: #2a5298 !important;
+      --accent-color: #4a6fa5 !important;
+      --text-color: #2c3e50 !important;
+      --light-bg: #f8f9fa !important;
+      --card-bg: #ffffff !important;
+      --success-color: #28a745 !important;
+      --warning-color: #ffc107 !important;
+      --danger-color: #dc3545 !important;
+      --info-color: #17a2b8 !important;
+    }
+    
+    /* Conteneur principal */
+    .edit-request-container {
+      background: var(--card-bg) !important;
+      border-radius: 12px !important;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1) !important;
+      overflow: hidden !important;
+      margin-bottom: 2rem !important;
+      transition: all 0.3s ease !important;
+      border: 1px solid rgba(0, 0, 0, 0.08) !important;
+      animation: fadeIn 0.6s ease-in-out !important;
+    }
+    
+    .edit-request-container:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+      transform: translateY(-3px) !important;
+    }
+    
+    /* En-tête de carte */
+    .card-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+      color: white !important;
+      padding: 1.25rem !important;
+      border-bottom: none !important;
+    }
+    
+    /* Corps de carte */
+    .card-body {
+      padding: 2rem !important;
+    }
+    
+    /* Formulaire personnalisé */
+    .form-label {
+      font-weight: 600 !important;
+      color: var(--text-color) !important;
+      margin-bottom: 0.5rem !important;
+    }
+    
+    .form-text {
+      color: #6c757d !important;
+      font-size: 0.85rem !important;
+      margin-top: 0.3rem !important;
+    }
+    
+    /* Champs de formulaire personnalisés */
+    .custom-input, .custom-textarea, .custom-select {
+      display: block !important;
+      width: 100% !important;
+      padding: 0.75rem !important;
+      font-size: 1rem !important;
+      line-height: 1.5 !important;
+      color: var(--text-color) !important;
+      background-color: var(--light-bg) !important;
+      background-clip: padding-box !important;
+      border: 1px solid #ced4da !important;
+      border-radius: 8px !important;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+    }
+    
+    .custom-input:focus, .custom-textarea:focus, .custom-select:focus {
+      border-color: var(--primary-color) !important;
+      outline: 0 !important;
+      box-shadow: 0 0 0 0.2rem rgba(30, 60, 114, 0.25) !important;
+    }
+    
+    .custom-textarea {
+      resize: vertical !important;
+      min-height: 150px !important;
+    }
+    
+    /* Bouton de retour */
+    .btn-back {
+      background-color: transparent !important;
+      color: var(--primary-color) !important;
+      border: 2px solid var(--primary-color) !important;
+      border-radius: 8px !important;
+      padding: 0.6rem 1.25rem !important;
+      font-weight: 600 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: all 0.3s ease !important;
+      text-decoration: none !important;
+    }
+    
+    .btn-back:hover {
+      background-color: var(--primary-color) !important;
+      color: white !important;
+      transform: translateY(-3px) !important;
+      box-shadow: 0 5px 15px rgba(30, 60, 114, 0.2) !important;
+    }
+    
+    /* Bouton d'action d'édition */
+    .action-btn-edit {
+      background-color: var(--primary-color) !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 8px !important;
+      padding: 0.6rem 1.5rem !important;
+      font-weight: 600 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: all 0.3s ease !important;
+      text-decoration: none !important;
+      box-shadow: 0 4px 10px rgba(30, 60, 114, 0.15) !important;
+      cursor: pointer !important;
+    }
+    
+    .action-btn-edit:hover {
+      background-color: var(--secondary-color) !important;
+      transform: translateY(-3px) !important;
+      box-shadow: 0 6px 15px rgba(30, 60, 114, 0.25) !important;
+    }
+    
+    /* Badges de demande */
+    .badge-container {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 0.5rem !important;
+    }
+    
+    .request-badge {
+      padding: 0.5rem 1rem !important;
+      border-radius: 30px !important;
+      font-weight: 600 !important;
+      font-size: 0.8rem !important;
+      letter-spacing: 0.3px !important;
+      text-transform: uppercase !important;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+      display: inline-block !important;
+      white-space: nowrap !important;
+    }
+    
+    .new-badge {
+      background-color: #e3f2fd !important;
+      color: #0d47a1 !important;
+      border: 1px solid #bbdefb !important;
+    }
+    
+    .pending-badge {
+      background-color: #fff8e1 !important;
+      color: #ff8f00 !important;
+      border: 1px solid #ffecb3 !important;
+    }
+    
+    .urgent-badge {
+      background-color: #ffebee !important;
+      color: #c62828 !important;
+      border: 1px solid #ffcdd2 !important;
+    }
+    
+    .high-badge {
+      background-color: #fff8e1 !important;
+      color: #ff8f00 !important;
+      border: 1px solid #ffecb3 !important;
+    }
+    
+    .medium-badge {
+      background-color: #e0f7fa !important;
+      color: #006064 !important;
+      border: 1px solid #b2ebf2 !important;
+    }
+    
+    .low-badge {
+      background-color: #e8f5e9 !important;
+      color: #2e7d32 !important;
+      border: 1px solid #c8e6c9 !important;
+    }
+    
+    /* Animation de fade-in */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .card-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+      }
+      
+      .badge-container {
+        margin-top: 0.5rem !important;
+      }
+      
+      .action-btn-edit {
+        width: 100% !important;
+      }
+    }
+  </style>
 {% endblock %}

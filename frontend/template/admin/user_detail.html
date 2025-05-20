@@ -1,0 +1,420 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Détails Utilisateur | Administration{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+  <!-- Back button and header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <a href="{% url 'admin_users' %}" class="btn btn-outline-primary me-2">
+        <i class="bi bi-arrow-left"></i> Retour aux utilisateurs
+      </a>
+      <h2 class="d-inline-block">Détails de l'utilisateur</h2>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'admin_edit_user' user_id=target_user.id %}" class="btn btn-success">
+        <i class="bi bi-pencil me-2"></i>Modifier
+      </a>
+      {% if target_user.is_active %}
+      <button type="button" class="btn btn-warning" onclick="confirmToggleStatus({{ target_user.id }}, false)">
+        <i class="bi bi-x-circle me-2"></i>Désactiver
+      </button>
+      {% else %}
+      <button type="button" class="btn btn-info" onclick="confirmToggleStatus({{ target_user.id }}, true)">
+        <i class="bi bi-check-circle me-2"></i>Activer
+      </button>
+      {% endif %}
+      <button type="button" class="btn btn-danger" onclick="confirmDelete({{ target_user.id }})">
+        <i class="bi bi-trash me-2"></i>Supprimer
+      </button>
+    </div>
+  </div>
+
+  <!-- User Profile Card -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card shadow h-100">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Informations de base</h6>
+        </div>
+        <div class="card-body">
+          <div class="text-center mb-4">
+            <img class="img-profile rounded-circle mb-2" width="128" height="128" 
+            src="{% if target_user.profile_picture %}{{ target_user.profile_picture.url }}{% else %}{% static 'img/profile-placeholder.jpg' %}{% endif %}">
+            <h5 class="mb-0">{{ target_user.name }} {{ target_user.first_name }}</h5>
+            {% if target_user.account_type == 'CLIENT' or target_user.account_type == 'client' %}
+            <span class="badge bg-success">Client</span>
+            {% elif target_user.account_type == 'EXPERT' or target_user.account_type == 'expert' %}
+            <span class="badge bg-warning text-dark">Expert</span>
+            {% elif target_user.account_type == 'ADMIN' or target_user.account_type == 'admin' %}
+            <span class="badge bg-info">Admin</span>
+            {% endif %}
+            <span class="badge {% if target_user.is_active %}bg-success{% else %}bg-danger{% endif %}">
+              {% if target_user.is_active %}Actif{% else %}Inactif{% endif %}
+            </span>
+          </div>
+
+          <div class="mb-3">
+            <h6 class="text-primary">Email:</h6>
+            <p>{{ target_user.email }}</p>
+          </div>
+
+          <div class="mb-3">
+            <h6 class="text-primary">Téléphone:</h6>
+            <p>{{ target_user.phone|default:"Non renseigné" }}</p>
+          </div>
+
+          <div class="mb-3">
+            <h6 class="text-primary">Date d'inscription:</h6>
+            <p>{{ target_user.date_joined|date:"d/m/Y H:i" }}</p>
+          </div>
+
+          <div class="mb-3">
+            <h6 class="text-primary">Dernière connexion:</h6>
+            <p>{{ target_user.last_login|date:"d/m/Y H:i"|default:"Jamais" }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Profile Information -->
+    <div class="col-md-8">
+      <div class="card shadow h-100">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Informations supplémentaires</h6>
+        </div>
+        <div class="card-body">
+          {% if target_user.account_type == 'CLIENT' or target_user.account_type == 'client' %}
+            <!-- Client specific information -->
+            {% if client_profile %}
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <h6 class="text-primary">Statut MRE:</h6>
+                <p>{% if client_profile.mre_status %}Oui{% else %}Non{% endif %}</p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <h6 class="text-primary">Pays d'origine:</h6>
+                <p>{{ client_profile.origin_country|default:"Non renseigné" }}</p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <h6 class="text-primary">Dernière visite au Maroc:</h6>
+                <p>{{ client_profile.last_visit|date:"d/m/Y"|default:"Non renseigné" }}</p>
+              </div>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">Profil client non trouvé</div>
+            {% endif %}
+          {% elif target_user.account_type == 'EXPERT' or target_user.account_type == 'expert' %}
+            <!-- Expert specific information -->
+            {% if expert_profile %}
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <h6 class="text-primary">Spécialité:</h6>
+                <p>{{ expert_profile.specialty|default:"Non renseigné" }}</p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <h6 class="text-primary">Langues parlées:</h6>
+                <p>{{ expert_profile.spoken_languages|default:"Non renseigné" }}</p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <h6 class="text-primary">Années d'expérience:</h6>
+                <p>{{ expert_profile.years_of_experience|default:"0" }}</p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <h6 class="text-primary">Tarif horaire:</h6>
+                <p>{{ expert_profile.hourly_rate|default:"0" }} Dh/h</p>
+              </div>
+              <div class="col-12 mb-3">
+                <h6 class="text-primary">Biographie:</h6>
+                <p>{{ expert_profile.biography|default:"Non renseigné" }}</p>
+              </div>
+              <div class="col-12 mb-3">
+                <h6 class="text-primary">Compétences:</h6>
+                <p>{{ expert_profile.competencies|default:"Non renseigné" }}</p>
+              </div>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">Profil expert non trouvé</div>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs for user activity -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <ul class="nav nav-tabs card-header-tabs" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="requests-tab" data-bs-toggle="tab" href="#requests" role="tab">Demandes ({{ service_requests.count }})</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="documents-tab" data-bs-toggle="tab" href="#documents" role="tab">Documents ({{ documents.count }})</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="messages-tab" data-bs-toggle="tab" href="#messages" role="tab">Messages ({{ messages_list.count }})</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="appointments-tab" data-bs-toggle="tab" href="#appointments" role="tab">Rendez-vous ({{ appointments.count }})</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <div class="tab-content">
+        <!-- Requests Tab -->
+        <div class="tab-pane fade show active" id="requests" role="tabpanel" aria-labelledby="requests-tab">
+          {% if service_requests %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Service</th>
+                  <th>Statut</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for request in service_requests %}
+                <tr>
+                  <td>{{ request.id }}</td>
+                  <td>{{ request.service.title }}</td>
+                  <td>
+                    {% if request.status == 'new' %}
+                    <span class="badge bg-primary">Nouveau</span>
+                    {% elif request.status == 'pending_info' %}
+                    <span class="badge bg-warning text-dark">En attente d'info</span>
+                    {% elif request.status == 'in_progress' %}
+                    <span class="badge bg-info">En cours</span>
+                    {% elif request.status == 'completed' %}
+                    <span class="badge bg-success">Terminé</span>
+                    {% elif request.status == 'cancelled' %}
+                    <span class="badge bg-danger">Annulé</span>
+                    {% elif request.status == 'rejected' %}
+                    <span class="badge bg-dark">Rejeté</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ request.created_at|date:"d/m/Y" }}</td>
+                  <td>
+                    <a href="{% url 'admin_request_detail' request_id=request.id %}" class="btn btn-sm btn-primary">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="bi bi-file-earmark-text text-muted" style="font-size: 3rem;"></i>
+            <p class="mt-3 text-muted">Aucune demande trouvée pour cet utilisateur</p>
+          </div>
+          {% endif %}
+        </div>
+        
+        <!-- Documents Tab -->
+        <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
+          {% if documents %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Type</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for doc in documents %}
+                <tr>
+                  <td>{{ doc.name }}</td>
+                  <td>{{ doc.get_type_display }}</td>
+                  <td>{{ doc.upload_date|date:"d/m/Y" }}</td>
+                  <td>
+                    <a href="{{ doc.file.url }}" class="btn btn-sm btn-primary" target="_blank">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="bi bi-file-earmark text-muted" style="font-size: 3rem;"></i>
+            <p class="mt-3 text-muted">Aucun document trouvé pour cet utilisateur</p>
+          </div>
+          {% endif %}
+        </div>
+        
+        <!-- Messages Tab -->
+        <div class="tab-pane fade" id="messages" role="tabpanel" aria-labelledby="messages-tab">
+          {% if messages_list %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Avec</th>
+                  <th>Contenu</th>
+                  <th>Date</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for msg in messages_list %}
+                <tr>
+                  <td>
+                    {% if msg.sender.id == target_user.id %}
+                    <span class="text-success">À: {{ msg.recipient.name }} {{ msg.recipient.first_name }}</span>
+                    {% else %}
+                    <span class="text-primary">De: {{ msg.sender.name }} {{ msg.sender.first_name }}</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ msg.content|truncatechars:50 }}</td>
+                  <td>{{ msg.sent_at|date:"d/m/Y H:i" }}</td>
+                  <td>
+                    {% if msg.is_read %}
+                    <span class="badge bg-success">Lu</span>
+                    {% else %}
+                    <span class="badge bg-warning text-dark">Non lu</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="bi bi-chat-dots text-muted" style="font-size: 3rem;"></i>
+            <p class="mt-3 text-muted">Aucun message trouvé pour cet utilisateur</p>
+          </div>
+          {% endif %}
+        </div>
+        
+        <!-- Appointments Tab -->
+        <div class="tab-pane fade" id="appointments" role="tabpanel" aria-labelledby="appointments-tab">
+          {% if appointments %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Avec</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                  <td>
+                    {% if appointment.client.id == target_user.id %}
+                    <span>Expert: {{ appointment.expert.name }} {{ appointment.expert.first_name }}</span>
+                    {% else %}
+                    <span>Client: {{ appointment.client.name }} {{ appointment.client.first_name }}</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ appointment.date_time|date:"d/m/Y H:i" }}</td>
+                  <td>{{ appointment.get_consultation_type_display }}</td>
+                  <td>
+                    {% if appointment.status == 'scheduled' %}
+                    <span class="badge bg-primary">Planifié</span>
+                    {% elif appointment.status == 'confirmed' %}
+                    <span class="badge bg-success">Confirmé</span>
+                    {% elif appointment.status == 'cancelled' %}
+                    <span class="badge bg-danger">Annulé</span>
+                    {% elif appointment.status == 'completed' %}
+                    <span class="badge bg-info">Terminé</span>
+                    {% elif appointment.status == 'missed' %}
+                    <span class="badge bg-warning text-dark">Manqué</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="bi bi-calendar-event text-muted" style="font-size: 3rem;"></i>
+            <p class="mt-3 text-muted">Aucun rendez-vous trouvé pour cet utilisateur</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals for confirmation actions -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="statusModalLabel">Changer le statut</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="status-modal-body">
+        Êtes-vous sûr de vouloir modifier le statut de cet utilisateur ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <a href="#" id="confirm-status-btn" class="btn btn-primary">Confirmer</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <a href="#" id="confirm-delete-btn" class="btn btn-danger">Supprimer</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Function to confirm toggling user status
+  function confirmToggleStatus(userId, makeActive) {
+    var statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+    var statusModalBody = document.getElementById('status-modal-body');
+    var confirmStatusBtn = document.getElementById('confirm-status-btn');
+    
+    statusModalBody.innerText = makeActive 
+      ? 'Êtes-vous sûr de vouloir activer cet utilisateur ?'
+      : 'Êtes-vous sûr de vouloir désactiver cet utilisateur ?';
+    
+    confirmStatusBtn.href = "{% url 'admin_toggle_user_status' user_id=0 %}".replace('0', userId);
+    statusModal.show();
+  }
+
+  // Function to confirm user deletion
+  function confirmDelete(userId) {
+    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    var confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    
+    confirmDeleteBtn.href = "{% url 'admin_delete_user' user_id=0 %}".replace('0', userId);
+    deleteModal.show();
+  }
+</script>
+{% endblock %} 
