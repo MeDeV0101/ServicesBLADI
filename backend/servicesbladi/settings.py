@@ -226,6 +226,7 @@ AUTHENTICATION_BACKENDS = [
     'accounts.backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+<<<<<<< HEAD
 
 # Logging Configuration
 LOGGING = {
@@ -270,3 +271,5 @@ LOGGING = {
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
+=======
+>>>>>>> parent of 5b7d8e5 (start setup messaging feature)
